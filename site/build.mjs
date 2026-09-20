@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { marked, Marked } from 'marked';
 import hljs from 'highlight.js';
 import GithubSlugger from 'github-slugger';
+import { createHash } from 'node:crypto';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
@@ -584,7 +585,13 @@ ${footer(lang, pagePath)}
 }
 
 // ---------------------------------------------------------------- write
+// GitHub Pages caches assets for minutes: version the local CSS/JS URLs by content so a redeploy is never
+// served as new HTML with stale styles.
+const ASSET_V = {};
+for (const f of ['site.css', 'site.js', 'demo.css', 'demo.js', 'viz.js']) ASSET_V[f] = createHash('sha256').update(readFileSync(join(HERE, 'src', f))).digest('hex').slice(0, 10);
+const versioned = (html) => html.replace(/(src|href)="([^"]*?)((?:site|demo|viz)\.(?:css|js))"/g, (m, attr, dir, f) => `${attr}="${dir}${f}?v=${ASSET_V[f]}"`);
 function write(p, content) {
+  if (p.endsWith('.html')) content = versioned(content);
   const full = join(DIST, p);
   mkdirSync(dirname(full), { recursive: true });
   writeFileSync(full, content);
