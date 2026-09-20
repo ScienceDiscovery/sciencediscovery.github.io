@@ -16,7 +16,7 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL ? undefined : {
     command: 'npm run serve --prefix ..',
     url: 'http://127.0.0.1:4173',
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 30_000
   }
 })

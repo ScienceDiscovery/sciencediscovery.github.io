@@ -51,7 +51,7 @@ npm run build
 npm run test:e2e
 ```
 
-Browser tests start the preview on port 4173 when it is not already running. Tests cover downloads, checksums, deployment, language switching, documentation navigation, search, screenshots, and a mobile viewport. Reports and browser artifacts remain in the ignored `.e2e/` directory.
+Stop any existing preview on port 4173 before testing. Browser tests start a fresh preview so its asset index matches the latest build. Restart a manually started preview after rebuilding for the same reason. Tests cover downloads, checksums, deployment, language switching, documentation navigation, search, screenshots, and a mobile viewport, including a language-link click while the initial page script is delayed. Reports and browser artifacts remain in the ignored `.e2e/` directory.
 
 ## Publishing
 
