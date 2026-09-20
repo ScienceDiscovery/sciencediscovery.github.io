@@ -64,6 +64,7 @@ test('find downloads, launch instructions, deployment, and bilingual documentati
 
   await journey.step('05 配图与正文', '从文档目录进入调研案例，全部用户指南截图加载成功。', async () => {
     await page.locator('.vp-doc').getByRole('link', { name: 'Literature research case guide', exact: true }).click()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('ScienceDiscovery User Guide: Literature Research Case')
     const images = page.locator('.vp-doc img')
     expect(await images.count()).toBeGreaterThan(10)
     for (const img of await images.all()) {
