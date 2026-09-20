@@ -48,7 +48,7 @@ export default defineConfig({
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/mark.svg' }], ['meta', { name: 'theme-color', content: '#147b66' }]],
   sitemap: { hostname: 'https://sciencediscovery.github.io' },
   locales: {
-    en: { label: 'English', lang: 'en', link: '/en/', themeConfig: localTheme('en') },
+    root: { label: 'English', lang: 'en', link: '/en/', themeConfig: localTheme('en') },
     zh: { label: '简体中文', lang: 'zh-CN', link: '/zh/', description: '面向科学研究的工作台，连接文献调研、代码开发与实验探索。', themeConfig: localTheme('zh') }
   },
   themeConfig: {

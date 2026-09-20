@@ -229,7 +229,7 @@ class Reporter implements JourneyReporter {
     const root = process.env.E2E_JOURNEY_REPORTS?.trim()
       || resolve(testInfo.project.outputDir, "..", "journey-reports");
     const specName = (testInfo.file.split(/[\\/]/).at(-1) ?? "spec").replace(/\.spec\.ts$/, "");
-    this.directory = join(root, slug(specName), slug(testInfo.title));
+    this.directory = join(root, slug(testInfo.project.name), slug(specName), slug(testInfo.title));
     this.attachPageListeners();
   }
 
