@@ -1,0 +1,24 @@
+{
+  "name": "sciencediscovery-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs --host 127.0.0.1 --port 4173 --strictPort",
+    "build": "vitepress build docs && node scripts/check-site.mjs",
+    "serve": "vitepress preview docs --host 127.0.0.1 --port 4173 --strictPort",
+    "sync:docs": "node scripts/sync-docs.mjs",
+    "test:e2e": "node test/sync-e2e.mjs --check && cd .e2e && npm test"
+  },
+  "devDependencies": {
+    "github-slugger": "2.0.0",
+    "parse5": "7.3.0",
+    "vitepress": "1.6.4",
+    "vue": "3.5.22"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "overrides": {
+    "vite": "6.4.3"
+  }
+}
