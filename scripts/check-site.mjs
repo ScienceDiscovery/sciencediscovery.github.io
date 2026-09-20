@@ -32,7 +32,7 @@ for (const path of allFiles(dist).filter(path => path.endsWith('.html'))) {
     if (node.tagName === 'script' && attrs.src) links.push(attrs.src)
     if (node.tagName === 'link' && attrs.href) links.push(attrs.href)
   })
-  if (/MissionCrew|\.missioncrew|\/resources\/science_agent|\/home\/test\/|\/Users\//i.test(html)) failures.push(`Private reference in ${path.slice(dist.length)}`)
+  if (/\/resources\/|\/home\/|\/Users\//i.test(html)) failures.push(`Private reference in ${path.slice(dist.length)}`)
   pages.set(path, { ids, links })
 }
 let checked = 0
