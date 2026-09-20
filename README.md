@@ -4,7 +4,7 @@ The public website at <https://sciencediscovery.github.io/> has an interactive p
 
 | Page | Source |
 |---|---|
-| Home (interactive demo, features, screenshots) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
+| Home (interactive demo, features) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
 | Documentation (with search) | rendered from `docs/en` and `docs/zh` |
 | Deployment (binary, Docker, source) | `site/build.mjs` (`D` strings) |
 | Download (Linux today; macOS ready) | `release.json` |

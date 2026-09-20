@@ -297,14 +297,12 @@ function renderDoc(md, srcFile, lang, pagePath) {
 const X = {
   en: {
     deploy: 'Deployment', searchPh: 'Search documentation', searchBtn: 'Search', searchEmpty: 'No results for', searchHint: '↑↓ to navigate · Enter to open · Esc to close', searchLoading: 'Loading index…',
-    theme: 'Toggle dark mode', shotsTitle: 'The real interface', shotsSub: 'Screenshots from the product documentation.',
-    shots: [['task.png', 'Sessions and workspace', 'A project, its sessions and the artifact workspace side by side.'], ['evolve/search-graph.png', 'Program evolution', 'Islands, lineages and the best-so-far curve of an /evolve search.'], ['evidence1.jpg', 'Evidence-backed results', 'Claims link back to the papers and spans they rest on.']],
+    theme: 'Toggle dark mode',
     docsQuick: 'Quick start'
   },
   zh: {
     deploy: '部署', searchPh: '搜索文档', searchBtn: '搜索', searchEmpty: '没有找到', searchHint: '↑↓ 选择 · Enter 打开 · Esc 关闭', searchLoading: '正在加载索引…',
-    theme: '切换深色模式', shotsTitle: '真实的产品界面', shotsSub: '截图来自产品文档。',
-    shots: [['task.png', '会话与工作区', '项目、会话与产物工作区并排呈现。'], ['evolve/search-graph.png', '程序演进', '/evolve 搜索的岛屿、谱系与当前最优曲线。'], ['evidence1.jpg', '有证据支撑的结果', '每条结论都链接回所依据的论文与片段。']],
+    theme: '切换深色模式',
     docsQuick: '快速开始'
   }
 };
@@ -405,7 +403,6 @@ function home(lang) {
   const r = (p) => rel(pagePath, p);
   const docLink = (k) => rel(pagePath, pathOf(lang, 'docs/' + keyFor(k) + '.html'));
   const feats = t.feats.map(([ic, title, text, doc]) => `<a class="card" href="${docLink(doc)}"><div class="ico">${svg(IC[ic], 20)}</div><h3>${title}</h3><p>${text}</p><span class="more">${t.learn}</span></a>`).join('');
-  const shots = x.shots.map(([img, title, cap]) => `<figure class="shot"><img src="${r('docs/images/' + img)}" alt="${esc(title)}" loading="lazy"><figcaption><b>${title}</b>${cap}</figcaption></figure>`).join('');
   return head(lang, `${t.name} — ${t.tag}`, pagePath, null, ['demo.css']) + `
 <body>
 ${topbar(lang, 'home', pagePath, other(lang, page))}
@@ -419,7 +416,6 @@ ${topbar(lang, 'home', pagePath, other(lang, page))}
 <div class="app" id="demo" aria-label="Interactive product demo"></div>
 <p class="demo-hint">${t.demoHint}</p>
 <section class="section"><h2>${t.featTitle}</h2><p class="sub">${t.featSub}</p><div class="grid">${feats}</div></section>
-<section class="section"><h2>${x.shotsTitle}</h2><p class="sub">${x.shotsSub}</p><div class="shots">${shots}</div></section>
 <section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'download/index.html'))}">${t.ctaDownload}</a><a class="btn" href="${r(pathOf(lang, 'docs/tutorial/01-quick-start.html'))}">${x.docsQuick}</a></div></section>
 </main>
 ${footer(lang, pagePath)}
