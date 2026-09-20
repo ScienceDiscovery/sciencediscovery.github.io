@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { parse } from 'parse5'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const dist = join(root, 'docs/.vitepress/dist')
+const dist = join(root, 'dist')
 const manifest = JSON.parse(readFileSync(join(root, 'docs-source.json'), 'utf8'))
 const failures = []
 for (const [path, digest] of Object.entries(manifest.files)) {

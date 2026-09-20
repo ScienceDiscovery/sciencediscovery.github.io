@@ -1,6 +1,15 @@
 # ScienceDiscovery website
 
-The public website at <https://sciencediscovery.github.io/> provides Linux binary downloads, deployment guides, and the bilingual ScienceDiscovery user documentation.
+The public website at <https://sciencediscovery.github.io/> has an interactive product demo, the bilingual user documentation with full-text search, a deployment guide, and downloads.
+
+| Page | Source |
+|---|---|
+| Home (interactive demo, features, screenshots) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
+| Documentation (with search) | rendered from `docs/en` and `docs/zh` |
+| Deployment (binary, Docker, source) | `site/build.mjs` (`D` strings) |
+| Download (Linux today, Windows/macOS ready) | `release.json` |
+
+English is at the root and Chinese under `/zh/`. Light and dark themes follow the system setting and can be toggled from the top bar.
 
 ## Develop and preview
 
@@ -8,21 +17,23 @@ Use Node.js 22.19 or later:
 
 ```sh
 npm ci
-npm run dev
+npm run build   # builds dist/ and validates links, anchors, images and the synced docs
+npm run serve   # http://127.0.0.1:4173/ (refuses to pick another port)
 ```
 
-For a production preview:
+`npm run dev` rebuilds and then serves. There is no runtime dependency on a CDN or an API.
 
-```sh
-npm run build
-npm run serve
-```
+### Interactive demo
 
-Both servers use <http://127.0.0.1:4173/> and refuse to silently choose another port. The build validates local links, fragments, images, and the integrity of the synced documentation. The product's application ports are independent of this website.
+`site/src/demo.js` replays seven scripted sessions in a replica of the product shell: literature survey, Idea Tree, Evolve, memory graph, protein pocket, crystal structure and differential expression. `site/src/viz.js` contains a small canvas 3D renderer (protein ribbon and ligand, perovskite supercell with octahedra) and the SVG plots (volcano, heatmap, XRD). All structures and data are generated locally and are illustrative, not experimental results.
+
+### Search
+
+The build writes `search-index.json` (English) and `zh/search-index.json` from the rendered documentation, split by heading. `site/src/site.js` loads it on first use and ranks results in the browser. Open it with the top-bar button, `Ctrl/⌘ K`, or `/`.
 
 ## Documentation source
 
-`docs/README.md`, `docs/en/`, `docs/zh/`, `docs/architecture/`, `docs/images/`, and `LICENSE` are copied from the [product repository](https://gitcode.com/openJiuwen/sciencediscovery). `docs-source.json` records the source revision and each copied file's SHA256. Copied pages retain their original Markdown, screenshots, and directory structure. The website renders links that leave the docs tree as public links to the [GitHub product repository](https://github.com/openJiuwen-ai/sciencediscovery).
+`docs/README.md`, `docs/en/`, `docs/zh/`, `docs/architecture/`, `docs/images/`, and `LICENSE` are copied from the [product repository](https://gitcode.com/openJiuwen/sciencediscovery). `docs-source.json` records the source revision and each copied file's SHA256. Copied pages keep their original Markdown, screenshots, and directory structure. Links that leave the docs tree become links into the [GitHub product repository](https://github.com/openJiuwen-ai/sciencediscovery). A page that exists in only one language is shown in the other with a notice.
 
 To refresh from a clean product checkout:
 
@@ -31,31 +42,17 @@ npm run sync:docs -- ../sciencediscovery
 npm run build
 ```
 
-The script only reads the source checkout. It replaces files recorded in the source manifest and removes obsolete synced files. It never writes to the product repository. Make product documentation edits upstream first, then sync. The landing pages, theme, workflow, source manifest, and copied documents are all committed together on `main`; deployments do not fetch documentation from another repository.
+The script only reads the source checkout, replaces the files recorded in the manifest, and removes obsolete synced files. Make documentation edits upstream first, then sync. Everything is committed together on `main`; deployments never fetch documentation from another repository.
 
-`docs/index.md`, `docs/en/index.md`, `docs/zh/index.md`, `docs/public/`, and `docs/.vitepress/` belong to the website. Navigation is generated from the source documents. The language menu opens the selected language's homepage because some source topics currently only have a Chinese page.
+The website owns `site/`, `scripts/`, `release.json`, `docs-source.json`, and the workflow. To feature a page in the documentation sidebar, add it to `NAV` in `site/build.mjs`; every other page appears automatically under “All documents”.
 
-The binary download metadata in `release.json` is pinned to [0.2.0](https://github.com/openJiuwen-ai/sciencediscovery/releases/tag/0.2.0), including the checksums published by the GitHub Release API. Product documentation is a snapshot of the main branch and can describe changes after that release. Review the release independently when updating download metadata.
+## Downloads
 
-The renderer uses GitHub-compatible heading anchors and treats angle-bracket placeholders in upstream prose as literal text. Vite is overridden to its patched 6.4.3 release while VitePress stays on the stable 1.6 series.
-
-## Browser verification
-
-The committed test manifest pins Playwright to 1.61.1. Assemble the isolated test environment and run against the production preview:
-
-```sh
-node test/sync-e2e.mjs --write
-npm ci --prefix .e2e
-.e2e/node_modules/.bin/playwright install chromium
-npm run build
-npm run test:e2e
-```
-
-Stop any existing preview on port 4173 before testing. Browser tests start a fresh preview so its asset index matches the latest build. Restart a manually started preview after rebuilding for the same reason. Tests cover downloads, checksums, deployment, language switching, documentation navigation, search, screenshots, and a mobile viewport, including a language-link click while the initial page script is delayed. Reports and browser artifacts remain in the ignored `.e2e/` directory.
+`release.json` pins the binaries to [0.2.0](https://github.com/openJiuwen-ai/sciencediscovery/releases/tag/0.2.0), with the SHA256 published by the GitHub Release API. When Windows or macOS builds are released, add entries with a matching `name` (or an explicit `"os"`), a `url`, and `sha256`; the download page moves them out of the “not published yet” state automatically. Product documentation is a snapshot of the main branch and can describe changes after that release.
 
 ## Publishing
 
-The `pages.yml` workflow builds from `main` and deploys the build artifact using GitHub Pages. Select **GitHub Actions** as the repository's Pages source. Pull requests run the build and link checks without deploying. No separate documentation branch or `gh-pages` branch is used.
+`pages.yml` builds from `main` and deploys the artifact with GitHub Pages. Select **GitHub Actions** as the Pages source. Pull requests run the build and link checks without deploying.
 
 ## License
 

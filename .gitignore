@@ -1,8 +1,4 @@
 node_modules/
+dist/
 .cache/
-.e2e/
-test/node_modules
-docs/.vitepress/cache/
-docs/.vitepress/dist/
-.codex/
 .DS_Store
