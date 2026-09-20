@@ -72,7 +72,7 @@ const T = {
       startTitle: 'After downloading',
       startSteps: 'Make the binary executable and start the stack, then open the <code>Open to sign in</code> URL printed in the terminal.',
       startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
-      note: 'Prebuilt binaries are currently published for Linux. macOS and Windows users can run ScienceDiscovery from source today — see the build guide.',
+      note: 'Prebuilt binaries are currently published for Linux. macOS users can run ScienceDiscovery from source today — see the build guide.',
       all: 'All releases on GitHub'
     },
     docs: {
@@ -135,7 +135,7 @@ const T = {
       startTitle: '下载之后',
       startSteps: '赋予可执行权限并启动服务，然后在浏览器中打开终端输出的 <code>Open to sign in</code> 链接。',
       startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
-      note: '目前预编译二进制仅发布 Linux 版本。macOS 与 Windows 用户现在可以从源码运行，详见构建指南。',
+      note: '目前预编译二进制仅发布 Linux 版本。macOS 用户现在可以从源码运行，详见构建指南。',
       all: '在 GitHub 查看全部版本'
     },
     docs: {
@@ -471,7 +471,7 @@ function download(lang) {
   const lk = (x) => rel(pagePath, pathOf(lang, x));
   const by = { windows: [], macos: [], linux: [] };
   for (const b of RELEASE.binaries) by[b.os || OS_OF(b.name)].push(b);
-  const file = (b) => `<div><a class="file" href="${esc(b.url)}"><span>${esc(b.name.replace(/^ScienceDiscovery-[\d.]+-/, ''))} · ${b.arch}</span><small>${b.size ? Math.round(b.size / 1e6) + ' MB' : svg(IC.download, 14)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`;
+  const file = (b) => `<div><a class="file" href="${esc(b.url)}"><span>${b.os === 'macos' || OS_OF(b.name) === 'macos' ? 'macOS' : 'Linux'} ${b.arch}</span><small>${b.size ? Math.round(b.size / 1e6) + ' MB' : svg(IC.download, 14)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`;
   const soon = (label) => `<span class="file off"><span>${label}</span><small>${d.soon}</small></span>`;
   const build = `<a class="file" href="${lk(d.buildLink)}"><span>${d.build}</span><small>→</small></a>`;
   const docker = `<a class="file" href="${lk(d.dockerLink)}"><span>${d.docker}</span><small>→</small></a>`;
@@ -484,7 +484,6 @@ ${topbar(lang, 'download', pagePath, other(lang, page))}
 <div class="ver-row"><span>${d.latest}: <b>${RELEASE.version}</b></span><span>·</span><a href="${esc(RELEASE.url)}" target="_blank" rel="noopener">${d.notes}</a></div></section>
 <span class="pill blue hidden" id="recommend-tag">${d.recommended}</span>
 <div class="os-grid">
-${col('windows', 'windows', d.windows, build, soon('Windows x64'))}
 ${col('macos', 'apple', d.macos, build, soon('Apple Silicon · Intel'))}
 ${col('linux', 'linux', d.linux, docker, '')}
 </div>

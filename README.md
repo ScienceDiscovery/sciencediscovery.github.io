@@ -7,7 +7,7 @@ The public website at <https://sciencediscovery.github.io/> has an interactive p
 | Home (interactive demo, features, screenshots) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
 | Documentation (with search) | rendered from `docs/en` and `docs/zh` |
 | Deployment (binary, Docker, source) | `site/build.mjs` (`D` strings) |
-| Download (Linux today, Windows/macOS ready) | `release.json` |
+| Download (Linux today; macOS ready) | `release.json` |
 
 English is at the root and Chinese under `/zh/`. Light and dark themes follow the system setting and can be toggled from the top bar.
 
