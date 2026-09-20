@@ -90,3 +90,28 @@ test('search documentation by a deployment term', async ({ page, journey }) => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Deploy ScienceDiscovery')
   })
 })
+
+test('follow a visible language link while the first page module is loading', async ({ page, journey }) => {
+  journey.scenario({ goal: '脚本尚在加载时点击文档语言链接，最终仍能进入正确页面。', preconditions: ['浏览器已收到静态中文目录；测试暂缓初始页面模块以模拟网络延迟。'] })
+  await journey.step('01 加载中切换语言', '点击已显示的英文链接后，完成初始加载并显示英文目录，没有渲染不匹配。', async () => {
+    const errors: string[] = []
+    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+    let release: () => void
+    let requested: () => void
+    const gate = new Promise<void>(resolve => { release = resolve })
+    const pending = new Promise<void>(resolve => { requested = resolve })
+    await page.route('**/assets/zh_README.md.*.lean.js', async route => {
+      requested()
+      await gate
+      await route.continue()
+    })
+    try {
+      await page.goto('/zh/README.html', { waitUntil: 'domcontentloaded' })
+      await pending
+      await page.locator('.vp-doc').getByRole('link', { name: 'English documentation', exact: true }).click()
+    } finally { release() }
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('ScienceDiscovery Documentation')
+    await expect(page).toHaveURL(/\/en\/README\.html$/)
+    expect(errors).toEqual([])
+  })
+})
