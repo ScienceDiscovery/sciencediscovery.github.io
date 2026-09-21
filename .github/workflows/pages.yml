@@ -5,6 +5,9 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Pick up documentation changes from the product repository without a commit here.
+    - cron: '17 */6 * * *'
 permissions:
   contents: read
 concurrency:
@@ -15,6 +18,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      # ./docs is a symlink to this checkout of the product repository's docs.
+      - uses: actions/checkout@v5
+        with:
+          repository: openJiuwen-ai/sciencediscovery
+          ref: main
+          path: sciencediscovery
+          sparse-checkout: docs
       - uses: actions/setup-node@v6
         with:
           node-version: 22

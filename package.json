@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node site/build.mjs && node scripts/check-site.mjs",
-    "dev": "node site/build.mjs && node scripts/serve.mjs",
-    "serve": "node scripts/serve.mjs",
-    "sync:docs": "node scripts/sync-docs.mjs"
+    "fetch:docs": "node scripts/fetch-docs.mjs",
+    "build": "node scripts/fetch-docs.mjs --if-missing && node site/build.mjs && node scripts/check-site.mjs",
+    "dev": "npm run build && node scripts/serve.mjs",
+    "serve": "node scripts/serve.mjs"
   },
   "dependencies": {
     "github-slugger": "2.0.0",

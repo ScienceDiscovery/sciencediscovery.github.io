@@ -1,18 +1,11 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createHash } from 'node:crypto'
 import { parse } from 'parse5'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
-const manifest = JSON.parse(readFileSync(join(root, 'docs-source.json'), 'utf8'))
 const failures = []
-for (const [path, digest] of Object.entries(manifest.files)) {
-  if (!existsSync(join(root, path)) || createHash('sha256').update(readFileSync(join(root, path))).digest('hex') !== digest) {
-    failures.push(`Synced source has changed: ${path}. Update the product documentation, then sync again.`)
-  }
-}
 function allFiles(path) {
   return readdirSync(path, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? allFiles(join(path, entry.name)) : [join(path, entry.name)])
 }
@@ -48,4 +41,4 @@ for (const [path, { links }] of pages) for (const href of links) {
 if (failures.length) {
   console.error([...new Set(failures)].join('\n'))
   process.exitCode = 1
-} else console.log(`Verified ${pages.size} HTML pages, ${checked} local links/assets, and ${Object.keys(manifest.files).length} unchanged source files.`)
+} else console.log(`Verified ${pages.size} HTML pages, ${checked} local links/assets.`)

@@ -5,7 +5,7 @@ The public website at <https://sciencediscovery.github.io/> has an interactive p
 | Page | Source |
 |---|---|
 | Home (interactive demo, features) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
-| Documentation (with search) | rendered from `docs/en` and `docs/zh` |
+| Documentation (with search) | rendered from the product repository's `docs/en` and `docs/zh` |
 | Deployment (binary, Docker, source) | `site/build.mjs` (`D` strings) |
 | Download (Linux today; macOS ready) | `release.json` |
 
@@ -17,7 +17,7 @@ Use Node.js 22.19 or later:
 
 ```sh
 npm ci
-npm run build   # builds dist/ and validates links, anchors, images and the synced docs
+npm run build   # fetches docs if needed, builds dist/, validates links, anchors and images
 npm run serve   # http://127.0.0.1:4173/ (refuses to pick another port)
 ```
 
@@ -33,18 +33,13 @@ The build writes `search-index.json` (English) and `zh/search-index.json` from t
 
 ## Documentation source
 
-`docs/README.md`, `docs/en/`, `docs/zh/`, `docs/architecture/`, `docs/images/`, and `LICENSE` are copied from the [product repository](https://gitcode.com/openJiuwen/sciencediscovery). `docs-source.json` records the source revision and each copied file's SHA256. Copied pages keep their original Markdown, screenshots, and directory structure. Links that leave the docs tree become links into the [GitHub product repository](https://github.com/openJiuwen-ai/sciencediscovery). A page that exists in only one language is shown in the other with a notice.
+`docs/` is a committed symlink to `sciencediscovery/docs`, a shallow sparse checkout of the [product repository](https://github.com/openJiuwen-ai/sciencediscovery) (`main`). The website renders the product's own `docs/en`, `docs/zh` and `docs/images`; nothing is copied or pinned here, so edit documentation upstream only.
 
-To refresh from a clean product checkout:
+- Locally, `npm run build` clones the checkout when it is missing. Run `npm run fetch:docs` to fast-forward it to the latest `main`. The checkout is git-ignored.
+- In CI, `pages.yml` checks the product repository out next to this one. It also runs every six hours, so upstream documentation changes reach the site without a commit here.
+- Links that leave the docs tree become links into the product repository. A page that exists in only one language is shown in the other with a notice.
 
-```sh
-npm run sync:docs -- ../sciencediscovery
-npm run build
-```
-
-The script only reads the source checkout, replaces the files recorded in the manifest, and removes obsolete synced files. Make documentation edits upstream first, then sync. Everything is committed together on `main`; deployments never fetch documentation from another repository.
-
-The website owns `site/`, `scripts/`, `release.json`, `docs-source.json`, and the workflow. To feature a page in the documentation sidebar, add it to `NAV` in `site/build.mjs`; every other page appears automatically under “All documents”.
+The website owns `site/`, `scripts/`, `release.json`, and the workflow. To feature a page in the documentation sidebar, add it to `NAV` in `site/build.mjs`; every other page appears automatically under “All documents”. Because the documentation is not pinned, a renamed upstream page can break a `NAV` entry or a link: `npm run build` fails on missing pages, links and anchors, so the scheduled deployment simply keeps the previous site until this repository is fixed.
 
 ## Downloads
 
