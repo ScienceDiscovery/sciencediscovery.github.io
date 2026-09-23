@@ -6,8 +6,8 @@ The public website at <https://sciencediscovery.github.io/> has an interactive p
 |---|---|
 | Home (interactive demo, features) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
 | Documentation (with search) | rendered from the product repository's `docs/en` and `docs/zh` |
-| Deployment (binary, Docker, source) | `site/build.mjs` (`D` strings) |
-| Download (Linux today; macOS ready) | `release.json` |
+| Install (binary, Docker, source) | `site/build.mjs` (`D` strings) |
+| Linux release assets | `release.json` |
 
 English is at the root and Chinese under `/zh/`. Light and dark themes follow the system setting and can be toggled from the top bar.
 
@@ -39,11 +39,11 @@ The build writes `search-index.json` (English) and `zh/search-index.json` from t
 - In CI, `pages.yml` checks the product repository out next to this one. It also runs every six hours, so upstream documentation changes reach the site without a commit here.
 - Links that leave the docs tree become links into the product repository. A page that exists in only one language is shown in the other with a notice.
 
-The website owns `site/`, `scripts/`, `release.json`, and the workflow. To feature a page in the documentation sidebar, add it to `NAV` in `site/build.mjs`; every other page appears automatically under “All documents”. Because the documentation is not pinned, a renamed upstream page can break a `NAV` entry or a link: `npm run build` fails on missing pages, links and anchors, so the scheduled deployment simply keeps the previous site until this repository is fixed.
+The website owns `site/`, `scripts/`, `release.json`, and the workflow. The documentation sidebar and its reading order are driven by the six product-owned groups in `DOC_GROUPS` in `site/build.mjs`. New pages in an existing group appear automatically after the curated pages. Because the documentation is not pinned, a renamed upstream page can break a curated link or a link: `npm run build` fails on missing pages, links and anchors, so the scheduled deployment simply keeps the previous site until this repository is fixed.
 
-## Downloads
+## Releases
 
-`release.json` pins the binaries to [0.2.0](https://github.com/openJiuwen-ai/sciencediscovery/releases/tag/0.2.0), with the SHA256 published by the GitHub Release API. When Windows or macOS builds are released, add entries with a matching `name` (or an explicit `"os"`), a `url`, and `sha256`; the download page moves them out of the “not published yet” state automatically. Product documentation is rendered from `feat/jiuwenswarm` and can describe changes after that release.
+`release.json` pins the binaries to [0.2.0](https://github.com/openJiuwen-ai/sciencediscovery/releases/tag/0.2.0), with the SHA256 published by the GitHub Release API. When Windows or macOS builds are released, add entries with a matching `name` (or an explicit `"os"`), a `url`, and `sha256`; the install page presents them automatically. Product documentation is rendered from `feat/jiuwenswarm` and can describe changes after that release.
 
 ## Publishing
 

@@ -1,4 +1,4 @@
-/* Site behaviour: theme toggle, documentation search, docs scroll-spy, copy buttons, deployment tabs. No dependencies. */
+/* Site behaviour: theme toggle, documentation search, docs scroll-spy and copy buttons. No dependencies. */
 (function () {
   'use strict';
   var doc = document.documentElement;
@@ -113,12 +113,13 @@
     var done = lang === 'zh' ? '已复制' : 'Copied', orig = b.textContent;
     (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { b.textContent = done; setTimeout(function () { b.textContent = orig; }, 1400); }, function () {});
   }
-  $$('.article pre, .mode-panel pre, .steps pre').forEach(function (pre) {
+  $$('.article pre, .install-route pre, .quick-command pre, .steps pre').forEach(function (pre) {
     var code = $('code', pre); if (!code) return;
     pre.style.position = 'relative';
     var b = document.createElement('button'); b.type = 'button'; b.textContent = lang === 'zh' ? '复制' : 'Copy';
     b.style.cssText = 'position:absolute;top:8px;right:8px;padding:2px 9px;border:1px solid #334155;border-radius:6px;background:#1e293b;color:#cbd5e1;font-size:12px;cursor:pointer;opacity:0;transition:opacity .15s';
     pre.appendChild(b);
+    if (matchMedia('(max-width: 720px)').matches) b.style.opacity = 1;
     pre.addEventListener('mouseenter', function () { b.style.opacity = 1; }); pre.addEventListener('mouseleave', function () { b.style.opacity = 0; });
     b.addEventListener('click', function () { copy(code.innerText, b); });
   });
@@ -135,13 +136,4 @@
     $$('[data-copy]', dl).forEach(function (b) { b.addEventListener('click', function () { copy(b.dataset.copy, b); }); });
   }
 
-  /* ---------------- deployment tabs ---------------- */
-  var tabs = $$('.mode-tabs button');
-  tabs.forEach(function (b) {
-    b.addEventListener('click', function () {
-      tabs.forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
-      $$('.mode-panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === b.dataset.mode); });
-    });
-  });
-  if (location.hash && $('[data-panel="' + location.hash.slice(1) + '"]')) { var tb = $('.mode-tabs [data-mode="' + location.hash.slice(1) + '"]'); if (tb) tb.click(); }
 })();

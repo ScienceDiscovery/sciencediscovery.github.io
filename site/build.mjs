@@ -22,12 +22,12 @@ const LANGS = ['en', 'zh'];
 const T = {
   en: {
     name: 'ScienceDiscovery', tag: 'AI research workspace',
-    nav: { home: 'Home', docs: 'Documentation', download: 'Download' },
+    nav: { home: 'Home', docs: 'Documentation', install: 'Install' },
     langLabel: '中文',
     eyebrow: 'Open source · Apache-2.0',
     h1: 'The AI workspace for <em>scientific research</em>',
     lead: 'From literature review and hypotheses to code, experiments and tuning — plan, execute, evolve and trace every result in one sandboxed environment.',
-    ctaDownload: 'Download', ctaDocs: 'Read the docs', ctaGh: 'View on GitHub',
+    ctaInstall: 'Install', ctaDocs: 'Read the docs', ctaGh: 'View on GitHub',
     demoHint: 'Everything above is interactive — click a node, replay a run, switch views.',
     demoUrl: '127.0.0.1:4310',
     featTitle: 'Built for the whole research loop',
@@ -44,7 +44,14 @@ const T = {
     ctaBoxTitle: 'Run it on your own machine',
     ctaBoxSub: 'A single binary, no cloud account. Start the stack and open the UI in your browser.',
     footNote: 'ScienceDiscovery is a workflow orchestration tool and does not embed any AI model.',
-    footLinks: [['Documentation', 'docs/index.html'], ['Download', 'download/index.html']],
+    footLinks: [['Documentation', 'docs/index.html'], ['Install', 'install/index.html']],
+    quickInstall: {
+      title: 'Run the Linux release',
+      sub: 'For Linux x86_64 with Bubblewrap available. Download the release, then start the local workspace.',
+      label: 'Fastest path',
+      alt: 'Need Docker, macOS, source mode, or another architecture?',
+      link: 'See all install options'
+    },
     demo: {
       task: ['Task', 'Session', 'Literature → analysis → report', 'Replay'],
       tree: ['Idea Tree', 'Idea Tree', 'Improve perovskite lifetime', 'Inspect random node'],
@@ -65,7 +72,7 @@ const T = {
       best2: 'best', nodes: 'nodes'
     },
     dl: {
-      title: 'Download ScienceDiscovery', sub: 'Pick the package for your system. Everything runs locally; no account is needed.',
+      title: 'Install ScienceDiscovery', sub: 'Start with the Linux release when it fits your machine, then choose Docker or source mode when it does not.',
       latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you',
       linux: ['Linux', 'x86_64 and aarch64 · needs bubblewrap'], macos: ['macOS', 'Apple Silicon and Intel · Seatbelt sandbox'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/getting-started/deployment.html',
@@ -79,18 +86,17 @@ const T = {
     docs: {
       title: 'Documentation', menu: 'Menu', on: 'On this page', prev: 'Previous', next: 'Next',
       onlyOther: 'This page is only available in Chinese so far.', homeIntro: 'Start here, then dive into the features you need.',
-      groups: 'Guides', allDocs: 'All documents',
-      sections: { start: 'Getting started', core: 'Core features', domain: 'Domain tutorials', ref: 'Reference', explain: 'Explanation', howto: 'How-to guides', 'advanced-setup': 'Advanced setup', 'developer-docs': 'Developer docs', domains: 'Domain guides', 'getting-started': 'Getting started' }
+      sections: { 'getting-started': 'Getting Started', core: 'Core Capabilities', domains: 'Domain Guides', 'advanced-setup': 'Advanced Setup', reference: 'Reference', 'developer-docs': 'Developer Documentation' }
     }
   },
   zh: {
     name: 'ScienceDiscovery', tag: 'AI 科研工作台',
-    nav: { home: '首页', docs: '文档', download: '下载' },
+    nav: { home: '首页', docs: '文档', install: '安装' },
     langLabel: 'English',
     eyebrow: '开源 · Apache-2.0',
     h1: '面向<em>科学研究</em>的 AI 工作台',
     lead: '从文献调研、假设提出，到代码开发、实验试错与调参——在同一个沙箱环境里规划、执行、进化，并追溯每一个结果。',
-    ctaDownload: '下载', ctaDocs: '阅读文档', ctaGh: '在 GitHub 查看',
+    ctaInstall: '安装', ctaDocs: '阅读文档', ctaGh: '在 GitHub 查看',
     demoHint: '上面的界面都可以操作——点击节点、重放运行、切换视图。',
     demoUrl: '127.0.0.1:4310',
     featTitle: '覆盖完整的科研闭环',
@@ -107,7 +113,14 @@ const T = {
     ctaBoxTitle: '在你自己的机器上运行',
     ctaBoxSub: '单个可执行文件，无需云账号。启动服务，在浏览器中打开界面。',
     footNote: 'ScienceDiscovery 仅作为工作流编排工具，不内置任何 AI 模型。',
-    footLinks: [['文档', 'docs/index.html'], ['下载', 'download/index.html']],
+    footLinks: [['文档', 'docs/index.html'], ['安装', 'install/index.html']],
+    quickInstall: {
+      title: '运行 Linux 预编译版本',
+      sub: '适用于已具备 Bubblewrap 的 Linux x86_64。下载发布包后即可启动本地工作台。',
+      label: '最快方式',
+      alt: '需要 Docker、macOS、源码模式或其他架构？',
+      link: '查看全部安装方式'
+    },
     demo: {
       task: ['任务', '会话', '文献 → 分析 → 报告', '重放'],
       tree: ['Idea Tree', 'Idea Tree', '提升钙钛矿寿命', '随机查看节点'],
@@ -128,7 +141,7 @@ const T = {
       best2: '最优', nodes: '节点'
     },
     dl: {
-      title: '下载 ScienceDiscovery', sub: '选择适合你系统的安装包。全部本地运行，无需账号。',
+      title: '安装 ScienceDiscovery', sub: '若你的机器适合 Linux 预编译版本，先从这里开始。其他情况可选择 Docker 或源码模式。',
       latest: '最新版本', notes: '发布说明', recommended: '为你推荐',
       linux: ['Linux', 'x86_64 与 aarch64 · 需要 bubblewrap'], macos: ['macOS', 'Apple 芯片与 Intel · Seatbelt 沙箱'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: '暂未发布预编译包', build: '从源码构建', buildLink: 'docs/getting-started/deployment.html',
@@ -142,38 +155,20 @@ const T = {
     docs: {
       title: '文档', menu: '目录', on: '本页内容', prev: '上一篇', next: '下一篇',
       onlyOther: '本页暂时只有英文版。', homeIntro: '从这里开始，再深入你需要的功能。',
-      groups: '指南', allDocs: '全部文档',
-      sections: { start: '快速开始', core: '核心功能', domain: '领域教程', ref: '参考', explain: '原理说明', howto: '操作指南', 'advanced-setup': '高级配置', 'developer-docs': '开发文档', domains: '领域指南', 'getting-started': '快速开始' }
+      sections: { 'getting-started': '快速开始', core: '核心功能', domains: '领域教程', 'advanced-setup': '高级配置', reference: '参考', 'developer-docs': '开发者文档' }
     }
   }
 };
 
-// Curated navigation. Keys are doc paths relative to docs/<lang>, without ".md".
-const NAV = [
-  ['start', [
-    ['getting-started/quick-start', { en: 'Quick start', zh: '快速开始' }],
-    ['getting-started/deployment', { en: 'Build from source & deploy', zh: '源码构建与部署' }],
-    ['reference/runtime-behavior', { en: 'Basic features & runtime', zh: '基础功能与运行机制' }],
-    ['reference/builtin-tools', { en: 'Built-in tools', zh: '内置工具' }],
-    ['developer-docs/web-frontend', { en: 'Web interface', zh: 'Web 界面' }]
-  ]],
-  ['core', [
-    ['reference/configuration', { en: 'Configure models & settings', zh: '配置模型与系统设置' }],
-    ['core/idea-tree', { en: 'Idea Tree', zh: 'Idea Tree' }],
-    ['core/evolve', { en: 'Evolve', zh: 'Evolve 程序演进' }],
-    ['domains/evolve-a-solution', { en: 'Tutorial: evolve a solution', zh: '教程：演进出一个解' }],
-    ['domains/run-an-evolution-search', { en: 'Run an evolution search', zh: '运行演进搜索' }],
-    ['developer-docs/science-memory', { en: 'Memory graph', zh: '记忆图谱' }],
-    ['advanced-setup/science-memory-setup', { en: 'Set up the memory graph', zh: '配置记忆图谱' }],
-    ['developer-docs/subagent-orchestration', { en: 'Subagents', zh: 'Subagent 编排' }],
-    ['developer-docs/skill-progressive-disclosure', { en: 'Skills', zh: '技能渐进披露' }],
-    ['advanced-setup/configure-custom-mcp', { en: 'Custom MCP servers', zh: '自定义 MCP' }],
-    ['advanced-setup/configure-network-proxy', { en: 'Network proxy', zh: '网络代理' }]
-  ]],
-  ['domain', [
-    ['domains/literature-research', { en: 'Literature research', zh: '文献调研' }],
-    ['domains/evolve-a-solution', { en: 'Algorithm & program optimisation', zh: '算法与程序优化' }]
-  ]]
+// The product documentation owns these six reader-facing groups. Listed pages keep
+// a useful reading order; new pages in the same directory are appended automatically.
+const DOC_GROUPS = [
+  ['getting-started', ['getting-started/README', 'getting-started/quick-start', 'getting-started/deployment']],
+  ['core', ['core/README', 'core/evolve', 'core/execution-workspaces', 'core/idea-tree']],
+  ['domains', ['domains/README', 'domains/evolve-a-solution', 'domains/run-an-evolution-search', 'domains/literature-research']],
+  ['advanced-setup', ['advanced-setup/README', 'advanced-setup/configure-custom-mcp', 'advanced-setup/configure-network-proxy', 'advanced-setup/science-memory-setup']],
+  ['reference', ['reference/README', 'reference/configuration', 'reference/rest-api', 'reference/runtime-behavior', 'reference/builtin-tools', 'reference/web-tools', 'reference/jiuwenswarm-migration-status']],
+  ['developer-docs', ['developer-docs/README', 'developer-docs/architecture', 'developer-docs/control-plane', 'developer-docs/agent', 'developer-docs/runner', 'developer-docs/sandbox-execution', 'developer-docs/science-memory', 'developer-docs/subagent-orchestration', 'developer-docs/skill-progressive-disclosure', 'developer-docs/science-connectors', 'developer-docs/web-frontend']]
 ];
 
 // ---------------------------------------------------------------- icons (same stroke style as the app)
@@ -217,6 +212,11 @@ for (const lang of LANGS) {
 }
 const keyFor = (k) => (k === 'README' ? 'index' : k.replace(/\/README$/, '/index'));
 const outPath = (k) => keyFor(k) + '.html';
+function groupItems(group) {
+  const listed = DOC_GROUPS.find(([name]) => name === group)?.[1] || [];
+  const available = Object.keys(sources).filter((k) => k.startsWith(group + '/'));
+  return [...listed.filter((k) => sources[k]), ...available.filter((k) => !listed.includes(k)).sort()];
+}
 
 function h1Of(md) { const m = md.match(/^#\s+(.+)$/m); return m ? m[1].replace(/[`*_]/g, '').trim() : ''; }
 
@@ -297,12 +297,12 @@ function renderDoc(md, srcFile, lang, pagePath) {
 // ---------------------------------------------------------------- extra strings
 const X = {
   en: {
-    deploy: 'Deployment', searchPh: 'Search documentation', searchBtn: 'Search', searchEmpty: 'No results for', searchHint: '↑↓ to navigate · Enter to open · Esc to close', searchLoading: 'Loading index…',
+    install: 'Install', searchPh: 'Search documentation', searchBtn: 'Search', searchEmpty: 'No results for', searchHint: '↑↓ to navigate · Enter to open · Esc to close', searchLoading: 'Loading index…',
     theme: 'Toggle dark mode',
     docsQuick: 'Quick start'
   },
   zh: {
-    deploy: '部署', searchPh: '搜索文档', searchBtn: '搜索', searchEmpty: '没有找到', searchHint: '↑↓ 选择 · Enter 打开 · Esc 关闭', searchLoading: '正在加载索引…',
+    install: '安装', searchPh: '搜索文档', searchBtn: '搜索', searchEmpty: '没有找到', searchHint: '↑↓ 选择 · Enter 打开 · Esc 关闭', searchLoading: '正在加载索引…',
     theme: '切换深色模式',
     docsQuick: '快速开始'
   }
@@ -312,9 +312,9 @@ const D = {
     title: 'Deploy ScienceDiscovery', sub: 'Three independent paths. Pick one and do not mix them.',
     tabs: ['Prebuilt binary', 'Docker', 'From source'], recommended: 'Recommended',
     reqTitle: 'Requirements',
-    bin: { h: 'Prebuilt single-file binary', p: 'One executable per architecture. It embeds Node, Python, the web UI and micromamba, so Bubblewrap is the only host dependency.',
+    bin: { h: 'Prebuilt single-file binary', p: 'For Linux x86_64 and aarch64 only. It embeds Node, Python, the web UI and micromamba, so Bubblewrap is the only host dependency. On macOS, use Local source mode below.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
-      steps: ['Install Bubblewrap.', 'Download the binary for your architecture from the download page and make it executable.', 'Start the stack.', 'Open the “Open to sign in” URL printed in the terminal, then verify the API.'],
+      steps: ['Install Bubblewrap.', 'Download the binary for your architecture and make it executable.', 'Start the stack.', 'Open the “Open to sign in” URL printed in the terminal, then verify the API.'],
       code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#single-file-binary-deployment', linkText: 'Binary deployment in the full guide' },
     docker: { h: 'Docker Compose', p: 'One image holds the complete stack. Good for container-based operations on a Linux host.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Software', 'Docker Engine 24+ and Compose v2'], ['Kernel', 'unprivileged user namespaces for the Bubblewrap sandbox']],
@@ -333,9 +333,9 @@ const D = {
     title: '部署 ScienceDiscovery', sub: '三种相互独立的路径，选择其一，不要混用。',
     tabs: ['预编译二进制', 'Docker', '源码运行'], recommended: '推荐',
     reqTitle: '前置条件',
-    bin: { h: '预编译单文件二进制', p: '每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba，宿主机只需安装 Bubblewrap。',
+    bin: { h: '预编译单文件二进制', p: '仅适用于 Linux x86_64 与 aarch64。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba，宿主机只需安装 Bubblewrap。macOS 请使用下方的本地源码模式。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
-      steps: ['安装 Bubblewrap。', '在下载页获取对应架构的二进制并赋予可执行权限。', '启动服务。', '打开终端输出的“Open to sign in”链接，并检查 API。'],
+      steps: ['安装 Bubblewrap。', '获取对应架构的二进制并赋予可执行权限。', '启动服务。', '打开终端输出中的“Open to sign in”链接，并检查 API。'],
       code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#单文件二进制部署', linkText: '完整指南中的二进制部署' },
     docker: { h: 'Docker Compose', p: '一个镜像包含完整服务栈，适合 Linux 主机上的容器化运维。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['软件', 'Docker Engine 24+ 与 Compose v2'], ['内核', 'Bubblewrap 沙箱需要非特权用户命名空间']],
@@ -379,7 +379,7 @@ function topbar(lang, active, pagePath, otherPath) {
   const item = (id, target, label) => `<a href="${p(target)}"${active === id ? ' class="active"' : ''}>${label}</a>`;
   return `<header class="topbar"><div class="topbar-inner">
 <a class="brand" href="${p('index.html')}"><span class="brand-mark">${svg(IC.brand, 20)}</span><span class="brand-name">${t.name}</span></a>
-<nav class="topnav">${item('home', 'index.html', t.nav.home)}${item('docs', 'docs/index.html', t.nav.docs)}${item('deploy', 'deployment/index.html', x.deploy)}${item('download', 'download/index.html', t.nav.download)}</nav>
+<nav class="topnav">${item('home', 'index.html', t.nav.home)}${item('docs', 'docs/index.html', t.nav.docs)}${item('install', 'install/index.html', t.nav.install)}</nav>
 <div class="topbar-actions">
 <button class="search-btn" type="button" data-ph="${esc(x.searchPh)}" data-empty="${esc(x.searchEmpty)}" data-hint="${esc(x.searchHint)}" data-loading="${esc(x.searchLoading)}" aria-label="${esc(x.searchPh)}">${svg('<circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/>', 15)}<span>${x.searchBtn}</span><kbd>⌘K</kbd></button>
 <a class="lang-switch" href="${rel(pagePath, otherPath)}" hreflang="${lang === 'zh' ? 'en' : 'zh'}">${t.langLabel}</a>
@@ -392,7 +392,7 @@ function footer(lang, pagePath) {
   const t = T[lang], x = X[lang];
   const p = (target) => rel(pagePath, (lang === 'zh' ? 'zh/' : '') + target);
   return `<footer class="footer"><div class="wrap"><span>© ScienceDiscovery · Apache-2.0 · ${t.footNote}</span>
-<span><a href="${p('docs/index.html')}">${t.nav.docs}</a> &nbsp;·&nbsp; <a href="${p('deployment/index.html')}">${x.deploy}</a> &nbsp;·&nbsp; <a href="${p('download/index.html')}">${t.nav.download}</a> &nbsp;·&nbsp; <a href="${GH}">GitHub</a></span></div></footer>`;
+<span><a href="${p('docs/index.html')}">${t.nav.docs}</a> &nbsp;·&nbsp; <a href="${p('install/index.html')}">${t.nav.install}</a> &nbsp;·&nbsp; <a href="${GH}">GitHub</a></span></div></footer>`;
 }
 
 const pathOf = (lang, page) => (lang === 'zh' ? 'zh/' : '') + page;
@@ -404,21 +404,22 @@ function home(lang) {
   const page = 'index.html', pagePath = pathOf(lang, page);
   const r = (p) => rel(pagePath, p);
   const docLink = (k) => rel(pagePath, pathOf(lang, 'docs/' + keyFor(k) + '.html'));
+  const binary = RELEASE.binaries.find((b) => (b.os || OS_OF(b.name)) === 'linux' && b.arch === 'x86_64');
+  const command = binary ? `curl -fL ${binary.url} -o ScienceDiscovery && chmod +x ScienceDiscovery && ./ScienceDiscovery serve` : '';
   const feats = t.feats.map(([ic, title, text, doc]) => `<a class="card" href="${docLink(doc)}"><div class="ico">${svg(IC[ic], 20)}</div><h3>${title}</h3><p>${text}</p><span class="more">${t.learn}</span></a>`).join('');
   return head(lang, `${t.name} — ${t.tag}`, pagePath, null, ['demo.css']) + `
 <body>
 ${topbar(lang, 'home', pagePath, other(lang, page))}
 <main class="wrap">
-<section class="hero">
+<section class="demo-stage"><div class="app" id="demo" aria-label="Interactive product demo"></div><p class="demo-hint">${t.demoHint}</p></section>
+<section class="quick-install">
 <span class="eyebrow">${svg(IC.flask, 14)}${t.eyebrow}</span>
-<h1>${t.h1}</h1>
-<p class="lead">${t.lead}</p>
-<div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'download/index.html'))}">${svg(IC.download, 17)}${t.ctaDownload}</a><a class="btn" href="${r(pathOf(lang, 'docs/index.html'))}">${svg(IC.book, 17)}${t.ctaDocs}</a><a class="btn" href="${r(pathOf(lang, 'deployment/index.html'))}">${x.deploy}</a></div>
+<h1>${t.h1}</h1><p class="lead">${t.lead}</p>
+<div class="quick-command"><div><span class="eyebrow">${t.quickInstall.label}</span><h2>${t.quickInstall.title}</h2><p>${t.quickInstall.sub}</p></div><pre><code>${esc(command)}</code></pre></div>
+<p class="install-alternative">${t.quickInstall.alt} <a href="${r(pathOf(lang, 'install/index.html'))}">${t.quickInstall.link} →</a></p>
 </section>
-<div class="app" id="demo" aria-label="Interactive product demo"></div>
-<p class="demo-hint">${t.demoHint}</p>
 <section class="section"><h2>${t.featTitle}</h2><p class="sub">${t.featSub}</p><div class="grid">${feats}</div></section>
-<section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'download/index.html'))}">${t.ctaDownload}</a><a class="btn" href="${r(pathOf(lang, 'docs/getting-started/quick-start.html'))}">${x.docsQuick}</a></div></section>
+<section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'install/index.html'))}">${t.ctaInstall}</a><a class="btn" href="${r(pathOf(lang, 'docs/getting-started/quick-start.html'))}">${x.docsQuick}</a></div></section>
 </main>
 ${footer(lang, pagePath)}
 <script src="${r('site.js')}"></script>
@@ -427,34 +428,34 @@ ${footer(lang, pagePath)}
 </body></html>`;
 }
 
-// ---------------------------------------------------------------- deployment
-function deployment(lang) {
-  const t = T[lang], d = D[lang];
-  const page = 'deployment/index.html', pagePath = pathOf(lang, page);
+// ---------------------------------------------------------------- install
+function install(lang) {
+  const t = T[lang], d = D[lang], dl = t.dl;
+  const page = 'install/index.html', pagePath = pathOf(lang, page);
   const r = (p) => rel(pagePath, p);
   const doc = (p) => rel(pagePath, pathOf(lang, 'docs/' + p));
   const modes = [['bin', d.bin, 0], ['docker', d.docker, 1], ['src', d.src, 2]];
-  const tabs = modes.map(([id, , i]) => `<button role="tab" aria-selected="${i === 0}" data-mode="${id}">${d.tabs[i]}${i === 0 ? ` <span class="badge blue" style="margin-left:4px">${d.recommended}</span>` : ''}</button>`).join('');
-  const panels = modes.map(([id, m, i]) => `<section class="mode-panel${i === 0 ? ' active' : ''}" data-panel="${id}">
-<h2>${m.h}</h2><p>${m.p}</p>
+  const releaseFiles = RELEASE.binaries.filter((b) => (b.os || OS_OF(b.name)) === 'linux').map((b) => `<div class="release-file"><a class="file" href="${esc(b.url)}"><span>Linux ${b.arch}</span><small>${svg(IC.download, 14)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`).join('');
+  const panels = modes.map(([id, m, i]) => `<details class="install-route"${i === 0 ? ' open' : ''}>
+<summary><span><b>${m.h}${i === 0 ? ` <span class="badge blue">${d.recommended}</span>` : ''}</b><small>${m.p}</small></span></summary>
+<div class="install-route-body">
 <div class="reqs">${m.req.map(([k, v]) => `<div class="req-item"><b>${k.toUpperCase()}</b>${v}</div>`).join('')}</div>
+${id === 'bin' ? `<div class="release-files">${releaseFiles}</div>` : ''}
 <ol>${m.steps.map((s, k) => `<li>${s}<pre><code>${esc(m.code[k] || '')}</code></pre></li>`).join('')}</ol>
 <a class="readmore" href="${doc(m.link)}">${m.linkText} →</a>
-${id === 'bin' ? `<p style="margin:12px 0 0"><a class="btn small primary" href="${r(pathOf(lang, 'download/index.html'))}">${svg(IC.download, 15)}${t.nav.download}</a></p>` : ''}
-</section>`).join('');
+</div></details>`).join('');
   const after = d.afterCards.map(([h, p, l]) => `<a class="card" href="${doc(l)}"><h3>${h}</h3><p>${p}</p></a>`).join('');
   const ports = d.ports.map(([n, v]) => `<div class="req-item"><b>${n}</b>${v}</div>`).join('');
-  return head(lang, `${d.title} — ${t.name}`, pagePath, d.sub) + `
+  return head(lang, `${dl.title} — ${t.name}`, pagePath, dl.sub) + `
 <body>
-${topbar(lang, 'deploy', pagePath, other(lang, page))}
-<main class="deploy">
-<section class="page-head"><h1>${d.title}</h1><p>${d.sub}</p></section>
-<div class="tabs-row"><div class="mode-tabs" role="tablist">${tabs}</div></div>
+${topbar(lang, 'install', pagePath, other(lang, page))}
+<main class="deploy install-page">
+<section class="page-head"><h1>${dl.title}</h1><p>${dl.sub}</p></section>
 ${panels}
 <div class="warn">${d.warn}</div>
 <h2 class="h">${d.after}</h2><div class="grid">${after}</div>
 <h2 class="h">${d.portsTitle}</h2><div class="reqs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${ports}</div>
-<p style="margin-top:28px;text-align:center"><a class="btn" href="${doc('getting-started/deployment.html')}">${svg(IC.book, 16)}${d.full}</a></p>
+<p class="install-more"><a class="btn" href="${doc('getting-started/deployment.html')}">${svg(IC.book, 16)}${d.full}</a> <a href="${GH}/releases" target="_blank" rel="noopener">${dl.all} →</a></p>
 </main>
 ${footer(lang, pagePath)}
 <script src="${r('site.js')}"></script>
@@ -463,36 +464,12 @@ ${footer(lang, pagePath)}
 
 // ---------------------------------------------------------------- download (pinned to release.json, with checksums)
 const OS_OF = (name) => (/win/i.test(name) && !/darwin/i.test(name) ? 'windows' : /mac|darwin/i.test(name) ? 'macos' : 'linux');
-function download(lang) {
-  const t = T[lang], d = t.dl;
-  const page = 'download/index.html', pagePath = pathOf(lang, page);
-  const r = (p) => rel(pagePath, p);
-  const lk = (x) => rel(pagePath, pathOf(lang, x));
-  const by = { windows: [], macos: [], linux: [] };
-  for (const b of RELEASE.binaries) by[b.os || OS_OF(b.name)].push(b);
-  const file = (b) => `<div><a class="file" href="${esc(b.url)}"><span>${b.os === 'macos' || OS_OF(b.name) === 'macos' ? 'macOS' : 'Linux'} ${b.arch}</span><small>${b.size ? Math.round(b.size / 1e6) + ' MB' : svg(IC.download, 14)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`;
-  const soon = (label) => `<span class="file off"><span>${label}</span><small>${d.soon}</small></span>`;
-  const build = `<a class="file" href="${lk(d.buildLink)}"><span>${d.build}</span><small>→</small></a>`;
-  const docker = `<a class="file" href="${lk(d.dockerLink)}"><span>${d.docker}</span><small>→</small></a>`;
-  const col = (os, icon, info, extra, fallback) => `<div class="os" data-os="${os}"><div class="ico">${svg(IC[icon], 24)}</div><h3>${info[0]}</h3><p class="req">${info[1]}</p><div class="files">${by[os].length ? by[os].map(file).join('') : fallback}${extra}</div></div>`;
-  return head(lang, `${d.title} — ${t.name}`, pagePath, d.sub) + `
-<body>
-${topbar(lang, 'download', pagePath, other(lang, page))}
-<main class="wrap" id="downloads">
-<section class="page-head"><h1>${d.title}</h1><p>${d.sub}</p>
-<div class="ver-row"><span>${d.latest}: <b>${RELEASE.version}</b></span><span>·</span><a href="${esc(RELEASE.url)}" target="_blank" rel="noopener">${d.notes}</a></div></section>
-<span class="pill blue hidden" id="recommend-tag">${d.recommended}</span>
-<div class="os-grid">
-${col('macos', 'apple', d.macos, build, soon('Apple Silicon · Intel'))}
-${col('linux', 'linux', d.linux, docker, '')}
-</div>
-<p class="note">${d.note}</p>
-<section class="steps"><h2>${d.startTitle}</h2><p>${d.startSteps}</p><pre><code>${esc(d.startCode)}</code></pre>
-<p style="margin:14px 0 0"><a href="${lk('deployment/index.html')}">${X[lang].deploy} →</a> &nbsp;·&nbsp; <a href="${GH}/releases" target="_blank" rel="noopener">${d.all} →</a></p></section>
-</main>
-${footer(lang, pagePath)}
-<script src="${r('site.js')}"></script>
-</body></html>`;
+function legacyRedirect(lang, page) {
+  const pagePath = pathOf(lang, page);
+  const target = rel(pagePath, pathOf(lang, 'install/index.html'));
+  return head(lang, `${T[lang].nav.install} — ${T[lang].name}`, pagePath) + `
+<meta http-equiv="refresh" content="0;url=${target}"></head>
+<body>${topbar(lang, 'install', pagePath, other(lang, page))}<main class="redirect"><p><a href="${target}">${T[lang].nav.install}</a></p></main>${footer(lang, pagePath)}</body></html>`;
 }
 
 // ---------------------------------------------------------------- docs
@@ -513,24 +490,13 @@ function indexDoc(lang, k, title, html) {
 
 function docNav(lang, activeKey) {
   const t = T[lang], S = t.docs.sections;
-  const used = new Set();
   const linkFor = (k, text, fromPath) => `<a href="${rel(fromPath, pathOf(lang, 'docs/' + outPath(k)))}"${k === activeKey ? ' class="active"' : ''}>${esc(text)}</a>`;
   return (fromPath) => {
-    let html = '';
-    for (const [sec, items] of NAV) {
-      const rows = items.filter(([k]) => sources[k]);
-      html += `<h4>${S[sec].toUpperCase()}</h4>` + rows.map(([k, l]) => { used.add(k); return linkFor(k, l[lang], fromPath); }).join('');
-    }
-    const rest = Object.keys(sources).filter((k) => k !== 'README' && !k.endsWith('/README') && !k.startsWith('architecture')).sort();
-    const bySec = {};
-    for (const k of rest) (bySec[k.split('/')[0]] ??= []).push(k);
-    for (const top of Object.keys(bySec).sort()) {
-      const ks = bySec[top] || [];
-      if (!ks.length) continue;
-      const open = ks.includes(activeKey) ? ' open' : '';
-      html += `<details${open}><summary>${t.docs.allDocs.toUpperCase()} · ${top}</summary>` + ks.map((k) => linkFor(k, titleOf(k, lang), fromPath)).join('') + '</details>';
-    }
-    return html;
+    return DOC_GROUPS.map(([group]) => {
+      const keys = groupItems(group);
+      const open = keys.includes(activeKey) ? ' open' : '';
+      return `<details${open}><summary>${S[group]}</summary>${keys.map((k) => linkFor(k, titleOf(k, lang), fromPath)).join('')}</details>`;
+    }).join('');
   };
 }
 const titleCache = {};
@@ -571,15 +537,11 @@ function docsHome(lang, order) {
   const t = T[lang], dd = t.docs, S = dd.sections;
   const page = 'docs/index.html', pagePath = pathOf(lang, page);
   const card = (k, l) => `<a class="card" href="${rel(pagePath, pathOf(lang, 'docs/' + outPath(k)))}"><h3>${esc(l || titleOf(k, lang))}</h3></a>`;
-  const secs = NAV.map(([sec, items]) => `<h2>${S[sec]}</h2><div class="grid">${items.filter(([k]) => sources[k]).map(([k, l]) => card(k, l[lang])).join('')}</div>`).join('');
-  const curated = new Set(NAV.flatMap(([, items]) => items.map(([k]) => k)));
-  const remaining = order.filter((k) => !curated.has(k));
-  const groups = [...new Set(remaining.map((k) => k.split('/')[0]))].sort();
-  const refs = groups.map((top) => `<h2>${dd.allDocs} · ${S[top] || top}</h2><div class="grid">${remaining.filter((k) => k.startsWith(top + '/')).map((k) => card(k)).join('')}</div>`).join('');
+  const groups = DOC_GROUPS.map(([group]) => `<h2>${S[group]}</h2><div class="grid">${groupItems(group).map((k) => card(k)).join('')}</div>`).join('');
   return head(lang, `${dd.title} — ${t.name}`, pagePath) + `
 <body>
 ${topbar(lang, 'docs', pagePath, other(lang, page))}
-<main class="docs-home"><h1>${dd.title}</h1><p style="color:var(--muted)">${dd.homeIntro}</p>${secs}${refs}</main>
+<main class="docs-home"><h1>${dd.title}</h1><p style="color:var(--muted)">${dd.homeIntro}</p>${groups}</main>
 ${footer(lang, pagePath)}
 <script src="${rel(pagePath, 'site.js')}"></script>
 </body></html>`;
@@ -594,10 +556,10 @@ const versioned = (html) => html.replace(/(src|href)="([^"]*?)((?:site|demo|viz)
 const SITE_ORIGIN = (process.env.SITE_URL || 'https://sciencediscovery.github.io').replace(/\/$/, '');
 const sitemapPages = []; // populated as pages are written; 404.html and JSON are excluded
 
-function write(p, content) {
+function write(p, content, sitemap = true) {
   if (p.endsWith('.html')) {
     content = versioned(content);
-    if (p !== '404.html') sitemapPages.push(p);
+    if (sitemap && p !== '404.html') sitemapPages.push(p);
   }
   const full = join(DIST, p);
   mkdirSync(dirname(full), { recursive: true });
@@ -612,15 +574,14 @@ write('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32
 write('.nojekyll', '');
 write('404.html', '<meta charset="utf-8"><meta http-equiv="refresh" content="0;url=./"><a href="./">ScienceDiscovery</a>');
 
-const curated = [...new Set(NAV.flatMap(([, items]) => items.map(([k]) => k)))].filter((k) => sources[k]);
-const remaining = Object.keys(sources).filter((k) => !curated.includes(k) && k !== 'README' && !k.endsWith('/README') && !k.startsWith('architecture')).sort();
-const order = [...curated, ...remaining];
+const order = DOC_GROUPS.flatMap(([group]) => groupItems(group));
 
 let pages = 0;
 for (const lang of LANGS) {
   write(pathOf(lang, 'index.html'), home(lang));
-  write(pathOf(lang, 'deployment/index.html'), deployment(lang));
-  write(pathOf(lang, 'download/index.html'), download(lang));
+  write(pathOf(lang, 'install/index.html'), install(lang));
+  write(pathOf(lang, 'deployment/index.html'), legacyRedirect(lang, 'deployment/index.html'), false);
+  write(pathOf(lang, 'download/index.html'), legacyRedirect(lang, 'download/index.html'), false);
   write(pathOf(lang, 'docs/index.html'), docsHome(lang, order));
   for (const k of order) { write(pathOf(lang, 'docs/' + outPath(k)), docPage(k, lang, order)); pages++; }
   write(pathOf(lang, 'search-index.json'), JSON.stringify(INDEX[lang]));

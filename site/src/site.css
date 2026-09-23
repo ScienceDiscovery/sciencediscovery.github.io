@@ -89,6 +89,18 @@ code, pre, kbd { font-family: var(--mono); }
 .hero h1 em { font-style: normal; color: var(--accent); }
 .hero p.lead { max-width: 680px; margin: 18px auto 0; color: var(--muted); font-size: 17px; }
 .hero-cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.demo-stage { padding-top: 32px; }
+.quick-install { max-width: 960px; margin: 34px auto 0; text-align: center; }
+.quick-install h1 { max-width: 820px; margin: 20px auto 0; color: var(--text-strong); font-size: clamp(32px, 5vw, 52px); line-height: 1.12; letter-spacing: -.03em; }
+.quick-install h1 em { font-style: normal; color: var(--accent); }
+.quick-install .lead { max-width: 680px; margin: 18px auto 0; color: var(--muted); font-size: 17px; }
+.quick-command { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.25fr); gap: 22px; margin-top: 30px; padding: 24px; border: 1px solid var(--accent-border-soft); border-radius: var(--radius-l); background: var(--accent-soft); text-align: left; }
+.quick-command .eyebrow { padding: 0; border: 0; background: transparent; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+.quick-command h2 { margin: 8px 0 6px; color: var(--text-strong); font-size: 20px; }
+.quick-command p { margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
+.quick-command pre { align-self: center; margin: 0; padding: 15px 16px; border: 1px solid var(--code-border); border-radius: var(--radius-m); background: var(--code-bg); color: #e2e8f0; overflow-x: auto; text-align: left; font-size: 13px; line-height: 1.6; }
+.install-alternative { margin: 14px 0 0; color: var(--muted); font-size: 14px; }
+.install-alternative a { font-weight: 650; }
 
 /* sections */
 .section { padding: 84px 0 0; }
@@ -206,10 +218,14 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
   .grid, .os-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 720px) {
-  .topbar-inner { gap: 10px; padding: 0 14px; }
+  .topbar-inner { gap: 6px; padding: 0 8px; }
   .topnav { gap: 0; }
-  .topnav a { padding: 7px 9px; }
+  .topnav a { padding: 7px; font-size: 13px; }
   .brand-name, .icon-link { display: none; }
+  .topbar-actions { gap: 4px; }
+  .search-btn, .theme-toggle, .lang-switch { height: 32px; }
+  .theme-toggle { width: 32px; }
+  .lang-switch { padding: 0 8px; font-size: 12px; }
   .grid, .os-grid, .docs-home .grid { grid-template-columns: 1fr; }
   .docs { grid-template-columns: 1fr; }
   .docs-nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); display: none; }
@@ -217,6 +233,11 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
   .btn.menu-toggle { display: inline-flex; margin: 12px 14px 0; }
   .article { padding: 24px 16px; }
   .hero { padding-top: 44px; }
+  .demo-stage { padding-top: 16px; }
+  .quick-command { grid-template-columns: 1fr; padding: 20px; }
+  .quick-command pre, .install-route pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .release-files { grid-template-columns: 1fr; }
+  .install-route summary, .install-route-body { padding-left: 18px; padding-right: 18px; }
 }
 
 /* theme toggle + shared bits */
@@ -253,6 +274,36 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 .deploy .warn { margin-top: 26px; padding: 12px 16px; border: 1px solid var(--warning-border); border-left-width: 4px; border-radius: var(--radius-m); background: var(--warning-soft); color: var(--warning); font-size: 13.5px; }
 .deploy .grid { margin-top: 18px; }
 .readmore { display: inline-block; margin-top: 8px; font-weight: 600; font-size: 14px; }
+.install-page .page-head { padding-bottom: 26px; }
+.install-route { margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius-l); background: var(--surface); box-shadow: var(--shadow-1); }
+.install-route summary { display: flex; align-items: center; gap: 10px; padding: 22px 24px; color: var(--text-strong); cursor: pointer; }
+.install-route summary:hover { background: var(--surface-subtle); }
+.install-route summary::before { content: '▸'; color: var(--accent); font-size: 18px; transition: transform .15s; }
+.install-route[open] summary::before { transform: rotate(90deg); }
+.install-route summary > span { display: grid; gap: 5px; }
+.install-route summary b { font-size: 18px; }
+.install-route summary .badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-softer);
+  color: var(--accent-deep);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.4;
+  vertical-align: 2px;
+}
+.install-route summary small { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.install-route[open] summary { border-bottom: 1px solid var(--border); }
+.install-route-body { padding: 22px 24px 24px; }
+.install-route-body ol { margin: 20px 0 0; padding-left: 20px; }
+.install-route-body li { margin: 8px 0; }
+.release-files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.release-file { min-width: 0; }
+.install-more { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 28px; text-align: center; }
+.redirect { min-height: 50vh; display: grid; place-items: center; }
 @media (max-width: 900px) { .reqs { grid-template-columns: 1fr; } }
 
 /* docs search */
@@ -278,3 +329,6 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 @media (max-width: 900px) { .search-btn { min-width: 0; } .search-btn span, .search-btn kbd { display: none; } .search-btn { padding: 0 10px; } }
 .lang-switch, .icon-link, .search-btn { white-space: nowrap; }
 .os-grid + .note, .steps { max-width: 860px; margin-left: auto; margin-right: auto; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
