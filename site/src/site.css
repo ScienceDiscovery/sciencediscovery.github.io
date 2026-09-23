@@ -98,7 +98,7 @@ code, pre, kbd { font-family: var(--mono); }
 .quick-command .eyebrow { padding: 0; border: 0; background: transparent; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
 .quick-command h2 { margin: 8px 0 6px; color: var(--text-strong); font-size: 20px; }
 .quick-command p { margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
-.quick-command pre { align-self: center; margin: 0; padding: 15px 16px; border: 1px solid var(--code-border); border-radius: var(--radius-m); background: var(--code-bg); color: #e2e8f0; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; font-size: 13px; line-height: 1.6; }
+.quick-command pre { align-self: center; margin: 0; padding: 15px 16px; border: 1px solid var(--code-border); border-radius: var(--radius-m); background: var(--code-bg); color: #e2e8f0; overflow-x: auto; text-align: left; font-size: 13px; line-height: 1.6; }
 .install-alternative { margin: 14px 0 0; color: var(--muted); font-size: 14px; }
 .install-alternative a { font-weight: 650; }
 
