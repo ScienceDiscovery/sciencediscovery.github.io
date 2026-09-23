@@ -265,10 +265,11 @@ function renderDoc(md, srcFile, lang, pagePath) {
   const srcDir = dirname(srcFile);
   const ctx = {
     link(href) {
-      if (!href || /^(https?:|mailto:|#)/.test(href)) return href;
+      if (!href || /^(https?:|mailto:)/.test(href)) return href;
       const [pathPart, hash = ''] = href.split('#');
-      const abs = resolve(srcDir, decodeURI(pathPart));
       const anchorAliases = { 'sandbox-and-system-requirements': 'sandbox-and-host-requirements' };
+      if (!pathPart && hash) return '#' + (anchorAliases[hash] || hash);
+      const abs = resolve(srcDir, decodeURI(pathPart));
       const frag = hash ? '#' + (anchorAliases[hash] || hash) : '';
       const m = abs.match(/[\\/]docs[\\/](en|zh)[\\/](.+)\.md$/);
       if (m) {
