@@ -28,7 +28,7 @@ const T = {
     h1: 'The AI workspace for <em>scientific research</em>',
     lead: 'From literature review and hypotheses to code, experiments and tuning — plan, execute, evolve and trace every result in one sandboxed environment.',
     ctaInstall: 'Install', ctaDocs: 'Read the docs', ctaGh: 'View on GitHub',
-    demoHint: 'Everything above is interactive — click a node, replay a run, switch views.',
+    demoHint: 'Try the interface: click a node, replay a run, or switch views.',
     demoUrl: '127.0.0.1:4310',
     featTitle: 'Built for the whole research loop',
     featSub: 'One local workspace that plans the work, runs it safely, searches for better answers, and remembers where every conclusion came from.',
@@ -95,31 +95,31 @@ const T = {
     langLabel: 'English',
     eyebrow: '开源 · Apache-2.0',
     h1: '面向<em>科学研究</em>的 AI 工作台',
-    lead: '从文献调研、假设提出，到代码开发、实验试错与调参——在同一个沙箱环境里规划、执行、进化，并追溯每一个结果。',
+    lead: '从文献调研和提出假设，到编写代码、开展实验和调参，都能在同一个沙箱环境里完成规划、执行、迭代，并追溯每一项结果。',
     ctaInstall: '安装', ctaDocs: '阅读文档', ctaGh: '在 GitHub 查看',
-    demoHint: '上面的界面都可以操作——点击节点、重放运行、切换视图。',
+    demoHint: '这个界面支持交互操作：点击节点、重放运行，或切换视图。',
     demoUrl: '127.0.0.1:4310',
-    featTitle: '覆盖完整的科研闭环',
-    featSub: '一个本地工作台：规划任务、安全执行、搜索更优解，并记住每个结论的来源。',
+    featTitle: '贯穿科研工作的完整闭环',
+    featSub: '一个本地工作台，帮你规划任务、安全执行、寻找更优解，并保留每个结论的来处。',
     feats: [
-      ['flask', '沙箱内自主代码探索', 'Agent 在 fail-closed 的 Bubblewrap / Seatbelt 沙箱中编写、调试并运行 Python、R 与 Shell，并使用受管科学计算环境。', 'developer-docs/sandbox-execution', '沙箱'],
-      ['tree', 'Idea Tree', '自主研究引擎：提出、设计、独立评分并筛选候选想法，再把洞察回传给下一轮。', 'core/idea-tree', 'Idea Tree'],
-      ['dna', 'Evolve 程序演进', '通过反复搜索改进程序：写出变体、按你的指标逐个评分、保留有效者，并在留出集上验证。', 'core/evolve', 'Evolve'],
-      ['graph', '记忆图谱', 'ScienceMemory 把任务链与引用链记录成可点击的图，“这个结论从哪来”总能回答。', 'developer-docs/science-memory', '记忆图谱'],
-      ['users', 'Subagent 与技能', '主 Agent 拆解复杂任务并派发专业 Subagent，按需渐进加载领域技能库。', 'developer-docs/subagent-orchestration', 'Subagent'],
-      ['plug', '连接器与 MCP', '一键接入文献与数据连接器，支持自定义 MCP、PDF 抽取，以及受控的权限与评审流程。', 'developer-docs/science-connectors', '连接器']
+      ['flask', '在沙箱中编写与运行代码', 'Agent 可在 Bubblewrap / Seatbelt 沙箱内编写、调试和运行 Python、R 与 Shell，科学计算环境由系统统一管理。', 'developer-docs/sandbox-execution', '沙箱'],
+      ['tree', 'Idea Tree', '自主研究引擎会提出候选思路、设计实验、独立评分并筛选，再把结果用于下一轮探索。', 'core/idea-tree', 'Idea Tree'],
+      ['dna', 'Evolve 程序演进', '通过反复搜索来改进程序：生成变体、按你的指标逐个评分、保留有效方案，并在留出集上验证。', 'core/evolve', 'Evolve'],
+      ['graph', '记忆图谱', 'ScienceMemory 会把任务和引用记录为可点击的图，让每个结论的来处都有据可查。', 'developer-docs/science-memory', '记忆图谱'],
+      ['users', '子 Agent 与技能', '主 Agent 会拆解复杂任务，再交给不同专长的子 Agent 协作完成，并按需加载领域技能。', 'developer-docs/subagent-orchestration', '子 Agent'],
+      ['plug', '连接器与 MCP', '快速接入文献和数据连接器，支持自定义 MCP、PDF 抽取，以及可控的权限与评审流程。', 'developer-docs/science-connectors', '连接器']
     ],
     learn: '了解更多 →',
     ctaBoxTitle: '在你自己的机器上运行',
-    ctaBoxSub: '单个可执行文件，无需云账号。启动服务，在浏览器中打开界面。',
+    ctaBoxSub: '一个可执行文件，无需云账号。启动服务后，即可在浏览器中使用。',
     footNote: 'ScienceDiscovery 仅作为工作流编排工具，不内置任何 AI 模型。',
     footLinks: [['文档', 'docs/index.html'], ['安装', 'install/index.html']],
     quickInstall: {
-      title: '运行 Linux 预编译版本',
-      sub: '适用于已具备 Bubblewrap 的 Linux x86_64。下载发布包后即可启动本地工作台。',
+      title: '运行 Linux 预编译版',
+      sub: '适用于已安装 Bubblewrap 的 Linux x86_64 系统。下载预编译版后即可启动本地工作台。',
       label: '最快方式',
-      alt: '需要 Docker、macOS、源码模式或其他架构？',
-      link: '查看全部安装方式'
+      alt: '需要使用 Docker、macOS、源码安装或其他 CPU 架构？',
+      link: '查看其他安装方式'
     },
     demo: {
       task: ['任务', '会话', '文献 → 分析 → 报告', '重放'],
@@ -405,19 +405,19 @@ function home(lang) {
   const r = (p) => rel(pagePath, p);
   const docLink = (k) => rel(pagePath, pathOf(lang, 'docs/' + keyFor(k) + '.html'));
   const binary = RELEASE.binaries.find((b) => (b.os || OS_OF(b.name)) === 'linux' && b.arch === 'x86_64');
-  const command = binary ? `curl -fL ${binary.url} -o ScienceDiscovery && chmod +x ScienceDiscovery && ./ScienceDiscovery serve` : '';
+  const command = binary ? [`curl -fL ${binary.url} -o ScienceDiscovery`, 'chmod +x ScienceDiscovery', './ScienceDiscovery serve'].join('\n') : '';
   const feats = t.feats.map(([ic, title, text, doc]) => `<a class="card" href="${docLink(doc)}"><div class="ico">${svg(IC[ic], 20)}</div><h3>${title}</h3><p>${text}</p><span class="more">${t.learn}</span></a>`).join('');
   return head(lang, `${t.name} — ${t.tag}`, pagePath, null, ['demo.css']) + `
 <body>
 ${topbar(lang, 'home', pagePath, other(lang, page))}
 <main class="wrap">
-<section class="demo-stage"><div class="app" id="demo" aria-label="Interactive product demo"></div><p class="demo-hint">${t.demoHint}</p></section>
 <section class="quick-install">
 <span class="eyebrow">${svg(IC.flask, 14)}${t.eyebrow}</span>
 <h1>${t.h1}</h1><p class="lead">${t.lead}</p>
 <div class="quick-command"><div><span class="eyebrow">${t.quickInstall.label}</span><h2>${t.quickInstall.title}</h2><p>${t.quickInstall.sub}</p></div><pre><code>${esc(command)}</code></pre></div>
 <p class="install-alternative">${t.quickInstall.alt} <a href="${r(pathOf(lang, 'install/index.html'))}">${t.quickInstall.link} →</a></p>
 </section>
+<section class="demo-stage"><div class="app" id="demo" aria-label="Interactive product demo"></div><p class="demo-hint">${t.demoHint}</p></section>
 <section class="section"><h2>${t.featTitle}</h2><p class="sub">${t.featSub}</p><div class="grid">${feats}</div></section>
 <section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'install/index.html'))}">${t.ctaInstall}</a><a class="btn" href="${r(pathOf(lang, 'docs/getting-started/quick-start.html'))}">${x.docsQuick}</a></div></section>
 </main>
