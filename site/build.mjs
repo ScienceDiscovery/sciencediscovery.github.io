@@ -14,7 +14,7 @@ const DOCS = join(ROOT, 'docs');
 const DIST = join(ROOT, 'dist');
 const RELEASE = JSON.parse(readFileSync(join(ROOT, 'release.json'), 'utf8'));
 const REPO = process.env.SITE_REPO || 'openJiuwen-ai/sciencediscovery';
-const BRANCH = process.env.SITE_BRANCH || 'main';
+const BRANCH = process.env.SITE_BRANCH || 'feat/jiuwenswarm';
 const GH = `https://github.com/${REPO}`;
 const LANGS = ['en', 'zh'];
 
@@ -33,12 +33,12 @@ const T = {
     featTitle: 'Built for the whole research loop',
     featSub: 'One local workspace that plans the work, runs it safely, searches for better answers, and remembers where every conclusion came from.',
     feats: [
-      ['flask', 'Sandboxed code exploration', 'Agents write, debug and run Python, R and shell inside a fail-closed Bubblewrap / Seatbelt sandbox with managed scientific environments.', 'explanation/sandbox-execution', 'Sandbox'],
-      ['tree', 'Idea Tree', 'A self-directed research engine that proposes, designs, independently scores and prunes candidate ideas, then feeds insights back into the next round.', 'explanation/idea-tree-engine', 'Idea Tree'],
-      ['dna', 'Evolve', 'Improve a program by repeated search: write variants, score each one against your metric, keep what works, and verify on held-out data.', 'explanation/evolve', 'Evolve'],
-      ['graph', 'Memory graph', 'ScienceMemory records tasks and citations as a clickable graph, so "where did this conclusion come from" always has an answer.', 'explanation/science-memory', 'Memory graph'],
-      ['users', 'Subagents & skills', 'A main agent decomposes complex work and dispatches specialised subagents, drawing on a library of domain skills loaded progressively.', 'explanation/subagent-orchestration', 'Subagents'],
-      ['plug', 'Connectors & MCP', 'One-click literature and data connectors, custom MCP servers, PDF extraction and a governed permission and review flow.', 'explanation/science-connectors', 'Connectors']
+      ['flask', 'Sandboxed code exploration', 'Agents write, debug and run Python, R and shell inside a fail-closed Bubblewrap / Seatbelt sandbox with managed scientific environments.', 'developer-docs/sandbox-execution', 'Sandbox'],
+      ['tree', 'Idea Tree', 'A self-directed research engine that proposes, designs, independently scores and prunes candidate ideas, then feeds insights back into the next round.', 'core/idea-tree', 'Idea Tree'],
+      ['dna', 'Evolve', 'Improve a program by repeated search: write variants, score each one against your metric, keep what works, and verify on held-out data.', 'core/evolve', 'Evolve'],
+      ['graph', 'Memory graph', 'ScienceMemory records tasks and citations as a clickable graph, so "where did this conclusion come from" always has an answer.', 'developer-docs/science-memory', 'Memory graph'],
+      ['users', 'Subagents & skills', 'A main agent decomposes complex work and dispatches specialised subagents, drawing on a library of domain skills loaded progressively.', 'developer-docs/subagent-orchestration', 'Subagents'],
+      ['plug', 'Connectors & MCP', 'One-click literature and data connectors, custom MCP servers, PDF extraction and a governed permission and review flow.', 'developer-docs/science-connectors', 'Connectors']
     ],
     learn: 'Learn more →',
     ctaBoxTitle: 'Run it on your own machine',
@@ -68,8 +68,8 @@ const T = {
       title: 'Download ScienceDiscovery', sub: 'Pick the package for your system. Everything runs locally; no account is needed.',
       latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you',
       linux: ['Linux', 'x86_64 and aarch64 · needs bubblewrap'], macos: ['macOS', 'Apple Silicon and Intel · Seatbelt sandbox'], windows: ['Windows', 'Windows 10 / 11 · x64'],
-      soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/how-to/deployment.html',
-      docker: 'Docker (Linux)', dockerLink: 'docs/how-to/deployment.html#docker-deployment',
+      soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/getting-started/deployment.html',
+      docker: 'Docker (Linux)', dockerLink: 'docs/getting-started/deployment.html#docker-deployment',
       startTitle: 'After downloading',
       startSteps: 'Make the binary executable and start the stack, then open the <code>Open to sign in</code> URL printed in the terminal.',
       startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
@@ -80,7 +80,7 @@ const T = {
       title: 'Documentation', menu: 'Menu', on: 'On this page', prev: 'Previous', next: 'Next',
       onlyOther: 'This page is only available in Chinese so far.', homeIntro: 'Start here, then dive into the features you need.',
       groups: 'Guides', allDocs: 'All documents',
-      sections: { start: 'Getting started', core: 'Core features', domain: 'Domain tutorials', ref: 'Reference', explain: 'Explanation', howto: 'How-to guides' }
+      sections: { start: 'Getting started', core: 'Core features', domain: 'Domain tutorials', ref: 'Reference', explain: 'Explanation', howto: 'How-to guides', 'advanced-setup': 'Advanced setup', 'developer-docs': 'Developer docs', domains: 'Domain guides', 'getting-started': 'Getting started' }
     }
   },
   zh: {
@@ -96,12 +96,12 @@ const T = {
     featTitle: '覆盖完整的科研闭环',
     featSub: '一个本地工作台：规划任务、安全执行、搜索更优解，并记住每个结论的来源。',
     feats: [
-      ['flask', '沙箱内自主代码探索', 'Agent 在 fail-closed 的 Bubblewrap / Seatbelt 沙箱中编写、调试并运行 Python、R 与 Shell，并使用受管科学计算环境。', 'explanation/sandbox-execution', '沙箱'],
-      ['tree', 'Idea Tree', '自主研究引擎：提出、设计、独立评分并筛选候选想法，再把洞察回传给下一轮。', 'explanation/idea-tree-engine', 'Idea Tree'],
-      ['dna', 'Evolve 程序演进', '通过反复搜索改进程序：写出变体、按你的指标逐个评分、保留有效者，并在留出集上验证。', 'explanation/evolve', 'Evolve'],
-      ['graph', '记忆图谱', 'ScienceMemory 把任务链与引用链记录成可点击的图，“这个结论从哪来”总能回答。', 'explanation/science-memory', '记忆图谱'],
-      ['users', 'Subagent 与技能', '主 Agent 拆解复杂任务并派发专业 Subagent，按需渐进加载领域技能库。', 'explanation/subagent-orchestration', 'Subagent'],
-      ['plug', '连接器与 MCP', '一键接入文献与数据连接器，支持自定义 MCP、PDF 抽取，以及受控的权限与评审流程。', 'explanation/science-connectors', '连接器']
+      ['flask', '沙箱内自主代码探索', 'Agent 在 fail-closed 的 Bubblewrap / Seatbelt 沙箱中编写、调试并运行 Python、R 与 Shell，并使用受管科学计算环境。', 'developer-docs/sandbox-execution', '沙箱'],
+      ['tree', 'Idea Tree', '自主研究引擎：提出、设计、独立评分并筛选候选想法，再把洞察回传给下一轮。', 'core/idea-tree', 'Idea Tree'],
+      ['dna', 'Evolve 程序演进', '通过反复搜索改进程序：写出变体、按你的指标逐个评分、保留有效者，并在留出集上验证。', 'core/evolve', 'Evolve'],
+      ['graph', '记忆图谱', 'ScienceMemory 把任务链与引用链记录成可点击的图，“这个结论从哪来”总能回答。', 'developer-docs/science-memory', '记忆图谱'],
+      ['users', 'Subagent 与技能', '主 Agent 拆解复杂任务并派发专业 Subagent，按需渐进加载领域技能库。', 'developer-docs/subagent-orchestration', 'Subagent'],
+      ['plug', '连接器与 MCP', '一键接入文献与数据连接器，支持自定义 MCP、PDF 抽取，以及受控的权限与评审流程。', 'developer-docs/science-connectors', '连接器']
     ],
     learn: '了解更多 →',
     ctaBoxTitle: '在你自己的机器上运行',
@@ -131,8 +131,8 @@ const T = {
       title: '下载 ScienceDiscovery', sub: '选择适合你系统的安装包。全部本地运行，无需账号。',
       latest: '最新版本', notes: '发布说明', recommended: '为你推荐',
       linux: ['Linux', 'x86_64 与 aarch64 · 需要 bubblewrap'], macos: ['macOS', 'Apple 芯片与 Intel · Seatbelt 沙箱'], windows: ['Windows', 'Windows 10 / 11 · x64'],
-      soon: '暂未发布预编译包', build: '从源码构建', buildLink: 'docs/how-to/deployment.html',
-      docker: 'Docker（Linux）', dockerLink: 'docs/how-to/deployment.html#docker-部署',
+      soon: '暂未发布预编译包', build: '从源码构建', buildLink: 'docs/getting-started/deployment.html',
+      docker: 'Docker（Linux）', dockerLink: 'docs/getting-started/deployment.html#docker-部署',
       startTitle: '下载之后',
       startSteps: '赋予可执行权限并启动服务，然后在浏览器中打开终端输出的 <code>Open to sign in</code> 链接。',
       startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
@@ -143,7 +143,7 @@ const T = {
       title: '文档', menu: '目录', on: '本页内容', prev: '上一篇', next: '下一篇',
       onlyOther: '本页暂时只有英文版。', homeIntro: '从这里开始，再深入你需要的功能。',
       groups: '指南', allDocs: '全部文档',
-      sections: { start: '快速开始', core: '核心功能', domain: '领域教程', ref: '参考', explain: '原理说明', howto: '操作指南' }
+      sections: { start: '快速开始', core: '核心功能', domain: '领域教程', ref: '参考', explain: '原理说明', howto: '操作指南', 'advanced-setup': '高级配置', 'developer-docs': '开发文档', domains: '领域指南', 'getting-started': '快速开始' }
     }
   }
 };
@@ -151,31 +151,30 @@ const T = {
 // Curated navigation. Keys are doc paths relative to docs/<lang>, without ".md".
 const NAV = [
   ['start', [
-    ['tutorial/01-quick-start', { en: 'Quick start', zh: '快速开始' }],
-    ['how-to/deployment', { en: 'Build from source & deploy', zh: '源码构建与部署' }],
+    ['getting-started/quick-start', { en: 'Quick start', zh: '快速开始' }],
+    ['getting-started/deployment', { en: 'Build from source & deploy', zh: '源码构建与部署' }],
     ['reference/runtime-behavior', { en: 'Basic features & runtime', zh: '基础功能与运行机制' }],
     ['reference/builtin-tools', { en: 'Built-in tools', zh: '内置工具' }],
-    ['reference/web-frontend', { en: 'Web interface', zh: 'Web 界面' }]
+    ['developer-docs/web-frontend', { en: 'Web interface', zh: 'Web 界面' }]
   ]],
   ['core', [
     ['reference/configuration', { en: 'Configure models & settings', zh: '配置模型与系统设置' }],
-    ['explanation/idea-tree-engine', { en: 'Idea Tree', zh: 'Idea Tree' }],
-    ['explanation/evolve', { en: 'Evolve', zh: 'Evolve 程序演进' }],
-    ['tutorial/02-evolve-a-solution', { en: 'Tutorial: evolve a solution', zh: '教程：演进出一个解' }],
-    ['how-to/run-an-evolution-search', { en: 'Run an evolution search', zh: '运行演进搜索' }],
-    ['explanation/science-memory', { en: 'Memory graph', zh: '记忆图谱' }],
-    ['how-to/science-memory-setup', { en: 'Set up the memory graph', zh: '配置记忆图谱' }],
-    ['explanation/subagent-orchestration', { en: 'Subagents', zh: 'Subagent 编排' }],
-    ['explanation/skill-progressive-disclosure', { en: 'Skills', zh: '技能渐进披露' }],
-    ['how-to/configure-custom-mcp', { en: 'Custom MCP servers', zh: '自定义 MCP' }],
-    ['how-to/configure-network-proxy', { en: 'Network proxy', zh: '网络代理' }]
+    ['core/idea-tree', { en: 'Idea Tree', zh: 'Idea Tree' }],
+    ['core/evolve', { en: 'Evolve', zh: 'Evolve 程序演进' }],
+    ['domains/evolve-a-solution', { en: 'Tutorial: evolve a solution', zh: '教程：演进出一个解' }],
+    ['domains/run-an-evolution-search', { en: 'Run an evolution search', zh: '运行演进搜索' }],
+    ['developer-docs/science-memory', { en: 'Memory graph', zh: '记忆图谱' }],
+    ['advanced-setup/science-memory-setup', { en: 'Set up the memory graph', zh: '配置记忆图谱' }],
+    ['developer-docs/subagent-orchestration', { en: 'Subagents', zh: 'Subagent 编排' }],
+    ['developer-docs/skill-progressive-disclosure', { en: 'Skills', zh: '技能渐进披露' }],
+    ['advanced-setup/configure-custom-mcp', { en: 'Custom MCP servers', zh: '自定义 MCP' }],
+    ['advanced-setup/configure-network-proxy', { en: 'Network proxy', zh: '网络代理' }]
   ]],
   ['domain', [
-    ['how-to/literature-research-case-guide', { en: 'Literature research', zh: '文献调研' }],
-    ['tutorial/02-evolve-a-solution', { en: 'Algorithm & program optimisation', zh: '算法与程序优化' }]
+    ['domains/literature-research', { en: 'Literature research', zh: '文献调研' }],
+    ['domains/evolve-a-solution', { en: 'Algorithm & program optimisation', zh: '算法与程序优化' }]
   ]]
 ];
-const AUTO_SECTIONS = { reference: 'ref', explanation: 'explain', 'how-to': 'howto', tutorial: 'start' };
 
 // ---------------------------------------------------------------- icons (same stroke style as the app)
 const svg = (d, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -269,7 +268,8 @@ function renderDoc(md, srcFile, lang, pagePath) {
       if (!href || /^(https?:|mailto:|#)/.test(href)) return href;
       const [pathPart, hash = ''] = href.split('#');
       const abs = resolve(srcDir, decodeURI(pathPart));
-      const frag = hash ? '#' + hash : '';
+      const anchorAliases = { 'sandbox-and-system-requirements': 'sandbox-and-host-requirements' };
+      const frag = hash ? '#' + (anchorAliases[hash] || hash) : '';
       const m = abs.match(/[\\/]docs[\\/](en|zh)[\\/](.+)\.md$/);
       if (m) {
         const k = m[2].split(sep).join('/');
@@ -314,16 +314,16 @@ const D = {
     bin: { h: 'Prebuilt single-file binary', p: 'One executable per architecture. It embeds Node, Python, the web UI and micromamba, so Bubblewrap is the only host dependency.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
       steps: ['Install Bubblewrap.', 'Download the binary for your architecture from the download page and make it executable.', 'Start the stack.', 'Open the “Open to sign in” URL printed in the terminal, then verify the API.'],
-      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'how-to/deployment.html#single-file-binary-deployment', linkText: 'Binary deployment in the full guide' },
+      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#single-file-binary-deployment', linkText: 'Binary deployment in the full guide' },
     docker: { h: 'Docker Compose', p: 'One image holds the complete stack. Good for container-based operations on a Linux host.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Software', 'Docker Engine 24+ and Compose v2'], ['Kernel', 'unprivileged user namespaces for the Bubblewrap sandbox']],
       steps: ['Clone the repository and prepare the environment file and data directory.', 'Build and start.', 'Read the sign-in URL from the logs and check health.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'how-to/deployment.html#docker-deployment', linkText: 'Docker deployment in the full guide' },
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-deployment', linkText: 'Docker deployment in the full guide' },
     src: { h: 'Local source mode', p: 'Runs ordinary host processes from a checkout. Best for development and debugging; supported on Linux and macOS.',
       req: [['Toolchain', 'Node.js 22.19+, pnpm 11.1.2, Python 3, uv 0.9+, Git, curl'], ['Linux sandbox', 'Bubblewrap 0.6+ (0.8+ recommended)'], ['macOS sandbox', 'built-in Seatbelt (/usr/bin/sandbox-exec)']],
       steps: ['Clone the repository.', 'Install, build and start every service.', 'Later starts can skip the build.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'how-to/deployment.html#local-mode-host-processes', linkText: 'Local mode in the full guide' },
-    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'tutorial/01-quick-start.html#2-start-sciencediscovery'], ['Configure a model', 'Add a task model under System configuration → Global defaults. ScienceDiscovery embeds no model of its own.', 'tutorial/01-quick-start.html#3-configure-a-task-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'tutorial/01-quick-start.html#4-run-a-first-scientific-task']],
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-mode-source-checkout', linkText: 'Local mode in the full guide' },
+    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#2-start-sciencediscovery'], ['Configure a model', 'Add a task model under System configuration → Global defaults. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#3-configure-a-task-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'getting-started/quick-start.html#4-run-a-first-scientific-task']],
     portsTitle: 'Default ports', ports: [['4310', 'Control API and Web UI'], ['4311', 'Runner (loopback only)']],
     warn: 'ScienceDiscovery is not a multi-user production service. The API, runner and gateway listen on loopback by default and the API uses one bearer token without TLS. Exposing it on another interface must be an explicit choice on a trusted network.',
     full: 'Read the full deployment guide'
@@ -335,16 +335,16 @@ const D = {
     bin: { h: '预编译单文件二进制', p: '每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba，宿主机只需安装 Bubblewrap。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
       steps: ['安装 Bubblewrap。', '在下载页获取对应架构的二进制并赋予可执行权限。', '启动服务。', '打开终端输出的“Open to sign in”链接，并检查 API。'],
-      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'how-to/deployment.html#单文件二进制部署', linkText: '完整指南中的二进制部署' },
+      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#单文件二进制部署', linkText: '完整指南中的二进制部署' },
     docker: { h: 'Docker Compose', p: '一个镜像包含完整服务栈，适合 Linux 主机上的容器化运维。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['软件', 'Docker Engine 24+ 与 Compose v2'], ['内核', 'Bubblewrap 沙箱需要非特权用户命名空间']],
       steps: ['克隆仓库，准备环境文件与数据目录。', '构建并启动。', '从日志读取登录链接并检查健康状态。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'how-to/deployment.html#docker-部署', linkText: '完整指南中的 Docker 部署' },
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-部署', linkText: '完整指南中的 Docker 部署' },
     src: { h: '本地源码模式', p: '从源码仓库直接运行宿主进程，适合开发与调试；支持 Linux 与 macOS。',
       req: [['工具链', 'Node.js 22.19+、pnpm 11.1.2、Python 3、uv 0.9+、Git、curl'], ['Linux 沙箱', 'Bubblewrap 0.6+（建议 0.8+）'], ['macOS 沙箱', '系统自带 Seatbelt（/usr/bin/sandbox-exec）']],
       steps: ['克隆仓库。', '安装、构建并启动全部服务。', '之后启动可跳过构建。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'how-to/deployment.html#本地模式宿主进程', linkText: '完整指南中的本地模式' },
-    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'tutorial/01-quick-start.html#2-启动-sciencediscovery'], ['配置模型', '在“系统配置 → 全局默认”中添加任务模型。ScienceDiscovery 本身不内置任何模型。', 'tutorial/01-quick-start.html#3-配置任务模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'tutorial/01-quick-start.html#4-完成第一次-agent-任务']],
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地模式源码检出', linkText: '完整指南中的本地模式' },
+    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#2-启动-sciencediscovery'], ['配置模型', '在“系统配置 → 全局默认”中添加任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#3-配置任务模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'getting-started/quick-start.html#4-完成第一次-agent-任务']],
     portsTitle: '默认端口', ports: [['4310', '控制 API 与 Web 界面'], ['4311', 'Runner（仅回环地址）']],
     warn: 'ScienceDiscovery 不是多用户生产服务。API、runner 与 gateway 默认只监听回环地址，API 使用单一 bearer token 且不终止 TLS。若要暴露到其他网卡，必须是在可信网络中的明确选择。',
     full: '阅读完整部署指南'
@@ -417,7 +417,7 @@ ${topbar(lang, 'home', pagePath, other(lang, page))}
 <div class="app" id="demo" aria-label="Interactive product demo"></div>
 <p class="demo-hint">${t.demoHint}</p>
 <section class="section"><h2>${t.featTitle}</h2><p class="sub">${t.featSub}</p><div class="grid">${feats}</div></section>
-<section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'download/index.html'))}">${t.ctaDownload}</a><a class="btn" href="${r(pathOf(lang, 'docs/tutorial/01-quick-start.html'))}">${x.docsQuick}</a></div></section>
+<section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'download/index.html'))}">${t.ctaDownload}</a><a class="btn" href="${r(pathOf(lang, 'docs/getting-started/quick-start.html'))}">${x.docsQuick}</a></div></section>
 </main>
 ${footer(lang, pagePath)}
 <script src="${r('site.js')}"></script>
@@ -453,7 +453,7 @@ ${panels}
 <div class="warn">${d.warn}</div>
 <h2 class="h">${d.after}</h2><div class="grid">${after}</div>
 <h2 class="h">${d.portsTitle}</h2><div class="reqs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${ports}</div>
-<p style="margin-top:28px;text-align:center"><a class="btn" href="${doc('how-to/deployment.html')}">${svg(IC.book, 16)}${d.full}</a></p>
+<p style="margin-top:28px;text-align:center"><a class="btn" href="${doc('getting-started/deployment.html')}">${svg(IC.book, 16)}${d.full}</a></p>
 </main>
 ${footer(lang, pagePath)}
 <script src="${r('site.js')}"></script>
@@ -523,7 +523,7 @@ function docNav(lang, activeKey) {
     const rest = Object.keys(sources).filter((k) => k !== 'README' && !k.endsWith('/README') && !k.startsWith('architecture')).sort();
     const bySec = {};
     for (const k of rest) (bySec[k.split('/')[0]] ??= []).push(k);
-    for (const top of ['tutorial', 'how-to', 'reference', 'explanation']) {
+    for (const top of Object.keys(bySec).sort()) {
       const ks = bySec[top] || [];
       if (!ks.length) continue;
       const open = ks.includes(activeKey) ? ' open' : '';
@@ -571,7 +571,10 @@ function docsHome(lang, order) {
   const page = 'docs/index.html', pagePath = pathOf(lang, page);
   const card = (k, l) => `<a class="card" href="${rel(pagePath, pathOf(lang, 'docs/' + outPath(k)))}"><h3>${esc(l || titleOf(k, lang))}</h3></a>`;
   const secs = NAV.map(([sec, items]) => `<h2>${S[sec]}</h2><div class="grid">${items.filter(([k]) => sources[k]).map(([k, l]) => card(k, l[lang])).join('')}</div>`).join('');
-  const refs = ['reference', 'explanation', 'how-to'].map((top) => `<h2>${S[AUTO_SECTIONS[top]]}</h2><div class="grid">${order.filter((k) => k.startsWith(top + '/')).map((k) => card(k)).join('')}</div>`).join('');
+  const curated = new Set(NAV.flatMap(([, items]) => items.map(([k]) => k)));
+  const remaining = order.filter((k) => !curated.has(k));
+  const groups = [...new Set(remaining.map((k) => k.split('/')[0]))].sort();
+  const refs = groups.map((top) => `<h2>${dd.allDocs} · ${S[top] || top}</h2><div class="grid">${remaining.filter((k) => k.startsWith(top + '/')).map((k) => card(k)).join('')}</div>`).join('');
   return head(lang, `${dd.title} — ${t.name}`, pagePath) + `
 <body>
 ${topbar(lang, 'docs', pagePath, other(lang, page))}
