@@ -587,8 +587,14 @@ ${footer(lang, pagePath)}
 const ASSET_V = {};
 for (const f of ['site.css', 'site.js', 'demo.css', 'demo.js', 'viz.js']) ASSET_V[f] = createHash('sha256').update(readFileSync(join(HERE, 'src', f))).digest('hex').slice(0, 10);
 const versioned = (html) => html.replace(/(src|href)="([^"]*?)((?:site|demo|viz)\.(?:css|js))"/g, (m, attr, dir, f) => `${attr}="${dir}${f}?v=${ASSET_V[f]}"`);
+const SITE_ORIGIN = (process.env.SITE_URL || 'https://sciencediscovery.github.io').replace(/\/$/, '');
+const sitemapPages = []; // populated as pages are written; 404.html and JSON are excluded
+
 function write(p, content) {
-  if (p.endsWith('.html')) content = versioned(content);
+  if (p.endsWith('.html')) {
+    content = versioned(content);
+    if (p !== '404.html') sitemapPages.push(p);
+  }
   const full = join(DIST, p);
   mkdirSync(dirname(full), { recursive: true });
   writeFileSync(full, content);
@@ -615,4 +621,19 @@ for (const lang of LANGS) {
   for (const k of order) { write(pathOf(lang, 'docs/' + outPath(k)), docPage(k, lang, order)); pages++; }
   write(pathOf(lang, 'search-index.json'), JSON.stringify(INDEX[lang]));
 }
-console.log(`built ${pages} doc pages, ${INDEX.en.length + INDEX.zh.length} search entries -> ${relative(process.cwd(), DIST)}`);
+
+// Sitemap + robots.txt. English and Chinese pages that mirror the same content declare each other
+// via hreflang so search engines index the pair as one entry rather than two competing pages.
+const today = new Date().toISOString().slice(0, 10);
+const altOf = (p) => (p.startsWith('zh/') ? p.slice(3) : 'zh/' + p);
+const urlset = sitemapPages.map((p) => {
+  const loc = `${SITE_ORIGIN}/${p}`;
+  const alt = sitemapPages.includes(altOf(p))
+    ? `\n    <xhtml:link rel="alternate" hreflang="${p.startsWith('zh/') ? 'zh' : 'en'}" href="${SITE_ORIGIN}/${p}"/>\n    <xhtml:link rel="alternate" hreflang="${p.startsWith('zh/') ? 'en' : 'zh'}" href="${SITE_ORIGIN}/${altOf(p)}"/>`
+    : '';
+  return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>${alt}\n  </url>`;
+}).join('\n');
+write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urlset}\n</urlset>\n`);
+write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`);
+
+console.log(`built ${pages} doc pages, ${INDEX.en.length + INDEX.zh.length} search entries, ${sitemapPages.length} sitemap URLs -> ${relative(process.cwd(), DIST)}`);
