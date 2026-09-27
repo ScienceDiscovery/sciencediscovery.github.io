@@ -395,6 +395,7 @@ function head(lang, title, pagePath, desc, extraCss = []) {
 <meta name="description" content="${esc(desc || T[lang].lead.replace(/<[^>]+>/g, ''))}">
 <meta name="google-site-verification" content="Z04-sOshM5D2RBC0A6Vi_SK49QHi3iIlHYwQ2dhywg0" />
 <link rel="icon" href="${r('favicon.svg')}" type="image/svg+xml">
+<link rel="preload" href="${r('fonts/manrope-latin-wght-normal.woff2')}" as="font" type="font/woff2" crossorigin>
 ${scriptTheme}
 <link rel="stylesheet" href="${r('site.css')}">
 ${extraCss.map((c) => `<link rel="stylesheet" href="${r(c)}">`).join('\n')}
@@ -604,6 +605,7 @@ function write(p, content, sitemap = true) {
 rmSync(DIST, { recursive: true, force: true });
 mkdirSync(DIST, { recursive: true });
 for (const f of ['site.css', 'site.js', 'demo.css', 'demo.js', 'viz.js']) cpSync(join(HERE, 'src', f), join(DIST, f));
+cpSync(join(HERE, 'src', 'fonts'), join(DIST, 'fonts'), { recursive: true });
 cpSync(join(DOCS, 'images'), join(DIST, 'docs', 'images'), { recursive: true });
 write('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#2563eb"/><g transform="translate(6 6) scale(.83)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC.brand}</g></svg>`);
 write('.nojekyll', '');
