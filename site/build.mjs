@@ -14,7 +14,7 @@ const DOCS = join(ROOT, 'docs');
 const DIST = join(ROOT, 'dist');
 const RELEASE = JSON.parse(readFileSync(join(ROOT, 'release.json'), 'utf8'));
 const REPO = process.env.SITE_REPO || 'openJiuwen-ai/sciencediscovery';
-const BRANCH = process.env.SITE_BRANCH || 'feat/jiuwenswarm';
+const BRANCH = process.env.SITE_BRANCH || 'main';
 const GH = `https://github.com/${REPO}`;
 const LANGS = ['en', 'zh'];
 
