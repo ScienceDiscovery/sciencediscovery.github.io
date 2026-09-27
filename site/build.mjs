@@ -76,7 +76,7 @@ const T = {
       latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you',
       linux: ['Linux', 'x86_64 and aarch64 · needs bubblewrap'], macos: ['macOS', 'Apple Silicon and Intel · Seatbelt sandbox'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/getting-started/deployment.html',
-      docker: 'Docker (Linux)', dockerLink: 'docs/getting-started/deployment.html#docker-deployment',
+      docker: 'Docker (Linux)', dockerLink: 'docs/getting-started/deployment.html#docker-deployment-linux',
       startTitle: 'After downloading',
       startSteps: 'Make the binary executable and start the stack, then open the <code>Open to sign in</code> URL printed in the terminal.',
       startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
@@ -261,6 +261,25 @@ function makeRenderer(ctx) {
   return { renderer, toc };
 }
 
+// Upstream documentation can rename headings independently of this website.
+// Keep links in the product docs pointing at the current rendered headings.
+const DOC_ANCHOR_ALIASES = {
+  en: {
+    'developer-docs/architecture': { '25-responsibility-split': '4-service-and-sidecar-responsibilities' },
+    'getting-started/deployment': {
+      'docker-deployment': 'docker-deployment-linux',
+      'local-mode-source-checkout': 'local-source-mode-linux--macos'
+    }
+  },
+  zh: {
+    'developer-docs/architecture': { '25-职责切分核心原则': '4-服务与-sidecar-职责' },
+    'getting-started/deployment': {
+      'docker-部署': 'docker-部署linux',
+      '本地模式源码检出': '本地源码模式linux--macos'
+    }
+  }
+};
+
 function renderDoc(md, srcFile, lang, pagePath) {
   const srcDir = dirname(srcFile);
   const ctx = {
@@ -270,8 +289,9 @@ function renderDoc(md, srcFile, lang, pagePath) {
       const anchorAliases = { 'sandbox-and-system-requirements': 'sandbox-and-host-requirements' };
       if (!pathPart && hash) return '#' + (anchorAliases[hash] || hash);
       const abs = resolve(srcDir, decodeURI(pathPart));
-      const frag = hash ? '#' + (anchorAliases[hash] || hash) : '';
       const m = abs.match(/[\\/]docs[\\/](en|zh)[\\/](.+)\.md$/);
+      const targetAliases = DOC_ANCHOR_ALIASES[m?.[1]]?.[m?.[2]] || {};
+      const frag = hash ? '#' + (targetAliases[hash] || anchorAliases[hash] || hash) : '';
       if (m) {
         const k = m[2].split(sep).join('/');
         if (sources[k]) return rel(pagePath, pathOf(lang, 'docs/' + outPath(k))) + frag;
@@ -315,16 +335,16 @@ const D = {
     bin: { h: 'Prebuilt single-file binary', p: 'For Linux x86_64 and aarch64 only. It embeds Node, Python, the web UI and micromamba, so Bubblewrap is the only host dependency. On macOS, use Local source mode below.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
       steps: ['Install Bubblewrap.', 'Download the binary for your architecture and make it executable.', 'Start the stack.', 'Open the “Open to sign in” URL printed in the terminal, then verify the API.'],
-      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#single-file-binary-deployment', linkText: 'Binary deployment in the full guide' },
+      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#prepackaged-single-file-deployment-linux', linkText: 'Binary deployment in the full guide' },
     docker: { h: 'Docker Compose', p: 'One image holds the complete stack. Good for container-based operations on a Linux host.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Software', 'Docker Engine 24+ and Compose v2'], ['Kernel', 'unprivileged user namespaces for the Bubblewrap sandbox']],
       steps: ['Clone the repository and prepare the environment file and data directory.', 'Build and start.', 'Read the sign-in URL from the logs and check health.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-deployment', linkText: 'Docker deployment in the full guide' },
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-deployment-linux', linkText: 'Docker deployment in the full guide' },
     src: { h: 'Local source mode', p: 'Runs ordinary host processes from a checkout. Best for development and debugging; supported on Linux and macOS.',
       req: [['Toolchain', 'Node.js 22.19+, pnpm 11.1.2, Python 3, uv 0.9+, Git, curl'], ['Linux sandbox', 'Bubblewrap 0.6+ (0.8+ recommended)'], ['macOS sandbox', 'built-in Seatbelt (/usr/bin/sandbox-exec)']],
       steps: ['Clone the repository.', 'Install, build and start every service.', 'Later starts can skip the build.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-mode-source-checkout', linkText: 'Local mode in the full guide' },
-    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#2-start-sciencediscovery'], ['Configure a model', 'Add a task model under System configuration → Global defaults. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#3-configure-a-task-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'getting-started/quick-start.html#4-run-a-first-scientific-task']],
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-source-mode-linux--macos', linkText: 'Local mode in the full guide' },
+    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#after-startup'], ['Configure a model', 'Add a task model under System configuration → Global defaults. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#2-configure-a-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'getting-started/quick-start.html#3-run-your-first-scientific-task']],
     portsTitle: 'Default ports', ports: [['4310', 'Control API and Web UI'], ['4311', 'Runner (loopback only)']],
     warn: 'ScienceDiscovery is not a multi-user production service. The API, runner and gateway listen on loopback by default and the API uses one bearer token without TLS. Exposing it on another interface must be an explicit choice on a trusted network.',
     full: 'Read the full deployment guide'
@@ -336,16 +356,16 @@ const D = {
     bin: { h: '预编译单文件二进制', p: '仅适用于 Linux x86_64 与 aarch64。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba，宿主机只需安装 Bubblewrap。macOS 请使用下方的本地源码模式。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
       steps: ['安装 Bubblewrap。', '获取对应架构的二进制并赋予可执行权限。', '启动服务。', '打开终端输出中的“Open to sign in”链接，并检查 API。'],
-      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#单文件二进制部署', linkText: '完整指南中的二进制部署' },
+      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#预编译单文件部署linux', linkText: '完整指南中的二进制部署' },
     docker: { h: 'Docker Compose', p: '一个镜像包含完整服务栈，适合 Linux 主机上的容器化运维。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['软件', 'Docker Engine 24+ 与 Compose v2'], ['内核', 'Bubblewrap 沙箱需要非特权用户命名空间']],
       steps: ['克隆仓库，准备环境文件与数据目录。', '构建并启动。', '从日志读取登录链接并检查健康状态。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-部署', linkText: '完整指南中的 Docker 部署' },
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-部署linux', linkText: '完整指南中的 Docker 部署' },
     src: { h: '本地源码模式', p: '从源码仓库直接运行宿主进程，适合开发与调试；支持 Linux 与 macOS。',
       req: [['工具链', 'Node.js 22.19+、pnpm 11.1.2、Python 3、uv 0.9+、Git、curl'], ['Linux 沙箱', 'Bubblewrap 0.6+（建议 0.8+）'], ['macOS 沙箱', '系统自带 Seatbelt（/usr/bin/sandbox-exec）']],
       steps: ['克隆仓库。', '安装、构建并启动全部服务。', '之后启动可跳过构建。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地模式源码检出', linkText: '完整指南中的本地模式' },
-    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#2-启动-sciencediscovery'], ['配置模型', '在“系统配置 → 全局默认”中添加任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#3-配置任务模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'getting-started/quick-start.html#4-完成第一次-agent-任务']],
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地源码模式linux--macos', linkText: '完整指南中的本地模式' },
+    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#启动成功后'], ['配置模型', '在“系统配置 → 全局默认”中添加任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#2-配置模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'getting-started/quick-start.html#3-完成第一次科研任务']],
     portsTitle: '默认端口', ports: [['4310', '控制 API 与 Web 界面'], ['4311', 'Runner（仅回环地址）']],
     warn: 'ScienceDiscovery 不是多用户生产服务。API、runner 与 gateway 默认只监听回环地址，API 使用单一 bearer token 且不终止 TLS。若要暴露到其他网卡，必须是在可信网络中的明确选择。',
     full: '阅读完整部署指南'
@@ -537,7 +557,10 @@ function docsHome(lang, order) {
   const t = T[lang], dd = t.docs, S = dd.sections;
   const page = 'docs/index.html', pagePath = pathOf(lang, page);
   const card = (k, l) => `<a class="card" href="${rel(pagePath, pathOf(lang, 'docs/' + outPath(k)))}"><h3>${esc(l || titleOf(k, lang))}</h3></a>`;
-  const groups = DOC_GROUPS.map(([group]) => `<h2>${S[group]}</h2><div class="grid">${groupItems(group).map((k) => card(k)).join('')}</div>`).join('');
+  const groupAnchors = lang === 'en'
+    ? { core: 'core-capabilities', domains: 'domain-guides' }
+    : { core: '核心能力', domains: '领域指南' };
+  const groups = DOC_GROUPS.map(([group]) => `<h2 id="${groupAnchors[group] || group}">${S[group]}</h2><div class="grid">${groupItems(group).map((k) => card(k)).join('')}</div>`).join('');
   return head(lang, `${dd.title} — ${t.name}`, pagePath) + `
 <body>
 ${topbar(lang, 'docs', pagePath, other(lang, page))}
