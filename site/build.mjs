@@ -334,19 +334,20 @@ const D = {
     title: 'Deploy ScienceDiscovery', sub: 'Three independent paths. Pick one and do not mix them.',
     tabs: ['Prebuilt binary', 'Docker', 'From source'], recommended: 'Recommended',
     platformsTitle: 'Choose your system and install method',
-    platforms: [['Linux', 'linux', 'x86_64 and aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple Silicon and Intel', ['docker', 'src']], ['Windows', 'windows', 'Docker Desktop with Linux containers', ['docker']]],
-    platformsNote: 'Docker Desktop requires Linux containers with Bubblewrap user namespace support; macOS and Windows setups have not been validated yet.',
+    platforms: [['Linux', 'linux', 'x86_64 and aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple Silicon and Intel', ['docker', 'src']], ['Windows', 'windows', 'WSL 2 Linux or Docker Desktop', [['bin', 'Linux binary · WSL 2'], ['src', 'From source · WSL 2'], ['docker', 'Docker Desktop']]]],
+    platformsNote: 'On Windows, run the Linux binary or source steps inside a WSL 2 distro with Bubblewrap and unprivileged user namespaces. Docker Desktop needs Linux containers with the same sandbox capability. macOS and Windows setups have not been validated yet.',
+    wslGuide: 'Set up WSL 2',
     reqTitle: 'Requirements',
-    bin: { h: 'Prebuilt single-file binary', p: 'For Linux x86_64 and aarch64 only. It embeds Node, Python, the web UI and micromamba, so Bubblewrap is the only host dependency. On macOS, consider Local source mode or Docker Desktop below.',
-      req: [['OS', 'Linux x86_64 or aarch64'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
+    bin: { h: 'Prebuilt single-file binary', p: 'For Linux x86_64 and aarch64, including a Linux distro in WSL 2 on Windows. It embeds Node, Python, the web UI and micromamba; the Linux environment still needs Bubblewrap and unprivileged user namespaces. On macOS, consider Local source mode or Docker Desktop below.',
+      req: [['OS', 'Linux x86_64 or aarch64, including WSL 2'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
       steps: ['Install Bubblewrap.', 'Download the binary for your architecture and make it executable.', 'Start the stack.', 'Open the “Open to sign in” URL printed in the terminal, then verify the API.'],
       code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#prepackaged-single-file-deployment-linux', linkText: 'Binary deployment in the full guide' },
     docker: { h: 'Docker Compose', p: 'One Linux container holds the complete stack. On macOS or Windows, Docker Desktop can provide that container backend when its sandbox capabilities are available.',
       req: [['Host', 'Linux, or macOS/Windows with Docker Desktop Linux containers'], ['Software', 'Docker Engine 24+ with Compose v2, or Docker Desktop'], ['Sandbox', 'Linux container must allow unprivileged user namespaces for Bubblewrap']],
       steps: ['Use a Unix shell (such as WSL 2 on Windows) to clone the repository and prepare the environment file and data directory.', 'Build and start.', 'Read the sign-in URL from the logs and check health.'],
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-deployment-linux', linkText: 'Linux host steps in the full guide' },
-    src: { h: 'Local source mode', p: 'Runs ordinary host processes from a checkout. Best for development and debugging; supported on Linux and macOS.',
-      req: [['Toolchain', 'Node.js 22.19+, pnpm 11.1.2, Python 3, uv 0.9+, Git, curl'], ['Linux sandbox', 'Bubblewrap 0.6+ (0.8+ recommended)'], ['macOS sandbox', 'built-in Seatbelt (/usr/bin/sandbox-exec)']],
+    src: { h: 'Local source mode', p: 'Runs ordinary host processes from a checkout. Best for development and debugging on Linux or macOS; on Windows, run the Linux steps inside WSL 2.',
+      req: [['Toolchain', 'Node.js 22.19+, pnpm 11.1.2, Python 3, uv 0.9+, Git, curl'], ['Linux / WSL 2 sandbox', 'Bubblewrap 0.6+ (0.8+ recommended) and unprivileged user namespaces'], ['macOS sandbox', 'built-in Seatbelt (/usr/bin/sandbox-exec)']],
       steps: ['Clone the repository.', 'Install, build and start every service.', 'Later starts can skip the build.'],
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-source-mode-linux--macos', linkText: 'Local mode in the full guide' },
     after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#after-startup'], ['Configure a model', 'Add a task model under System configuration → Global defaults. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#2-configure-a-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'getting-started/quick-start.html#3-run-your-first-scientific-task']],
@@ -358,19 +359,20 @@ const D = {
     title: '部署 ScienceDiscovery', sub: '三种相互独立的路径，选择其一，不要混用。',
     tabs: ['预编译二进制', 'Docker', '源码运行'], recommended: '推荐',
     platformsTitle: '按系统选择安装方式',
-    platforms: [['Linux', 'linux', 'x86_64 与 aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple 芯片与 Intel', ['docker', 'src']], ['Windows', 'windows', 'Docker Desktop Linux 容器', ['docker']]],
-    platformsNote: 'Docker Desktop 需要 Linux 容器支持 Bubblewrap 用户命名空间；macOS 和 Windows 环境尚未完成实机验证。',
+    platforms: [['Linux', 'linux', 'x86_64 与 aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple 芯片与 Intel', ['docker', 'src']], ['Windows', 'windows', 'WSL 2 Linux 或 Docker Desktop', [['bin', 'Linux 二进制 · WSL 2'], ['src', '源码运行 · WSL 2'], ['docker', 'Docker Desktop']]]],
+    platformsNote: 'Windows 可在 WSL 2 Linux 发行版中按二进制或源码步骤安装，仍需 Bubblewrap 和非特权用户命名空间。Docker Desktop 需要 Linux 容器具备相同的沙箱能力。macOS 和 Windows 环境尚未完成实机验证。',
+    wslGuide: '安装 WSL 2',
     reqTitle: '前置条件',
-    bin: { h: '预编译单文件二进制', p: '仅适用于 Linux x86_64 与 aarch64。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba，宿主机只需安装 Bubblewrap。macOS 可考虑下方的本地源码模式或 Docker Desktop。',
-      req: [['系统', 'Linux x86_64 或 aarch64'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
+    bin: { h: '预编译单文件二进制', p: '适用于 Linux x86_64 与 aarch64，包括 Windows 上的 WSL 2 Linux 发行版。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba；Linux 环境仍需 Bubblewrap 与非特权用户命名空间。macOS 可考虑下方的本地源码模式或 Docker Desktop。',
+      req: [['系统', 'Linux x86_64 或 aarch64，包括 WSL 2'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
       steps: ['安装 Bubblewrap。', '获取对应架构的二进制并赋予可执行权限。', '启动服务。', '打开终端输出中的“Open to sign in”链接，并检查 API。'],
       code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'chmod +x ./ScienceDiscovery-*-linux-x86_64', './ScienceDiscovery-*-linux-x86_64 serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#预编译单文件部署linux', linkText: '完整指南中的二进制部署' },
     docker: { h: 'Docker Compose', p: '一个 Linux 容器包含完整服务栈；macOS 和 Windows 可通过 Docker Desktop 提供容器环境，但仍需满足沙箱能力要求。',
       req: [['宿主系统', 'Linux，或使用 Docker Desktop Linux 容器的 macOS/Windows'], ['软件', 'Docker Engine 24+ 与 Compose v2，或 Docker Desktop'], ['沙箱', 'Linux 容器内需允许 Bubblewrap 使用非特权用户命名空间']],
       steps: ['使用 Unix Shell（Windows 可用 WSL 2）克隆仓库，准备环境文件与数据目录。', '构建并启动。', '从日志读取登录链接并检查健康状态。'],
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git && cd sciencediscovery\ncp .env.docker.example .env\nmkdir -p data', 'docker compose build\ndocker compose up -d', 'docker compose logs | grep "Open to sign in"\ncurl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#docker-部署linux', linkText: '完整指南中的 Linux 宿主机步骤' },
-    src: { h: '本地源码模式', p: '从源码仓库直接运行宿主进程，适合开发与调试；支持 Linux 与 macOS。',
-      req: [['工具链', 'Node.js 22.19+、pnpm 11.1.2、Python 3、uv 0.9+、Git、curl'], ['Linux 沙箱', 'Bubblewrap 0.6+（建议 0.8+）'], ['macOS 沙箱', '系统自带 Seatbelt（/usr/bin/sandbox-exec）']],
+    src: { h: '本地源码模式', p: '从源码仓库直接运行宿主进程，适合在 Linux 或 macOS 开发与调试；Windows 可在 WSL 2 中运行 Linux 步骤。',
+      req: [['工具链', 'Node.js 22.19+、pnpm 11.1.2、Python 3、uv 0.9+、Git、curl'], ['Linux / WSL 2 沙箱', 'Bubblewrap 0.6+（建议 0.8+），需非特权用户命名空间'], ['macOS 沙箱', '系统自带 Seatbelt（/usr/bin/sandbox-exec）']],
       steps: ['克隆仓库。', '安装、构建并启动全部服务。', '之后启动可跳过构建。'],
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地源码模式linux--macos', linkText: '完整指南中的本地模式' },
     after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#启动成功后'], ['配置模型', '在“系统配置 → 全局默认”中添加任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#2-配置模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'getting-started/quick-start.html#3-完成第一次科研任务']],
@@ -465,7 +467,7 @@ function install(lang) {
   const doc = (p) => rel(pagePath, pathOf(lang, 'docs/' + p));
   const modes = [['bin', d.bin, 0], ['docker', d.docker, 1], ['src', d.src, 2]];
   const modeLabels = Object.fromEntries(modes.map(([id, , i]) => [id, d.tabs[i]]));
-  const platforms = d.platforms.map(([name, icon, note, methods]) => `<section class="install-platform"><div class="install-platform-heading"><span class="install-platform-icon">${svg(IC[icon], 22)}</span><div><h3>${name}</h3><p>${note}</p></div></div><div class="install-platform-methods">${methods.map((id) => `<a href="#install-${id}">${modeLabels[id]} <span aria-hidden="true">→</span></a>`).join('')}</div></section>`).join('');
+  const platforms = d.platforms.map(([name, icon, note, methods]) => `<section class="install-platform"><div class="install-platform-heading"><span class="install-platform-icon">${svg(IC[icon], 22)}</span><div><h3>${name}</h3><p>${note}</p></div></div><div class="install-platform-methods">${methods.map((method) => { const [id, label] = Array.isArray(method) ? method : [method, modeLabels[method]]; return `<a href="#install-${id}">${label} <span aria-hidden="true">→</span></a>`; }).join('')}</div></section>`).join('');
   const releaseFiles = RELEASE.binaries.filter((b) => (b.os || OS_OF(b.name)) === 'linux').sort((a, b) => Number(b.arch === 'x86_64') - Number(a.arch === 'x86_64')).map((b) => `<div class="release-file"><a class="file download-file" href="${esc(b.url)}"><span>${dl.download} Linux ${b.arch}</span><small>${svg(IC.download, 18)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`).join('');
   const panels = modes.map(([id, m, i]) => `<details class="install-route" id="install-${id}"${i === 0 ? ' open' : ''}>
 <summary><span><b>${m.h}${i === 0 ? ` <span class="badge blue">${d.recommended}</span>` : ''}</b><small>${m.p}</small></span></summary>
@@ -482,7 +484,7 @@ ${id === 'bin' ? `<div class="release-files">${releaseFiles}</div>` : ''}
 ${topbar(lang, 'install', pagePath, other(lang, page))}
 <main class="deploy install-page">
 <section class="page-head"><h1>${dl.title}</h1><p>${dl.sub}</p></section>
-<nav class="install-platform-nav" aria-label="${d.platformsTitle}"><h2>${d.platformsTitle}</h2><div class="install-platforms">${platforms}</div><p>${d.platformsNote}</p></nav>
+<nav class="install-platform-nav" aria-label="${d.platformsTitle}"><h2>${d.platformsTitle}</h2><div class="install-platforms">${platforms}</div><p>${d.platformsNote} <a href="https://learn.microsoft.com/${lang === 'zh' ? 'zh-cn' : 'en-us'}/windows/wsl/install" target="_blank" rel="noopener">${d.wslGuide} →</a></p></nav>
 ${panels}
 <div class="warn">${d.warn}</div>
 <h2 class="h">${d.after}</h2><div class="grid">${after}</div>
