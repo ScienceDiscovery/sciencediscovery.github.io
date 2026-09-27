@@ -73,7 +73,7 @@ const T = {
       best2: 'best', nodes: 'nodes'
     },
     dl: {
-      title: 'Install ScienceDiscovery', sub: 'Start with the Linux release when it fits your machine, then choose Docker or source mode when it does not.',
+      title: 'Install ScienceDiscovery', sub: 'Choose your system, then jump to the install method that fits your machine.',
       latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you', download: 'Download',
       linux: ['Linux', 'x86_64 and aarch64 · needs bubblewrap'], macos: ['macOS', 'Apple Silicon and Intel · Seatbelt sandbox'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/getting-started/deployment.html',
@@ -143,7 +143,7 @@ const T = {
       best2: '最优', nodes: '节点'
     },
     dl: {
-      title: '安装 ScienceDiscovery', sub: '若你的机器适合 Linux 预编译版本，先从这里开始。其他情况可选择 Docker 或源码模式。',
+      title: '安装 ScienceDiscovery', sub: '选择你的系统，再跳转到适合的安装方式。',
       latest: '最新版本', notes: '发布说明', recommended: '为你推荐', download: '下载',
       linux: ['Linux', 'x86_64 与 aarch64 · 需要 bubblewrap'], macos: ['macOS', 'Apple 芯片与 Intel · Seatbelt 沙箱'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: '暂未发布预编译包', build: '从源码构建', buildLink: 'docs/getting-started/deployment.html',
@@ -333,6 +333,9 @@ const D = {
   en: {
     title: 'Deploy ScienceDiscovery', sub: 'Three independent paths. Pick one and do not mix them.',
     tabs: ['Prebuilt binary', 'Docker', 'From source'], recommended: 'Recommended',
+    platformsTitle: 'Choose your system and install method',
+    platforms: [['Linux', 'linux', 'x86_64 and aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple Silicon and Intel', ['docker', 'src']], ['Windows', 'windows', 'Docker Desktop with Linux containers', ['docker']]],
+    platformsNote: 'Docker Desktop requires Linux containers with Bubblewrap user namespace support; macOS and Windows setups have not been validated yet.',
     reqTitle: 'Requirements',
     bin: { h: 'Prebuilt single-file binary', p: 'For Linux x86_64 and aarch64 only. It embeds Node, Python, the web UI and micromamba, so Bubblewrap is the only host dependency. On macOS, consider Local source mode or Docker Desktop below.',
       req: [['OS', 'Linux x86_64 or aarch64'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
@@ -354,6 +357,9 @@ const D = {
   zh: {
     title: '部署 ScienceDiscovery', sub: '三种相互独立的路径，选择其一，不要混用。',
     tabs: ['预编译二进制', 'Docker', '源码运行'], recommended: '推荐',
+    platformsTitle: '按系统选择安装方式',
+    platforms: [['Linux', 'linux', 'x86_64 与 aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple 芯片与 Intel', ['docker', 'src']], ['Windows', 'windows', 'Docker Desktop Linux 容器', ['docker']]],
+    platformsNote: 'Docker Desktop 需要 Linux 容器支持 Bubblewrap 用户命名空间；macOS 和 Windows 环境尚未完成实机验证。',
     reqTitle: '前置条件',
     bin: { h: '预编译单文件二进制', p: '仅适用于 Linux x86_64 与 aarch64。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba，宿主机只需安装 Bubblewrap。macOS 可考虑下方的本地源码模式或 Docker Desktop。',
       req: [['系统', 'Linux x86_64 或 aarch64'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
@@ -457,8 +463,10 @@ function install(lang) {
   const r = (p) => rel(pagePath, p);
   const doc = (p) => rel(pagePath, pathOf(lang, 'docs/' + p));
   const modes = [['bin', d.bin, 0], ['docker', d.docker, 1], ['src', d.src, 2]];
+  const modeLabels = Object.fromEntries(modes.map(([id, , i]) => [id, d.tabs[i]]));
+  const platforms = d.platforms.map(([name, icon, note, methods]) => `<section class="install-platform"><div class="install-platform-heading"><span class="install-platform-icon">${svg(IC[icon], 22)}</span><div><h3>${name}</h3><p>${note}</p></div></div><div class="install-platform-methods">${methods.map((id) => `<a href="#install-${id}">${modeLabels[id]} <span aria-hidden="true">→</span></a>`).join('')}</div></section>`).join('');
   const releaseFiles = RELEASE.binaries.filter((b) => (b.os || OS_OF(b.name)) === 'linux').sort((a, b) => Number(b.arch === 'x86_64') - Number(a.arch === 'x86_64')).map((b) => `<div class="release-file"><a class="file download-file" href="${esc(b.url)}"><span>${dl.download} Linux ${b.arch}</span><small>${svg(IC.download, 18)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`).join('');
-  const panels = modes.map(([id, m, i]) => `<details class="install-route"${i === 0 ? ' open' : ''}>
+  const panels = modes.map(([id, m, i]) => `<details class="install-route" id="install-${id}"${i === 0 ? ' open' : ''}>
 <summary><span><b>${m.h}${i === 0 ? ` <span class="badge blue">${d.recommended}</span>` : ''}</b><small>${m.p}</small></span></summary>
 <div class="install-route-body">
 <div class="reqs">${m.req.map(([k, v]) => `<div class="req-item"><b>${k.toUpperCase()}</b>${v}</div>`).join('')}</div>
@@ -473,6 +481,7 @@ ${id === 'bin' ? `<div class="release-files">${releaseFiles}</div>` : ''}
 ${topbar(lang, 'install', pagePath, other(lang, page))}
 <main class="deploy install-page">
 <section class="page-head"><h1>${dl.title}</h1><p>${dl.sub}</p></section>
+<nav class="install-platform-nav" aria-label="${d.platformsTitle}"><h2>${d.platformsTitle}</h2><div class="install-platforms">${platforms}</div><p>${d.platformsNote}</p></nav>
 ${panels}
 <div class="warn">${d.warn}</div>
 <h2 class="h">${d.after}</h2><div class="grid">${after}</div>
