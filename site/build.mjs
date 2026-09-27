@@ -521,12 +521,13 @@ function indexDoc(lang, k, title, html) {
 
 function docNav(lang, activeKey) {
   const t = T[lang], S = t.docs.sections;
-  const linkFor = (k, text, fromPath) => `<a href="${rel(fromPath, pathOf(lang, 'docs/' + outPath(k)))}"${k === activeKey ? ' class="active"' : ''}>${esc(text)}</a>`;
+  const groupIcons = { 'getting-started': 'book', core: 'tree', domains: 'flask', 'advanced-setup': 'plug', reference: 'task', 'developer-docs': 'graph' };
+  const linkFor = (k, text, fromPath) => `<a href="${rel(fromPath, pathOf(lang, 'docs/' + outPath(k)))}"${k === activeKey ? ' class="active" aria-current="page"' : ''}>${esc(text)}</a>`;
   return (fromPath) => {
     return DOC_GROUPS.map(([group]) => {
       const keys = groupItems(group);
       const open = keys.includes(activeKey) ? ' open' : '';
-      return `<details${open}><summary>${S[group]}</summary>${keys.map((k) => linkFor(k, titleOf(k, lang), fromPath)).join('')}</details>`;
+      return `<details class="docs-nav-group"${open}><summary><span class="docs-nav-icon">${svg(IC[groupIcons[group]], 18)}</span><span class="docs-nav-title">${esc(S[group])}</span><span class="docs-nav-chevron" aria-hidden="true"></span></summary><div class="docs-nav-links">${keys.map((k) => linkFor(k, titleOf(k, lang), fromPath)).join('')}</div></details>`;
     }).join('');
   };
 }
