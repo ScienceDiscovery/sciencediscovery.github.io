@@ -49,6 +49,7 @@ const T = {
       title: 'Run the Linux release',
       sub: 'For Linux x86_64 with Bubblewrap available. Download the release, then start the local workspace.',
       label: 'Fastest path',
+      download: 'Download Linux x86_64',
       alt: 'Need Docker, macOS, source mode, or another architecture?',
       link: 'See all install options'
     },
@@ -118,6 +119,7 @@ const T = {
       title: '运行 Linux 预编译版',
       sub: '适用于已安装 Bubblewrap 的 Linux x86_64 系统。下载预编译版后即可启动本地工作台。',
       label: '最快方式',
+      download: '下载 Linux x86_64',
       alt: '需要使用 Docker、macOS、源码安装或其他 CPU 架构？',
       link: '查看其他安装方式'
     },
@@ -425,7 +427,7 @@ function home(lang) {
   const r = (p) => rel(pagePath, p);
   const docLink = (k) => rel(pagePath, pathOf(lang, 'docs/' + keyFor(k) + '.html'));
   const binary = RELEASE.binaries.find((b) => (b.os || OS_OF(b.name)) === 'linux' && b.arch === 'x86_64');
-  const command = binary ? [`curl -fL ${binary.url} -o ScienceDiscovery`, 'chmod +x ScienceDiscovery', './ScienceDiscovery serve'].join('\n') : '';
+  const command = binary ? [`chmod +x ./${binary.name}`, `./${binary.name} serve`].join('\n') : '';
   const feats = t.feats.map(([ic, title, text, doc]) => `<a class="card" href="${docLink(doc)}"><div class="ico">${svg(IC[ic], 20)}</div><h3>${title}</h3><p>${text}</p><span class="more">${t.learn}</span></a>`).join('');
   return head(lang, `${t.name} — ${t.tag}`, pagePath, null, ['demo.css']) + `
 <body>
@@ -434,7 +436,7 @@ ${topbar(lang, 'home', pagePath, other(lang, page))}
 <section class="quick-install">
 <span class="eyebrow">${svg(IC.flask, 14)}${t.eyebrow}</span>
 <h1>${t.h1}</h1><p class="lead">${t.lead}</p>
-<div class="quick-command"><div><span class="eyebrow">${t.quickInstall.label}</span><h2>${t.quickInstall.title}</h2><p>${t.quickInstall.sub}</p></div><pre><code>${esc(command)}</code></pre></div>
+<div class="quick-command"><div><span class="eyebrow">${t.quickInstall.label}</span><h2>${t.quickInstall.title}</h2><p>${t.quickInstall.sub}</p>${binary ? `<a class="btn primary quick-download" href="${esc(binary.url)}">${svg(IC.download, 16)}${t.quickInstall.download}</a>` : ''}</div><pre><code>${esc(command)}</code></pre></div>
 <p class="install-alternative">${t.quickInstall.alt} <a href="${r(pathOf(lang, 'install/index.html'))}">${t.quickInstall.link} →</a></p>
 </section>
 <section class="demo-stage"><div class="app" id="demo" aria-label="Interactive product demo"></div><p class="demo-hint">${t.demoHint}</p></section>
