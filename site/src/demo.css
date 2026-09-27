@@ -195,9 +195,9 @@
 .cbar .mdl { display: flex; align-items: center; gap: 6px; }
 .fsel { padding: 4px 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-subtle); color: var(--text-secondary); font-size: 11.5px; white-space: nowrap; }
 .cbar .hint { margin-left: auto; color: var(--text-faint); }
-.run { display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border: 0; border-radius: 9px; background: var(--accent); color: #fff; font-weight: 650; font-size: 13px; cursor: pointer; }
-.run:hover { background: var(--accent-strong); }
-.run:disabled { opacity: .55; cursor: progress; }
+.cbar button.run { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; padding: 8px 16px; border: 0; border-radius: 9px; background: var(--accent); color: #fff; font-weight: 650; font-size: 13px; cursor: pointer; }
+.cbar button.run:hover { background: var(--accent-strong); }
+.cbar button.run:disabled { opacity: .55; cursor: progress; }
 
 /* modal */
 .mask { position: absolute; inset: 38px 0 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: rgba(15, 20, 28, .55); animation: fade .2s ease; }
