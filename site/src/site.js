@@ -136,4 +136,21 @@
     $$('[data-copy]', dl).forEach(function (b) { b.addEventListener('click', function () { copy(b.dataset.copy, b); }); });
   }
 
+  /* ---------------- install routes ---------------- */
+  function openInstallRoute(hash) {
+    var route = document.getElementById(hash.replace(/^#/, ''));
+    if (route && route.matches('details.install-route')) route.open = true;
+    return route;
+  }
+  $$('.install-platform-methods a[href^="#install-"]').forEach(function (link) {
+    link.addEventListener('click', function () { openInstallRoute(link.hash); });
+  });
+  function openHashRoute() {
+    if (location.hash.indexOf('#install-') !== 0) return;
+    var route = openInstallRoute(location.hash);
+    if (route) route.scrollIntoView();
+  }
+  window.addEventListener('hashchange', openHashRoute);
+  openHashRoute();
+
 })();
