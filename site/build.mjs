@@ -74,7 +74,7 @@ const T = {
     },
     dl: {
       title: 'Install ScienceDiscovery', sub: 'Start with the Linux release when it fits your machine, then choose Docker or source mode when it does not.',
-      latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you',
+      latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you', download: 'Download',
       linux: ['Linux', 'x86_64 and aarch64 · needs bubblewrap'], macos: ['macOS', 'Apple Silicon and Intel · Seatbelt sandbox'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/getting-started/deployment.html',
       docker: 'Docker (Linux)', dockerLink: 'docs/getting-started/deployment.html#docker-deployment-linux',
@@ -144,7 +144,7 @@ const T = {
     },
     dl: {
       title: '安装 ScienceDiscovery', sub: '若你的机器适合 Linux 预编译版本，先从这里开始。其他情况可选择 Docker 或源码模式。',
-      latest: '最新版本', notes: '发布说明', recommended: '为你推荐',
+      latest: '最新版本', notes: '发布说明', recommended: '为你推荐', download: '下载',
       linux: ['Linux', 'x86_64 与 aarch64 · 需要 bubblewrap'], macos: ['macOS', 'Apple 芯片与 Intel · Seatbelt 沙箱'], windows: ['Windows', 'Windows 10 / 11 · x64'],
       soon: '暂未发布预编译包', build: '从源码构建', buildLink: 'docs/getting-started/deployment.html',
       docker: 'Docker（Linux）', dockerLink: 'docs/getting-started/deployment.html#docker-部署',
@@ -457,7 +457,7 @@ function install(lang) {
   const r = (p) => rel(pagePath, p);
   const doc = (p) => rel(pagePath, pathOf(lang, 'docs/' + p));
   const modes = [['bin', d.bin, 0], ['docker', d.docker, 1], ['src', d.src, 2]];
-  const releaseFiles = RELEASE.binaries.filter((b) => (b.os || OS_OF(b.name)) === 'linux').map((b) => `<div class="release-file"><a class="file" href="${esc(b.url)}"><span>Linux ${b.arch}</span><small>${svg(IC.download, 14)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`).join('');
+  const releaseFiles = RELEASE.binaries.filter((b) => (b.os || OS_OF(b.name)) === 'linux').sort((a, b) => Number(b.arch === 'x86_64') - Number(a.arch === 'x86_64')).map((b) => `<div class="release-file"><a class="file download-file" href="${esc(b.url)}"><span>${dl.download} Linux ${b.arch}</span><small>${svg(IC.download, 18)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`).join('');
   const panels = modes.map(([id, m, i]) => `<details class="install-route"${i === 0 ? ' open' : ''}>
 <summary><span><b>${m.h}${i === 0 ? ` <span class="badge blue">${d.recommended}</span>` : ''}</b><small>${m.p}</small></span></summary>
 <div class="install-route-body">
