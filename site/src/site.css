@@ -385,6 +385,7 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 .install-route-body { padding: 22px 24px 24px; }
 .install-route-body ol { margin: 20px 0 0; padding-left: 20px; }
 .install-route-body li { margin: 8px 0; }
+.install-step-note { margin: 10px 0 0; }
 .release-files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
 .release-file { min-width: 0; }
 .release-file .download-file { min-height: 52px; padding: 12px 16px; border-color: #1d4ed8; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 700; box-shadow: 0 4px 12px rgba(29, 78, 216, .18); transition: background .15s, box-shadow .15s, transform .15s; }
