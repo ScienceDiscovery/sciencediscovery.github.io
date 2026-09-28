@@ -344,7 +344,6 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 .req-item { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--surface-subtle); font-size: 13px; }
 .req-item b { display: block; margin-bottom: 2px; color: var(--text-strong); font-size: 12px; letter-spacing: .04em; }
 .deploy h2.h { margin: 48px 0 0; color: var(--text-strong); font-size: 22px; letter-spacing: -.015em; }
-.deploy .warn { margin-top: 26px; padding: 12px 16px; border: 1px solid var(--warning-border); border-left-width: 4px; border-radius: var(--radius-m); background: var(--warning-soft); color: var(--warning); font-size: 13.5px; }
 .deploy .grid { margin-top: 18px; }
 .readmore { display: inline-block; margin-top: 8px; font-weight: 600; font-size: 14px; }
 .install-page .page-head { padding-bottom: 26px; }

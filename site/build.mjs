@@ -352,7 +352,6 @@ const D = {
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'scripts/jiuwenswarm.sh setup', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-source-mode-linux--macos', linkText: 'Local mode in the full guide' },
     after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#after-startup'], ['Configure a model', 'Open System settings → Model registry, connect a model provider, then choose a global default task model. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#2-configure-a-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'getting-started/quick-start.html#3-run-your-first-scientific-task']],
     portsTitle: 'Default ports', ports: [['4310', 'Control API and Web UI'], ['4311', 'Runner (loopback only)']],
-    warn: 'ScienceDiscovery is not a multi-user production service. The API, runner and gateway listen on loopback by default and the API uses one bearer token without TLS. Exposing it on another interface must be an explicit choice on a trusted network.',
     full: 'Read the full deployment guide'
   },
   zh: {
@@ -377,7 +376,6 @@ const D = {
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'scripts/jiuwenswarm.sh setup', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地源码模式linux--macos', linkText: '完整指南中的本地模式' },
     after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#启动成功后'], ['配置模型', '打开“系统设置 → 模型注册表”，连接模型服务商，再选择全局默认任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#2-配置模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'getting-started/quick-start.html#3-完成第一次科研任务']],
     portsTitle: '默认端口', ports: [['4310', '控制 API 与 Web 界面'], ['4311', 'Runner（仅回环地址）']],
-    warn: 'ScienceDiscovery 不是多用户生产服务。API、runner 与 gateway 默认只监听回环地址，API 使用单一 bearer token 且不终止 TLS。若要暴露到其他网卡，必须是在可信网络中的明确选择。',
     full: '阅读完整部署指南'
   }
 };
@@ -488,7 +486,6 @@ ${topbar(lang, 'install', pagePath, other(lang, page))}
 <section class="page-head"><h1>${dl.title}</h1><p>${dl.sub}</p></section>
 <nav class="install-platform-nav" aria-label="${d.platformsTitle}"><h2>${d.platformsTitle}</h2><div class="install-platforms">${platforms}</div><p>${d.platformsNote} <a href="https://learn.microsoft.com/${lang === 'zh' ? 'zh-cn' : 'en-us'}/windows/wsl/install" target="_blank" rel="noopener">${d.wslGuide} →</a></p></nav>
 ${panels}
-<div class="warn">${d.warn}</div>
 <h2 class="h">${d.after}</h2><div class="grid">${after}</div>
 <h2 class="h">${d.portsTitle}</h2><div class="reqs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${ports}</div>
 <p class="install-more"><a class="btn" href="${doc('getting-started/deployment.html')}">${svg(IC.book, 16)}${d.full}</a> <a href="${GH}/releases" target="_blank" rel="noopener">${dl.all} →</a></p>
