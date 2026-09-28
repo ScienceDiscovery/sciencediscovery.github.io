@@ -33,12 +33,12 @@ const T = {
     featTitle: 'Built for the whole research loop',
     featSub: 'One local workspace that plans the work, runs it safely, searches for better answers, and remembers where every conclusion came from.',
     feats: [
-      ['flask', 'Sandboxed code exploration', 'Agents write, debug and run Python, R and shell inside a fail-closed Bubblewrap / Seatbelt sandbox with managed scientific environments.', 'core/execution-workspaces', 'Sandbox'],
-      ['tree', 'Idea Tree', 'A self-directed research engine that proposes, designs, independently scores and prunes candidate ideas, then feeds insights back into the next round.', 'core/idea-tree', 'Idea Tree'],
-      ['dna', 'Evolve', 'Improve a program by repeated search: write variants, score each one against your metric, keep what works, and verify on held-out data.', 'core/evolve', 'Evolve'],
-      ['graph', 'Memory graph', 'ScienceMemory records tasks and citations as a clickable graph, so "where did this conclusion come from" always has an answer.', 'core/science-memory-reviewer', 'Memory graph'],
-      ['users', 'Subagents & skills', 'A main agent decomposes complex work and dispatches specialised subagents, drawing on a library of domain skills loaded progressively.', 'core/specialists', 'Subagents'],
-      ['plug', 'Connectors & MCP', 'One-click literature and data connectors, custom MCP servers, PDF extraction and a governed permission and review flow.', 'core/mcp-skills', 'Connectors']
+      ['flask', 'Execution environments & workspaces', 'Run Python, R and shell in a managed, sandboxed environment. Keep code, data and results in a workspace you can inspect.', 'core/execution-workspaces', 'Sandbox'],
+      ['tree', 'Idea Tree', 'Explore candidate research directions, assess their designs in separate steps, and use feedback to refine a plan you can test.', 'core/idea-tree', 'Idea Tree'],
+      ['dna', 'RSI for research artifacts', 'Generate and evaluate variants of a program or other measurable artifact, then check the result on held-out data.', 'core/evolve', 'Evolve'],
+      ['graph', 'ScienceMemory & Reviewer', 'Trace recorded work and evidence through a graph. When enabled, Reviewer flags findings in artifacts that need a closer look.', 'core/science-memory-reviewer', 'Memory graph'],
+      ['users', 'Specialists', 'Call focused research roles for literature, code and evaluation, or create your own with the right instructions, Skills and tools.', 'core/specialists', 'Subagents'],
+      ['plug', 'Scientific MCP & Skills', 'Connect literature, databases and tools through MCP. Reuse research methods for retrieval, analysis and delivery through Skills.', 'core/mcp-skills', 'Connectors']
     ],
     learn: 'Learn more →',
     ctaBoxTitle: 'Run it on your own machine',
@@ -103,12 +103,12 @@ const T = {
     featTitle: '贯穿科研工作的完整闭环',
     featSub: '一个本地工作台，帮你规划任务、安全执行、寻找更优解，并保留每个结论的来处。',
     feats: [
-      ['flask', '在沙箱中编写与运行代码', 'Agent 可在 Bubblewrap / Seatbelt 沙箱内编写、调试和运行 Python、R 与 Shell，科学计算环境由系统统一管理。', 'core/execution-workspaces', '沙箱'],
-      ['tree', 'Idea Tree', '自主研究引擎会提出候选思路、设计实验、独立评分并筛选，再把结果用于下一轮探索。', 'core/idea-tree', 'Idea Tree'],
-      ['dna', 'Evolve 程序演进', '通过反复搜索来改进程序：生成变体、按你的指标逐个评分、保留有效方案，并在留出集上验证。', 'core/evolve', 'Evolve'],
-      ['graph', '记忆图谱', 'ScienceMemory 会把任务和引用记录为可点击的图，让每个结论的来处都有据可查。', 'core/science-memory-reviewer', '记忆图谱'],
-      ['users', '子 Agent 与技能', '主 Agent 会拆解复杂任务，再交给不同专长的子 Agent 协作完成，并按需加载领域技能。', 'core/specialists', '子 Agent'],
-      ['plug', '连接器与 MCP', '快速接入文献和数据连接器，支持自定义 MCP、PDF 抽取，以及可控的权限与评审流程。', 'core/mcp-skills', '连接器']
+      ['flask', '科研执行环境与工作区', '在受管的沙箱环境中运行 Python、R 和 Shell，并在工作区保留代码、数据和结果，方便检查。', 'core/execution-workspaces', '沙箱'],
+      ['tree', 'Idea Tree', '提出多个研究方向，分步设计和评估，再用反馈完善可供检验的方案。', 'core/idea-tree', 'Idea Tree'],
+      ['dna', '科研产物的 RSI', '为程序或其他可评价的产物生成变体、逐个评价，并用留出数据检验结果。', 'core/evolve', 'Evolve'],
+      ['graph', '记忆图谱与 Reviewer', '用图谱追溯已记录的工作和证据。启用 Reviewer 后，还能找出产物中需要进一步核查的问题。', 'core/science-memory-reviewer', '记忆图谱'],
+      ['users', '专业 Specialist', '按任务调用文献、代码和评价等专业角色，也可以结合指令、Skill 和工具创建自己的角色。', 'core/specialists', '子 Agent'],
+      ['plug', '科研 MCP 与 Skill', '通过 MCP 接入文献、数据库和工具，用 Skill 复用检索、分析与交付方法。', 'core/mcp-skills', '连接器']
     ],
     learn: '了解更多 →',
     ctaBoxTitle: '在你自己的机器上运行',
