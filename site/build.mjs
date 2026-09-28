@@ -397,7 +397,8 @@ function head(lang, title, pagePath, desc, extraCss = []) {
 <meta name="description" content="${esc(desc || T[lang].lead.replace(/<[^>]+>/g, ''))}">
 <meta name="google-site-verification" content="Z04-sOshM5D2RBC0A6Vi_SK49QHi3iIlHYwQ2dhywg0" />
 <link rel="icon" href="${r('favicon.svg')}" type="image/svg+xml">
-<link rel="preload" href="${r('fonts/manrope-latin-wght-normal.woff2')}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${r('fonts/newsreader-latin-wght-normal.woff2')}" as="font" type="font/woff2" crossorigin>
+${lang === 'en' && pagePath === 'index.html' ? `<link rel="preload" href="${r('fonts/newsreader-latin-wght-italic.woff2')}" as="font" type="font/woff2" crossorigin>` : ''}
 ${scriptTheme}
 <link rel="stylesheet" href="${r('site.css')}">
 ${extraCss.map((c) => `<link rel="stylesheet" href="${r(c)}">`).join('\n')}
