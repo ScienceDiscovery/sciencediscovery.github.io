@@ -335,22 +335,22 @@ const D = {
     tabs: ['Prebuilt binary', 'Docker', 'From source'], recommended: 'Recommended',
     platformsTitle: 'Choose your system and install method',
     platforms: [['Linux', 'linux', 'x86_64 and aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple Silicon and Intel', ['docker', 'src']], ['Windows', 'windows', 'WSL 2 Linux or Docker Desktop', [['bin', 'Linux binary · WSL 2'], ['src', 'From source · WSL 2'], ['docker', 'Docker Desktop']]]],
-    platformsNote: 'The WSL 2 paths require Bubblewrap and unprivileged user namespaces in the Linux distribution.',
+    platformsNote: 'On Windows, the WSL 2 paths require Bubblewrap and unprivileged user namespaces in the Linux distribution.',
     wslGuide: 'Set up WSL 2',
     reqTitle: 'Requirements',
     bin: { h: 'Prebuilt single-file binary', p: 'For Linux x86_64 and aarch64, including a Linux distro in WSL 2 on Windows. It embeds Node, Python, the web UI and micromamba; the Linux environment still needs Bubblewrap and unprivileged user namespaces. On macOS, consider Local source mode or the Docker path below.',
       req: [['OS', 'Linux x86_64 or aarch64, including WSL 2'], ['Host dependency', 'bubblewrap 0.6+ (unprivileged user namespaces)'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
-      steps: ['Install Bubblewrap with the command for your Linux distribution (use only one).', 'Download the binary for your architecture. In the directory containing it, rename it and make it executable.', 'Start the stack.', 'Open the “Open to sign in” URL printed in the terminal, then verify the API.'],
-      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'mv ScienceDiscovery-<version>-linux-<architecture> ScienceDiscovery\nchmod +x ./ScienceDiscovery', './ScienceDiscovery serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#prepackaged-single-file-deployment-linux', linkText: 'Binary deployment in the full guide' },
+      steps: ['Install Bubblewrap with the command for your Linux distribution (use only one).', 'Download the binary for your architecture, then rename it and make it executable. On Windows, open your WSL 2 Linux terminal (for example, Ubuntu) and run <code>cd ~ && explorer.exe .</code> there. Windows File Explorer opens your Linux home directory; copy the download into it first.', 'Start the stack.', 'Check the service response. Its top-level <code>status</code> should be <code>ok</code>.'],
+      code: [[['Debian / Ubuntu', 'sudo apt-get install -y bubblewrap'], ['Fedora / RHEL / openEuler', 'sudo dnf install -y bubblewrap']], 'mv ScienceDiscovery-<version>-linux-<architecture> ScienceDiscovery\nchmod +x ./ScienceDiscovery', './ScienceDiscovery serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#prepackaged-single-file-deployment-linux', linkText: 'Binary deployment in the full guide' },
     docker: { h: 'Docker Compose', p: 'Run the complete stack in a Linux container.',
-      req: [['Host', 'Linux, macOS with Docker Desktop or a working Docker engine, or Windows with Docker Desktop'], ['Software', 'Docker Engine 24+ with Compose v2, or Docker Desktop using Linux containers'], ['Sandbox', 'Linux container must allow unprivileged user namespaces for Bubblewrap']],
-      steps: ['Clone the repository and enter it.', 'Prepare <code>.env</code> and <code>data/</code>.<p class="install-step-note"><strong>Windows (PowerShell):</strong> copy <code>.env.docker.example</code> to <code>.env</code> and create <code>data/</code> in the repository root.</p><p class="install-step-note"><strong>Linux / macOS (Unix shell):</strong> run the commands below. If your uid/gid differs from 1000, update <code>SCIENCE_AGENT_UID</code> and <code>SCIENCE_AGENT_GID</code> in <code>.env</code>.</p>', 'Build and start.', 'Check the service and find the “Open to sign in” URL in the logs.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'cp .env.docker.example .env\nmkdir -p data\nid -u\nid -g', 'docker compose build\ndocker compose up -d', 'docker compose ps\ndocker compose logs -f'], link: 'getting-started/deployment.html#docker-deployment-linux-containers', linkText: 'Docker deployment in the full guide' },
+      req: [['Host', 'Linux, macOS with Docker Desktop or a working Docker engine, or Windows with Docker Desktop'], ['Software', 'Docker Engine 24+ with Compose v2.15+, or Docker Desktop using Linux containers'], ['Sandbox', 'Linux container must allow unprivileged user namespaces for Bubblewrap']],
+      steps: ['Clone the repository and enter it.', 'Prepare <code>.env</code> and <code>data/</code>. On Linux / macOS, set <code>SCIENCE_AGENT_UID</code> and <code>SCIENCE_AGENT_GID</code> in <code>.env</code> if your ids differ from 1000. On Windows, start with the default ids; if <code>data/</code> is unwritable, see the troubleshooting guide below.', 'Build and start.', 'Check the service response and find the “Open to sign in” URL in the logs.'],
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', [['Linux / macOS · Unix shell', 'cp .env.docker.example .env\nmkdir -p data\nid -u\nid -g'], ['Windows · PowerShell', 'Copy-Item .env.docker.example .env\nNew-Item -ItemType Directory -Force data']], 'docker compose build\ndocker compose up -d', 'docker compose ps\ndocker compose exec sciencediscovery curl -fsS http://127.0.0.1:4310/health\ndocker compose logs --tail=100 sciencediscovery'], link: 'getting-started/deployment.html#docker-deployment-linux-containers', linkText: 'Docker deployment and troubleshooting' },
     src: { h: 'Local source mode', p: 'Runs ordinary host processes from a checkout. Best for development and debugging on Linux or macOS; on Windows, run the Linux steps inside WSL 2.',
       req: [['Toolchain', 'Node.js 22.19+, pnpm 11.1.2, Python 3, uv 0.9+, Git, curl'], ['Linux / WSL 2 sandbox', 'Bubblewrap 0.6+ (0.8+ recommended) and unprivileged user namespaces'], ['macOS sandbox', 'built-in Seatbelt (/usr/bin/sandbox-exec)']],
-      steps: ['Clone the repository.', 'Set up JiuwenSwarm once.', 'Install, build and start every service.', 'Later starts can skip the build.'],
+      steps: ['Clone the repository. On Windows, run <code>cd ~</code> inside WSL 2 first and keep the checkout out of <code>/mnt/c</code>.', 'Set up JiuwenSwarm once.', 'Install, build and start every service.', 'Later starts can skip the build.'],
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'scripts/jiuwenswarm.sh setup', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-source-mode-linux--macos', linkText: 'Local mode in the full guide' },
-    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#after-startup'], ['Configure a model', 'Open System settings → Model registry, connect a model provider, then choose a global default task model. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#2-configure-a-model'], ['Run a first task', 'Submit a scientific task and follow the results in the workspace.', 'getting-started/quick-start.html#3-run-your-first-scientific-task']],
+    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#after-startup'], ['Configure a model', 'Open System settings → Model registry, connect a model provider, then choose a global default task model. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#2-configure-a-model'], ['Run a first task', 'Run a task that executes code, then check its result. Quick Start provides a Python example and a checklist.', 'getting-started/quick-start.html#3-run-your-first-scientific-task']],
     portsTitle: 'Default ports', ports: [['4310', 'Control API and Web UI'], ['4311', 'Runner (loopback only)']],
     full: 'Read the full deployment guide'
   },
@@ -359,22 +359,22 @@ const D = {
     tabs: ['预编译二进制', 'Docker', '源码运行'], recommended: '推荐',
     platformsTitle: '按系统选择安装方式',
     platforms: [['Linux', 'linux', 'x86_64 与 aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple 芯片与 Intel', ['docker', 'src']], ['Windows', 'windows', 'WSL 2 Linux 或 Docker Desktop', [['bin', 'Linux 二进制 · WSL 2'], ['src', '源码运行 · WSL 2'], ['docker', 'Docker Desktop']]]],
-    platformsNote: 'WSL 2 路径需要在 Linux 发行版中安装 Bubblewrap，并确保可使用非特权用户命名空间。',
+    platformsNote: 'Windows 用户使用 WSL 2 路径时，需在 Linux 发行版中安装 Bubblewrap，并确保可使用非特权用户命名空间。',
     wslGuide: '安装 WSL 2',
     reqTitle: '前置条件',
     bin: { h: '预编译单文件二进制', p: '适用于 Linux x86_64 与 aarch64，包括 Windows 上的 WSL 2 Linux 发行版。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba；Linux 环境仍需 Bubblewrap 与非特权用户命名空间。macOS 可考虑下方的本地源码模式或 Docker 路径。',
       req: [['系统', 'Linux x86_64 或 aarch64，包括 WSL 2'], ['宿主依赖', 'bubblewrap 0.6+（需非特权用户命名空间）'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
-      steps: ['按自己的 Linux 发行版安装 Bubblewrap，两条命令只需执行其一。', '下载对应架构的二进制，在文件所在目录重命名并赋予可执行权限。', '启动服务。', '打开终端输出中的“Open to sign in”链接，并检查 API。'],
-      code: ['sudo apt-get install -y bubblewrap   # Debian / Ubuntu\nsudo dnf install -y bubblewrap       # Fedora / RHEL / openEuler', 'mv ScienceDiscovery-<version>-linux-<architecture> ScienceDiscovery\nchmod +x ./ScienceDiscovery', './ScienceDiscovery serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#预编译单文件部署linux', linkText: '完整指南中的二进制部署' },
+      steps: ['按自己的 Linux 发行版安装 Bubblewrap，两条命令只需执行其一。', '下载对应架构的二进制，重命名并赋予可执行权限。Windows 用户先打开 WSL 2 的 Linux 终端（例如 Ubuntu），在其中运行 <code>cd ~ && explorer.exe .</code>。Windows 文件资源管理器会打开 Linux 用户主目录，先将下载文件复制进去。', '启动服务。', '检查服务响应，顶层 <code>status</code> 应为 <code>ok</code>。'],
+      code: [[['Debian / Ubuntu', 'sudo apt-get install -y bubblewrap'], ['Fedora / RHEL / openEuler', 'sudo dnf install -y bubblewrap']], 'mv ScienceDiscovery-<version>-linux-<architecture> ScienceDiscovery\nchmod +x ./ScienceDiscovery', './ScienceDiscovery serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#预编译单文件部署linux', linkText: '完整指南中的二进制部署' },
     docker: { h: 'Docker Compose', p: '在 Linux 容器中运行完整服务栈。',
-      req: [['宿主系统', 'Linux；macOS 使用 Docker Desktop 或可用的 Docker 引擎；Windows 使用 Docker Desktop'], ['软件', 'Docker Engine 24+ 与 Compose v2，或使用 Linux 容器模式的 Docker Desktop'], ['沙箱', 'Linux 容器内需允许 Bubblewrap 使用非特权用户命名空间']],
-      steps: ['克隆仓库并进入仓库目录。', '准备 <code>.env</code> 和 <code>data/</code>。<p class="install-step-note"><strong>Windows（PowerShell）：</strong>在仓库根目录将 <code>.env.docker.example</code> 复制为 <code>.env</code>，并创建 <code>data/</code>。</p><p class="install-step-note"><strong>Linux / macOS（Unix Shell）：</strong>执行下方命令；若 uid/gid 不为 1000，先在 <code>.env</code> 中修改 <code>SCIENCE_AGENT_UID</code> 和 <code>SCIENCE_AGENT_GID</code>。</p>', '构建并启动。', '检查服务状态，并从日志中找到“Open to sign in”链接。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'cp .env.docker.example .env\nmkdir -p data\nid -u\nid -g', 'docker compose build\ndocker compose up -d', 'docker compose ps\ndocker compose logs -f'], link: 'getting-started/deployment.html#docker-部署linux-容器', linkText: '完整指南中的 Docker 部署' },
+      req: [['宿主系统', 'Linux；macOS 使用 Docker Desktop 或可用的 Docker 引擎；Windows 使用 Docker Desktop'], ['软件', 'Docker Engine 24+ 与 Compose v2.15+，或使用 Linux 容器模式的 Docker Desktop'], ['沙箱', 'Linux 容器内需允许 Bubblewrap 使用非特权用户命名空间']],
+      steps: ['克隆仓库并进入仓库目录。', '准备 <code>.env</code> 和 <code>data/</code>。Linux / macOS 用户若 uid/gid 不为 1000，需在 <code>.env</code> 中设置 <code>SCIENCE_AGENT_UID</code> 和 <code>SCIENCE_AGENT_GID</code>；Windows 用户先使用默认值，若 <code>data/</code> 不可写，请查看下方排障指南。', '构建并启动。', '检查服务响应，从日志中找到“Open to sign in”链接。'],
+      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', [['Linux / macOS · Unix Shell', 'cp .env.docker.example .env\nmkdir -p data\nid -u\nid -g'], ['Windows · PowerShell', 'Copy-Item .env.docker.example .env\nNew-Item -ItemType Directory -Force data']], 'docker compose build\ndocker compose up -d', 'docker compose ps\ndocker compose exec sciencediscovery curl -fsS http://127.0.0.1:4310/health\ndocker compose logs --tail=100 sciencediscovery'], link: 'getting-started/deployment.html#docker-部署linux-容器', linkText: '完整 Docker 部署与排障指南' },
     src: { h: '本地源码模式', p: '从源码仓库直接运行宿主进程，适合在 Linux 或 macOS 开发与调试；Windows 可在 WSL 2 中运行 Linux 步骤。',
       req: [['工具链', 'Node.js 22.19+、pnpm 11.1.2、Python 3、uv 0.9+、Git、curl'], ['Linux / WSL 2 沙箱', 'Bubblewrap 0.6+（建议 0.8+），需非特权用户命名空间'], ['macOS 沙箱', '系统自带 Seatbelt（/usr/bin/sandbox-exec）']],
-      steps: ['克隆仓库。', '首次运行前安装 JiuwenSwarm。', '安装、构建并启动全部服务。', '之后启动可跳过构建。'],
+      steps: ['克隆仓库。Windows 用户请先在 WSL 2 内运行 <code>cd ~</code>，再执行这些 Linux 命令，不要将仓库放在 <code>/mnt/c</code>。', '首次运行前安装 JiuwenSwarm。', '安装、构建并启动全部服务。', '之后启动可跳过构建。'],
       code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'scripts/jiuwenswarm.sh setup', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地源码模式linux--macos', linkText: '完整指南中的本地模式' },
-    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#启动成功后'], ['配置模型', '打开“系统设置 → 模型注册表”，连接模型服务商，再选择全局默认任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#2-配置模型'], ['运行第一个任务', '提交一个科研任务，并在工作区查看结果。', 'getting-started/quick-start.html#3-完成第一次科研任务']],
+    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#启动成功后'], ['配置模型', '打开“系统设置 → 模型注册表”，连接模型服务商，再选择全局默认任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#2-配置模型'], ['运行第一个任务', '运行一个实际执行代码的任务，再检查其结果。快速开始提供了 Python 示例和检查清单。', 'getting-started/quick-start.html#3-完成第一次科研任务']],
     portsTitle: '默认端口', ports: [['4310', '控制 API 与 Web 界面'], ['4311', 'Runner（仅回环地址）']],
     full: '阅读完整部署指南'
   }
@@ -460,6 +460,14 @@ ${footer(lang, pagePath)}
 }
 
 // ---------------------------------------------------------------- install
+function installStep(step, code) {
+  const blocks = Array.isArray(code) ? code : [['', code || '']];
+  const snippets = blocks.map(([label, snippet]) =>
+    `${label ? `<p class="install-step-note"><strong>${label}</strong></p>` : ''}<pre><code>${esc(snippet)}</code></pre>`
+  ).join('');
+  return `<li>${step}${snippets}</li>`;
+}
+
 function install(lang) {
   const t = T[lang], d = D[lang], dl = t.dl;
   const page = 'install/index.html', pagePath = pathOf(lang, page);
@@ -474,7 +482,7 @@ function install(lang) {
 <div class="install-route-body">
 <div class="reqs">${m.req.map(([k, v]) => `<div class="req-item"><b>${k.toUpperCase()}</b>${v}</div>`).join('')}</div>
 ${id === 'bin' ? `<div class="release-files">${releaseFiles}</div>` : ''}
-<ol>${m.steps.map((s, k) => `<li>${s}<pre><code>${esc(m.code[k] || '')}</code></pre></li>`).join('')}</ol>
+<ol>${m.steps.map((step, k) => installStep(step, m.code[k])).join('')}</ol>
 <a class="readmore" href="${doc(m.link)}">${m.linkText} →</a>
 </div></details>`).join('');
   const after = d.afterCards.map(([h, p, l]) => `<a class="card" href="${doc(l)}"><h3>${h}</h3><p>${p}</p></a>`).join('');
