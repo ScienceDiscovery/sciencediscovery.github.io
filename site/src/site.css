@@ -354,11 +354,13 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 .install-platform-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
 .install-platform-icon { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 11px; background: var(--accent-softer); color: var(--accent-deep); }
 .install-platform h3 { margin: 0; color: var(--text-strong); font-size: 19px; line-height: 1.3; letter-spacing: -.03em; }
+.install-experimental { display: inline-block; margin-left: 5px; padding: 2px 7px; border: 1px solid var(--warning-border); border-radius: var(--radius-pill); background: var(--warning-soft); color: var(--warning); font-size: 10px; font-weight: 700; line-height: 1.3; letter-spacing: 0; vertical-align: middle; white-space: nowrap; }
 .install-platform-heading p { margin: 2px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
 .install-platform-methods { display: grid; gap: 8px; }
 .install-platform-methods a { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 39px; padding: 7px 11px; border: 1px solid var(--border); border-radius: var(--radius-m); background: var(--surface-subtle); color: var(--text-heading); font-size: 13px; font-weight: 600; }
 .install-platform-methods a:hover, .install-platform-methods a:focus-visible { border-color: var(--accent-border-soft); background: var(--accent-soft); color: var(--accent-deep); text-decoration: none; }
 .install-platform-nav > p { margin: 12px 0 0; color: var(--muted); font-size: 13px; }
+.install-platform-nav > p + p { margin-top: 5px; }
 .install-route { margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius-l); background: var(--surface); box-shadow: var(--shadow-1); }
 .install-route summary { display: flex; align-items: center; gap: 10px; padding: 22px 24px; color: var(--text-strong); cursor: pointer; }
 .install-route summary:hover { background: var(--surface-subtle); }
