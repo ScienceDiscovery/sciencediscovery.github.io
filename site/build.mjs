@@ -28,7 +28,8 @@ const T = {
     h1: 'The AI workspace for <em>scientific research</em>',
     lead: 'From literature review and hypotheses to code, experiments and tuning — plan, execute, evolve and trace every result in one sandboxed environment.',
     ctaInstall: 'Install', ctaDocs: 'Read the docs', ctaGh: 'View on GitHub',
-    demoHint: 'Try the interface: click a node, replay a run, or switch views.',
+    demoHint: 'This demo uses preset workflows and sample data, not a live research task. '
+      + 'Click nodes, replay, or switch views.',
     demoUrl: '127.0.0.1:4310',
     featTitle: 'Built for the whole research loop',
     featSub: 'One local workspace that plans the work, runs it safely, searches for better answers, and remembers where every conclusion came from.',
@@ -98,7 +99,8 @@ const T = {
     h1: '面向<em>科学研究</em>的 AI 工作台',
     lead: '从文献调研和提出假设，到编写代码、开展实验和调参，都能在同一个沙箱环境里完成规划、执行、迭代，并追溯每一项结果。',
     ctaInstall: '安装', ctaDocs: '阅读文档', ctaGh: '在 GitHub 查看',
-    demoHint: '这个界面支持交互操作：点击节点、重放运行，或切换视图。',
+    demoHint: '这是使用预设流程与示例数据的交互演示，不对应运行中的科研任务。'
+      + '可点击节点、重放或切换视图。',
     demoUrl: '127.0.0.1:4310',
     featTitle: '贯穿科研工作的完整闭环',
     featSub: '一个本地工作台，帮你规划任务、安全执行、寻找更优解，并保留每个结论的来处。',
