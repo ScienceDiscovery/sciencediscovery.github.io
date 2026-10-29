@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 const dist = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'dist')
 const port = Number(process.env.PORT || 4173)
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg' }
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.pdb': 'chemical/x-pdb' }
 if (!existsSync(dist)) throw new Error('dist/ is missing. Run `npm run build` first.')
 createServer((req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://x').pathname)

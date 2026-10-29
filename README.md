@@ -1,10 +1,10 @@
 # ScienceDiscovery website
 
-The public website at <https://sciencediscovery.github.io/> has an interactive product demo, the bilingual user documentation with full-text search, a deployment guide, and downloads.
+The public website at <https://sciencediscovery.github.io/> opens with a product screen recording, then the four headline capabilities, the bilingual user documentation with full-text search, a deployment guide, and downloads.
 
 | Page | Source |
 |---|---|
-| Home (interactive demo, features) | `site/build.mjs`, `site/src/demo.js`, `site/src/viz.js` |
+| Home (screen recording, four capabilities) | `site/build.mjs`, `site/src/site.css`, `site/src/media/ScienceDiscovery.mp4` |
 | Documentation (with search) | rendered from the product repository's `docs/en` and `docs/zh` |
 | Install (binary, Docker, source) | `site/build.mjs` (`D` strings) |
 | Linux release assets | `release.json` |
@@ -23,9 +23,11 @@ npm run serve   # http://127.0.0.1:4173/ (refuses to pick another port)
 
 `npm run dev` rebuilds and then serves. There is no runtime dependency on a CDN or an API.
 
-### Interactive demo
+### Homepage video
 
-`site/src/demo.js` replays seven scripted sessions in a replica of the product shell: literature survey, Idea Tree, Evolve, memory graph, protein pocket, crystal structure and differential expression. `site/src/viz.js` contains a small canvas 3D renderer (protein ribbon and ligand, perovskite supercell with octahedra) and the SVG plots (volcano, heatmap, XRD). All structures and data are generated locally and are illustrative, not experimental results.
+The recording sits in the middle of the homepage and starts on its own: `autoplay muted loop playsinline`, with controls so a visitor can turn the sound on. Safari and Chrome only autoplay muted video, so the `muted` attribute is load-bearing, not cosmetic. The file lives in `site/src/media/` and is copied to `dist/media/`; replace `ScienceDiscovery.mp4` to update the recording.
+
+Typography uses Microsoft YaHei first on every page, including headings, with the bundled Manrope and Source Serif 4 webfonts kept as fallbacks for machines without it.
 
 ### Search
 

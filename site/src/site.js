@@ -21,6 +21,14 @@
     });
   } catch (e) { /* older browsers */ }
 
+  /* ---------------- language ---------------- */
+  /* The root page sends Chinese-reading visitors to /zh/ on their own, so an explicit switch has to
+     outrank the browser language from then on. The link's hreflang is the language it goes to. */
+  var langSwitch = $('.lang-switch');
+  if (langSwitch) langSwitch.addEventListener('click', function () {
+    try { localStorage.setItem('sd-lang', langSwitch.getAttribute('hreflang')); } catch (e) { /* private mode */ }
+  });
+
   /* ---------------- search ---------------- */
   var btn = $('.search-btn');
   if (btn) {
@@ -113,7 +121,7 @@
     var done = lang === 'zh' ? '已复制' : 'Copied', orig = b.textContent;
     (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { b.textContent = done; setTimeout(function () { b.textContent = orig; }, 1400); }, function () {});
   }
-  $$('.article pre, .install-route pre, .quick-command pre, .steps pre').forEach(function (pre) {
+  $$('.article pre, .install-route pre, .steps pre').forEach(function (pre) {
     var code = $('code', pre); if (!code) return;
     pre.style.position = 'relative';
     var b = document.createElement('button'); b.type = 'button'; b.textContent = lang === 'zh' ? '复制' : 'Copy';
@@ -134,23 +142,76 @@
     var card = $('[data-os="' + os + '"]', dl), tag = $('#recommend-tag');
     if (card) { card.classList.add('recommended'); if (tag) { $('h3', card).appendChild(tag); tag.classList.remove('hidden'); } }
     $$('[data-copy]', dl).forEach(function (b) { b.addEventListener('click', function () { copy(b.dataset.copy, b); }); });
+    /* The cards above are the platform picker the download button unfolds beneath itself. The class
+       drives the slide-and-fade in both directions, and Escape or a click outside folds it back. */
+    var openBtn = $('[data-download-open]'), panel = $('#download-panel');
+    if (openBtn && panel) {
+      var isOpen = function () { return panel.classList.contains('open'); };
+      var setOpen = function (on) {
+        panel.classList.toggle('open', on);
+        openBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      };
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen()) setOpen(false); });
+      document.addEventListener('click', function (e) { if (isOpen() && !panel.contains(e.target) && !openBtn.contains(e.target)) setOpen(false); });
+    }
   }
 
-  /* ---------------- install routes ---------------- */
-  function openInstallRoute(hash) {
-    var route = document.getElementById(hash.replace(/^#/, ''));
-    if (route && route.matches('details.install-route')) route.open = true;
-    return route;
+  /* ---------------- structure viewer ---------------- */
+  // The 3D view is a real Mol* viewer, not a picture. The bundle is ~5 MB and the structure file
+  // another 300 KB, so both are fetched the first time a reader opens one and never on page load.
+  function loadCss(href) {
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
   }
-  $$('.install-platform-methods a[href^="#install-"]').forEach(function (link) {
-    link.addEventListener('click', function () { openInstallRoute(link.hash); });
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+  $$('[data-viewer]').forEach(function (button) {
+    var dialog = document.getElementById(button.dataset.viewer);
+    if (!dialog) return;
+    var stage = $('.viewer-stage', dialog);
+    var message = stage ? $('.viewer-msg', stage) : null;
+    var started = false;
+    button.addEventListener('click', function () {
+      dialog.showModal();
+      // Panels that hold a still image (an Evolve run) have nothing to initialise.
+      if (!stage || started) return;
+      started = true;
+      loadCss(stage.dataset.viewerCss);
+      loadScript(stage.dataset.viewerLib)
+        .then(function () {
+          // layoutIsExpanded keeps the viewer inside its container: the expanded layout pins
+          // itself to the viewport and would cover the dialog's own header and close button.
+          return molstar.Viewer.create(stage, {
+            layoutIsExpanded: false, layoutShowLog: false,
+            layoutShowRemoteState: false,
+            viewportShowExpand: true, viewportShowSettings: true,
+            viewportShowSelectionMode: true, viewportShowTrajectoryControls: false
+          });
+        })
+        .then(function (viewer) { return viewer.loadStructureFromUrl(stage.dataset.viewerSrc, 'pdb'); })
+        .then(function () { if (message) message.remove(); })
+        .catch(function () {
+          started = false;
+          message.textContent = stage.dataset.viewerError;
+        });
+    });
+    $('[data-close]', dialog).addEventListener('click', function () { dialog.close(); });
+    // Mol* binds Escape for its own shortcuts, so the dialog gets its own way out rather than
+    // relying on the browser's cancel behaviour.
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && dialog.open) dialog.close(); });
+    // Clicking the backdrop is the third way out, after the button and Escape. The dialog itself
+    // is the target there, because its children fill every pixel.
+    dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
   });
-  function openHashRoute() {
-    if (location.hash.indexOf('#install-') !== 0) return;
-    var route = openInstallRoute(location.hash);
-    if (route) route.scrollIntoView();
-  }
-  window.addEventListener('hashchange', openHashRoute);
-  openHashRoute();
 
 })();

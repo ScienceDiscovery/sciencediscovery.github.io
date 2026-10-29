@@ -10,6 +10,8 @@ on:
     - cron: '17 */6 * * *'
 permissions:
   contents: read
+  pages: write
+  id-token: write
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
@@ -19,9 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       # ./docs is a symlink to this checkout of the product repository's docs.
+      # Read the fork this site is maintained against, so documentation edits here go live
+      # without waiting on an upstream merge.
       - uses: actions/checkout@v5
         with:
-          repository: openJiuwen-ai/sciencediscovery
+          repository: nanzhaogang/sciencediscovery
           ref: main
           path: sciencediscovery
           sparse-checkout: docs
@@ -29,8 +33,17 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Reads the Pages site this repository deploys to, so the sitemap and robots.txt match it:
+      # <owner>.github.io when the repository is an owner site, otherwise its project path. Only the
+      # main-branch run deploys, and the Pages site has to exist already: enabling it needs a token
+      # with administration/pages write, which GITHUB_TOKEN cannot provide.
+      - id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v6
       - run: npm ci
       - run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
