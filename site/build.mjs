@@ -12,77 +12,128 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
 const DOCS = join(ROOT, 'docs');
 const DIST = join(ROOT, 'dist');
+// Pins the homepage downloads to the newest published release, so what visitors get by default is
+// the version release.json names, and every file comes with its checksum.
 const RELEASE = JSON.parse(readFileSync(join(ROOT, 'release.json'), 'utf8'));
 const REPO = process.env.SITE_REPO || 'openJiuwen-ai/sciencediscovery';
 const BRANCH = process.env.SITE_BRANCH || 'main';
 const GH = `https://github.com/${REPO}`;
 const LANGS = ['en', 'zh'];
 
+// The opening block of 1ATP.pdb, shared by both languages: the left column's "file" folds open
+// to the raw record, so the record itself has to be the real one.
+const PDB_HEAD = [
+  'HEADER    TRANSFERASE(PHOSPHOTRANSFERASE)         08-JAN-93   1ATP',
+  'TITLE     2.2 ANGSTROM REFINED CRYSTAL STRUCTURE OF THE CATALYTIC SUBUNIT OF',
+  'TITLE    2 CAMP-DEPENDENT PROTEIN KINASE COMPLEXED WITH MNATP AND A PEPTIDE',
+  'TITLE    3 INHIBITOR',
+  'COMPND    MOL_ID: 1;',
+  'COMPND   2 MOLECULE: CAMP-DEPENDENT PROTEIN KINASE;',
+  'COMPND   3 CHAIN: E;',
+  'COMPND   4 EC: 2.7.1.37;',
+  'COMPND   5 ENGINEERED: YES;',
+  'COMPND   6 MOL_ID: 2;',
+  'COMPND   7 MOLECULE: PEPTIDE INHIBITOR PKI(5-24);',
+  'COMPND   8 CHAIN: I;',
+  'COMPND   9 ENGINEERED: YES',
+  'SOURCE    MOL_ID: 1;',
+].join('\n');
+
 // ---------------------------------------------------------------- i18n
 const T = {
   en: {
     name: 'ScienceDiscovery', tag: 'AI research workspace',
-    nav: { home: 'Home', docs: 'Documentation', install: 'Install' },
+    nav: { home: 'Home', docs: 'Documentation' },
     langLabel: '中文',
-    eyebrow: 'Open source · Apache-2.0',
-    h1: 'The AI workspace for <em>scientific research</em>',
-    lead: 'From literature review and hypotheses to code, experiments and tuning — plan, execute, evolve and trace every result in one sandboxed environment.',
-    ctaInstall: 'Install', ctaDocs: 'Read the docs', ctaGh: 'View on GitHub',
-    demoHint: 'This demo uses preset workflows and sample data, not a live research task. '
-      + 'Click nodes, replay, or switch views.',
-    demoUrl: '127.0.0.1:4310',
-    featTitle: 'Built for the whole research loop',
-    featSub: 'One local workspace that plans the work, runs it safely, searches for better answers, and remembers where every conclusion came from.',
+    eyebrow: 'Open source · Apache-2.0 · Runs on your machine',
+    h1: '<span class="h1-brand"><span class="h1-initial">S</span>cience<span class="h1-initial">D</span>iscovery</span><span class="h1-slogan">Your <em>all-in-one</em> AI research workspace</span>',
+    lead: 'Papers, code, experiments, conclusions — all in one AI workspace instead of a dozen tools, and every conclusion and every number keeps a traceable record of the data, code and run behind it.',
+    ctaDownload: 'Download ScienceDiscovery', ctaGh: 'View on GitHub',
+    videoLabel: 'ScienceDiscovery screen recording',
+    avatarUser: 'You',
+    avatarAgent: 'Agent',
+    avatarSd: 'SD',
+    close: 'Close',
+    filesMore: 'More files below',
+    chatPlain: 'Generic agent',
+    chatSd: 'ScienceDiscovery',
     feats: [
-      ['flask', 'Execution environments & workspaces', 'Run Python, R and shell in a managed, sandboxed environment. Keep code, data and results in a workspace you can inspect.', 'core/execution-workspaces', 'Sandbox'],
-      ['tree', 'Idea Tree', 'Explore candidate research directions, assess their designs in separate steps, and use feedback to refine a plan you can test.', 'core/idea-tree', 'Idea Tree'],
-      ['dna', 'RSI for research artifacts', 'Generate and evaluate variants of a program or other measurable artifact, then check the result on held-out data.', 'core/evolve', 'Evolve'],
-      ['graph', 'ScienceMemory & Reviewer', 'Trace recorded work and evidence through a graph. When enabled, Reviewer flags findings in artifacts that need a closer look.', 'core/science-memory-reviewer', 'Memory graph'],
-      ['users', 'Specialists', 'Call focused research roles for literature, code and evaluation, or create your own with the right instructions, Skills and tools.', 'core/specialists', 'Subagents'],
-      ['plug', 'Scientific MCP & Skills', 'Connect literature, databases and tools through MCP. Reuse research methods for retrieval, analysis and delivery through Skills.', 'core/mcp-skills', 'Connectors']
+      {
+        ic: 'plug', tag: 'Scientific MCP', doc: 'core/mcp-skills',
+        title: 'One place to manage your scattered research tools',
+        text: '<strong>Scientific MCP</strong> retrieves and downloads papers and data for you: no code to write, no API keys to wire up, no hopping between a dozen websites. Say what you need and the files land in your workspace.',
+        ask: 'Find recent work on additives that improve perovskite stability, and grab the related crystal structures while you are at it.',
+        plain: 'I will write some Python against the PubMed E-utilities API, or query the endpoints one by one with curl.',
+        plain2: 'Writing the Python script',
+        sd: 'PubMed MCP tools returned 63 papers; 9 survived relevance and citation screening and are saved in /workspace/lit/. Three structures came back from the PDB. Want a table of the additive families behind those 9 papers?',
+        files: ['zhang2024_perovskite.pdf', 'liu2025_additives.pdf', '1ATP.pdb']
+      }, {
+        ic: 'dna', tag: 'Protein structures', doc: 'domains/antibody-design',
+        title: 'View protein 3D structures',
+        text: 'Drop a PDB file into the workspace and the artifact preview opens an interactive 3D structure in one click: rotate, zoom, a sequence panel, with protein, pocket and ligand atoms coloured automatically by layer.',
+        ask: 'Please fetch the 1ATP file from RCSB PDB.',
+        plain: '<p>Downloaded 1ATP from RCSB PDB.</p>'
+          + '<p>Source: <code>https://files.rcsb.org/download/1ATP.pdb</code><br>Saved to: 1ATP.pdb (current working directory)</p>'
+          + '<p>File check and summary</p>'
+          + '<table><tbody><tr><th scope="row">File size</th><td>299,538 bytes / 3,698 lines</td></tr>'
+          + '<tr><th scope="row">Format</th><td>PDB (v3.x)</td></tr>'
+          + '<tr><th scope="row">Structure ID</th><td>1ATP</td></tr>'
+          + '<tr><th scope="row">Title</th><td>2.2 Å refined crystal structure of the catalytic subunit of cAMP-dependent protein kinase complexed with MnATP and a peptide inhibitor</td></tr></tbody></table>',
+        plainFold: { name: '1ATP.pdb', hint: 'Click to open the file', text: PDB_HEAD, note: 'The file has 3,698 lines; this is its opening block.' },
+        sd: '<p>Fetching the 1ATP structure from RCSB PDB. I will look up the entry metadata and try a direct download at the same time.</p>'
+          + '<div class="tool">Called mcp__pdb__lookup_structure</div>'
+          + '<div class="tool">Called run_shell</div>'
+          + '<div class="step">Thinking · round 1</div>'
+          + '<p>The file downloaded (299,538 bytes) and its header confirms the official 1ATP entry. One more integrity check — record-type counts, ligands, file ending:</p>'
+          + '<div class="tool">Called run_shell</div>'
+          + '<div class="step">Thinking · round 2</div>'
+          + '<p>Check passed: 2,913 ATOM and 157 HETATM records (3,070 atoms, matching RCSB deposited_atom_count=3070) and a clean MASTER/END tail. Registering the file as a project artifact:</p>',
+        sdFold: { label: 'Artifact from this run', name: '1ATP.pdb', hint: 'Click to open the 3D view', viewer: 'viewer-1atp', structure: '1ATP.pdb', loading: 'Loading the 3D viewer (about 5 MB on first open)…', error: 'The 3D viewer could not load. The file itself is still readable in the left column.', caption: 'A real Mol* viewer, the same engine embedded in a ScienceDiscovery session: drag to rotate, scroll to zoom, and use the panels on both sides to change the representation, inspect the structure and its ligands, or export models.' }
+      }, {
+        ic: 'tree', tag: 'Evolve', doc: 'core/evolve',
+        title: 'Auto-tune artifacts with a search algorithm, using fewer tokens',
+        text: 'Hand over something measurable — a program, a parameter table, even a prompt — and it generates variants, scores each one, checks the winner on held-out data and returns the best version. Every variant keeps its code, score and run record, so you can roll back.',
+        ask: 'Run just one LLM-SRBench task, lsr_transform_i.34.1_2_0, with flags matching era-srbench-deepseek-transform.',
+        plain: '<p>Task analysed, writing a program to check the fit.</p>'
+          + '<div class="step">Verification round 1</div>'
+          + '<div class="step">…</div>'
+          + '<div class="step">Verification round n</div>'
+          + '<div class="step">Verification complete</div>',
+        tally: '939,940 tokens spent',
+        sd: '<div class="tool">Called create_evolve_run</div>'
+          + '<p>Searching for the symbolic equation with the smallest NMSE on LLM-SRBench task lsr_transform_i.34.1_2_0 (input omega, c, v → output omega_0)…</p>',
+        sdTally: '608,361 tokens spent', sdTallyIcon: 'down',
+        sdTask: { ic: 'tree', label: 'Artifact from this run', name: 'Evolution task', hint: 'Click to see the run', viewer: 'viewer-evolve', image: 'sd-evolve.png', alt: 'Evolve program-evolution panel', caption: 'Evolve run panel: score curve, candidate log, search tree.' }
+      }, {
+        ic: 'graph', tag: 'Science Memory', doc: 'core/science-memory-reviewer',
+        title: 'Every number 100% trustworthy, traceable on the spot',
+        text: 'Runs, artifacts and claims all carry a version and an origin: open a claim and see which run, which dataset and which code produced it, together with the inputs and outputs of that moment.',
+        ask: 'Search PubMed and bioRxiv for 2023–2025 papers comparing adult and paediatric hepatocyte gene expression, focused on immune pathways. Chart the top enriched pathways and flag where the studies disagree.',
+        plain: '<div class="step">Thinking: The user wants a literature search...</div>'
+          + '<div class="step">Updated task list 0/5 done · Search PubMed ...</div>'
+          + '<div class="step">Web fetch...</div>'
+          + '<div class="step">Web search...</div>'
+          + '<p>Direction of inflammation with age ★★★: E25 (highest in fetal liver, falling through adulthood) vs L24/H23/R25 (rising again in the elderly) → in fact a U-shaped curve, with each pair covering one arm.</p>'
+          + '<p>Is the paediatric-to-adult NAFLD programme portable? ★★: G23 contradicts itself — the gene set is almost entirely non-portable (17%), yet the core GO inflammation module is shared. Supporting evidence: E25 found that using adult liver as the control systematically masks paediatric IFALD signals.</p>',
+        tally: 'Claim cannot be traced', tallyIcon: 'warn',
+        sd: '<div class="step">Thinking · round 1</div>'
+          + '<div class="tool">Called mcp__pubmed__prepare_paper_download</div>'
+          + '<div class="tool">Called mcp__biorxiv__search_preprints</div>'
+          + '<p>Is the paediatric liver pro-inflammatory, or immune-dysregulated and hypo-responsive?</p>'
+          + '<p>Edgar: higher inflammatory potential (IL-1β secretion p&lt;0.05) <button class="ev" type="button" data-viewer="ev-1" aria-haspopup="dialog">[evidence1]<span class="ev-hint">Click to see the source</span></button>; Vance: IL-27-dominant with failed immune coordination, and the background literature reports lower Th1 cytokines in neonates <button class="ev" type="button" data-viewer="ev-6" aria-haspopup="dialog">[evidence6]<span class="ev-hint">Click to see the source</span></button>.</p>',
+        sdTally: 'Claim fully traced', sdTallyIcon: 'check',
+        evidence: [
+          { viewer: 'ev-1', name: 'evidence1', image: 'e1.png', alt: 'The source behind citation evidence1', caption: 'The source behind citation [evidence1].' },
+          { viewer: 'ev-6', name: 'evidence6', image: 'e6.png', alt: 'The source behind citation evidence6', caption: 'The source behind citation [evidence6].' }
+        ]
+      }
     ],
     learn: 'Learn more →',
-    ctaBoxTitle: 'Run it on your own machine',
-    ctaBoxSub: 'A single binary, no cloud account. Start the stack and open the UI in your browser.',
     footNote: 'ScienceDiscovery is a workflow orchestration tool and does not embed any AI model.',
-    footLinks: [['Documentation', 'docs/index.html'], ['Install', 'install/index.html']],
-    quickInstall: {
-      title: 'Run the Linux release',
-      sub: 'For glibc-based Linux x86_64 (glibc 2.28+ and compatible libstdc++; not Alpine/musl) with Bubblewrap. Run the commands from the download directory.',
-      label: 'Fastest path',
-      download: 'Download Linux x86_64',
-      alt: 'Need Docker, a different OS or architecture, or source mode?',
-      link: 'See all install options'
-    },
-    demo: {
-      task: ['Task', 'Session', 'Literature → analysis → report', 'Replay'],
-      tree: ['Idea Tree', 'Idea Tree', 'Improve perovskite lifetime', 'Inspect random node'],
-      evolve: ['Evolve', 'Program evolution', 'Minimise f(x,y) in 200 calls', 'Replay search'],
-      memory: ['Memory graph', 'ScienceMemory', 'Trace a report back to its sources', 'Trace random node'],
-      agents: ['Subagents', 'Orchestration', 'Four specialists, one goal', 'Restart'],
-      projects: 'Projects', sessions: 'Sessions',
-      sess: ['Perovskite stability', 'Kinase screening', 'Benchmark tuning'],
-      prompt: 'Survey additives that improve perovskite stability and build a degradation model.',
-      reply: 'I will search three databases, read the key papers, fit a model in the sandbox and write a cited report.',
-      running: 'running', done: 'done',
-      final: 'Report ready: 9 claims, each linked to its evidence in the memory graph.',
-      rootDesc: 'Research goal. Child ideas are designed, scored independently and aggregated.',
-      best: 'best so far', evaluated: 'evaluated', score: 'Score',
-      dims: ['Viability', 'Stability', 'Sustainability'], parent: 'Parent',
-      lineage: 'Lineage', lineageHint: 'Click any node to trace what it depends on.',
-      legend: [['#22a06b', 'strong'], ['#2563eb', 'evaluated'], ['#d19a32', 'weak']],
-      best2: 'best', nodes: 'nodes'
-    },
+    footLinks: [['Documentation', 'docs/index.html']],
     dl: {
-      title: 'Install ScienceDiscovery', sub: 'Choose your system, then jump to the install method that fits your machine.',
       latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you', download: 'Download',
-      linux: ['Linux', 'x86_64 and aarch64 · needs bubblewrap'], macos: ['macOS', 'Apple Silicon and Intel · Seatbelt sandbox'], windows: ['Windows', 'Windows 10 / 11 · x64'],
-      soon: 'Prebuilt package not published yet', build: 'Build from source', buildLink: 'docs/getting-started/deployment.html',
-      docker: 'Docker Compose', dockerLink: 'docs/getting-started/deployment.html#docker-deployment-linux-containers',
-      startTitle: 'After downloading',
-      startSteps: 'Make the binary executable and start the stack, then open the <code>Open to sign in</code> URL printed in the terminal.',
-      startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
-      note: 'Prebuilt binaries are currently published for Linux. macOS users can run ScienceDiscovery from source today — see the build guide.',
+      linux: 'Linux', macos: 'macOS', windows: 'Windows',
       all: 'All releases on GitHub'
     },
     docs: {
@@ -93,67 +144,97 @@ const T = {
   },
   zh: {
     name: 'ScienceDiscovery', tag: 'AI 科研工作台',
-    nav: { home: '首页', docs: '文档', install: '安装' },
+    nav: { home: '首页', docs: '文档' },
     langLabel: 'English',
-    eyebrow: '开源 · Apache-2.0',
-    h1: '面向<em>科学研究</em>的 AI 工作台',
-    lead: '从文献调研和提出假设，到编写代码、开展实验和调参，都能在同一个沙箱环境里完成规划、执行、迭代，并追溯每一项结果。',
-    ctaInstall: '安装', ctaDocs: '阅读文档', ctaGh: '在 GitHub 查看',
-    demoHint: '这是使用预设流程与示例数据的交互演示，不对应运行中的科研任务。'
-      + '可点击节点、重放或切换视图。',
-    demoUrl: '127.0.0.1:4310',
-    featTitle: '贯穿科研工作的完整闭环',
-    featSub: '一个本地工作台，帮你规划任务、安全执行、寻找更优解，并保留每个结论的来处。',
+    eyebrow: '开源 · Apache-2.0 · 全部在你的机器上跑',
+    h1: '<span class="h1-brand"><span class="h1-initial">S</span>cience<span class="h1-initial">D</span>iscovery</span><span class="h1-slogan">你的<em>一站式</em> AI 科研工作站</span>',
+    lead: '文献、代码、实验、结论，全部在一个 AI 工作站里完成，不必在十几个工具之间来回搬运；每一条结论、每一个数据都留有出处，随时可以追溯到当时的数据、代码和运行记录。',
+    ctaDownload: '下载 ScienceDiscovery', ctaGh: '在 GitHub 查看',
+    videoLabel: 'ScienceDiscovery 实机演示',
+    avatarUser: '你',
+    avatarAgent: 'Agent',
+    avatarSd: 'SD',
+    close: '关闭',
+    filesMore: '还有更多文件',
+    chatPlain: '通用 Agent',
+    chatSd: 'ScienceDiscovery',
     feats: [
-      ['flask', '科研执行环境与工作区', '在受管的沙箱环境中运行 Python、R 和 Shell，并在工作区保留代码、数据和结果，方便检查。', 'core/execution-workspaces', '沙箱'],
-      ['tree', 'Idea Tree', '提出多个研究方向，分步设计和评估，再用反馈完善可供检验的方案。', 'core/idea-tree', 'Idea Tree'],
-      ['dna', '科研产物的 RSI', '为程序或其他可评价的产物生成变体、逐个评价，并用留出数据检验结果。', 'core/evolve', 'Evolve'],
-      ['graph', '记忆图谱与 Reviewer', '用图谱追溯已记录的工作和证据。启用 Reviewer 后，还能找出产物中需要进一步核查的问题。', 'core/science-memory-reviewer', '记忆图谱'],
-      ['users', '专业 Specialist', '按任务调用文献、代码和评价等专业角色，也可以结合指令、Skill 和工具创建自己的角色。', 'core/specialists', '子 Agent'],
-      ['plug', '科研 MCP 与 Skill', '通过 MCP 接入文献、数据库和工具，用 Skill 复用检索、分析与交付方法。', 'core/mcp-skills', '连接器']
+      {
+        ic: 'plug', tag: '科学 MCP', doc: 'core/mcp-skills',
+        title: '一站式管理你的碎片化科研工具',
+        text: '科研文献、数据都能通过<strong>科学MCP</strong>检索、下载：不用写代码、不用配 API key，也不用在十几个网站之间手动翻找。说清你要什么，文件直接落到工作区里，又快又好。',
+        ask: '帮我找近两年提升钙钛矿稳定性的添加剂研究，顺便把相关的晶体结构文件也取回来。',
+        plain: '我先写一段 Python 调 PubMed 的 E-utilities 接口，或者用 curl 逐个查询。',
+        plain2: '正在编写 Python 程序',
+        sd: '已通过 PubMed MCP 工具检索到 63 篇，按相关性和引用筛出 9 篇并存入 /workspace/lit/；另有 3 个结构文件已从 PDB 取回。要我把这 9 篇里的添加剂类型做成对照表吗？',
+        files: ['zhang2024_perovskite.pdf', 'liu2025_additives.pdf', '1ATP.pdb']
+      }, {
+        ic: 'dna', tag: '蛋白质结构', doc: 'domains/antibody-design',
+        title: '支持查看蛋白质 3D 结构',
+        text: '把 PDB 文件放进工作区，产物预览页点一下就能打开交互式 3D 结构：旋转、缩放、序列面板，蛋白、口袋、配体自动分层着色。',
+        ask: '请你从 RCSB PDB 中获取 1ATP 文件。',
+        plain: '<p>已从 RCSB PDB 成功下载 1ATP。</p>'
+          + '<p>下载来源：<code>https://files.rcsb.org/download/1ATP.pdb</code><br>保存位置：1ATP.pdb（当前工作目录）</p>'
+          + '<p>文件校验与内容摘要</p>'
+          + '<table><tbody><tr><th scope="row">文件大小</th><td>299,538 字节 / 3,698 行</td></tr>'
+          + '<tr><th scope="row">格式</th><td>PDB (v3.x)</td></tr>'
+          + '<tr><th scope="row">结构 ID</th><td>1ATP</td></tr>'
+          + '<tr><th scope="row">标题</th><td>2.2 Å 分辨率下 cAMP 依赖性蛋白激酶催化亚基与 MnATP 及肽抑制剂复合物的精修晶体结构</td></tr></tbody></table>',
+        plainFold: { name: '1ATP.pdb', hint: '点击查看文件', text: PDB_HEAD, note: '文件共 3,698 行，此处只展开开头部分。' },
+        sd: '<p>我来从 RCSB PDB 获取 1ATP 结构文件。先查询该结构的元数据，同时尝试直接下载。</p>'
+          + '<div class="tool">已调用 mcp__pdb__lookup_structure</div>'
+          + '<div class="tool">已调用 run_shell</div>'
+          + '<div class="step">思考过程 · 第 1 轮</div>'
+          + '<p>文件已成功下载（299,538 字节），头部信息确认为官方 1ATP 条目。再做一次完整性校验（记录类型统计、配体、文件结尾）：</p>'
+          + '<div class="tool">已调用 run_shell</div>'
+          + '<div class="step">思考过程 · 第 2 轮</div>'
+          + '<p>校验通过：2,913 条 ATOM + 157 条 HETATM（共 3,070 个原子，与 RCSB 官方 deposited_atom_count=3070 一致），文件以 MASTER/END 正常收尾。现在将文件登记为项目产物：</p>',
+        sdFold: { label: '本轮产物', name: '1ATP.pdb', hint: '点击展开 3D 结构', viewer: 'viewer-1atp', structure: '1ATP.pdb', loading: '正在加载 3D 查看器（首次打开需要下载约 5 MB）…', error: '3D 查看器没能加载，可以先用左侧的 1ATP.pdb 看文件内容。', caption: '真实的 Mol* 结构查看器，与 ScienceDiscovery 会话里内嵌的是同一个引擎：拖动旋转、滚轮缩放，左右两侧面板可切换表示方式、查看结构与配体、导出模型。' }
+      }, {
+        ic: 'tree', tag: '产物自进化', doc: 'core/evolve',
+        title: '使用搜索算法对产物自动调优，消耗更少token',
+        text: '给出一个可评价的产物——程序、参数表、甚至提示词都行——它会成批生成变体、逐个打分，再用留出数据检验，最后把得分最高的版本交给你。每个变体的代码、分数和运行记录都留了版本，随时可以回退。',
+        ask: '只跑 LLM-SRBench 的一道题 lsr_transform_i.34.1_2_0，配置对齐 era-srbench-deepseek-transform 的旗标。',
+        plain: '<p>完成题目分析，编写程序验证。</p>'
+          + '<div class="step">第一轮验证</div>'
+          + '<div class="step">…</div>'
+          + '<div class="step">第 n 轮验证</div>'
+          + '<div class="step">验证完成</div>',
+        tally: 'token消耗939,940',
+        sd: '<div class="tool">已调用 create_evolve_run</div>'
+          + '<p>为 LLM-SRBench 题目 lsr_transform_i.34.1_2_0（输入 omega,c,v → 输出 omega_0）搜索 NMSE 最小的符号方程……</p>',
+        sdTally: 'token消耗608,361', sdTallyIcon: 'down',
+        sdTask: { ic: 'tree', label: '本轮产物', name: '演进任务', hint: '点击查看演进任务', viewer: 'viewer-evolve', image: 'sd-evolve.png', alt: 'Evolve 程序演进面板', caption: 'Evolve 程序演进面板：得分曲线、候选流水与搜索树。' }
+      }, {
+        ic: 'graph', tag: '结果可溯源', doc: 'core/science-memory-reviewer',
+        title: '每个数据都 100% 可信，支持即时溯源',
+        text: '运行、产物、结论都带版本和来源：这条结论出自哪次运行、哪份数据、哪段代码，点开就能看到当时的输入和输出。',
+        ask: '检索 PubMed 与 bioRxiv 上 2023–2025 年比较成人与儿童肝实质细胞基因表达的论文，聚焦免疫相关通路。生成前几位富集通路的柱状图，并标出不同研究之间相互矛盾的结论。',
+        plain: '<div class="step">思考:The user wants a literature search...</div>'
+          + '<div class="step">更新任务清单0/5 已完成 · Search PubMed ...</div>'
+          + '<div class="step">网页获取...</div>'
+          + '<div class="step">网页搜索...</div>'
+          + '<p>炎症随年龄的方向 ★★★：E25（胎儿最高→成人递减）vs L24/H23/R25（老年回升）→ 实为 U 型曲线，两篇各覆盖一段。</p>'
+          + '<p>儿童-成人 NAFLD 程序是否可移植 ★★：G23 自身就矛盾——基因集合几乎不可移植（17%），但 GO 核心炎症模块共享。旁证：E25 发现用成人肝作对照会系统性掩盖儿童 IFALD 信号。</p>',
+        tally: '结论无法溯源', tallyIcon: 'warn',
+        sd: '<div class="step">思考过程 · 第 1 轮</div>'
+          + '<div class="tool">已调用 mcp__pubmed__prepare_paper_download</div>'
+          + '<div class="tool">已调用 mcp__biorxiv__search_preprints</div>'
+          + '<p>儿科肝是「高炎症」还是「免疫失调/低应答」</p>'
+          + '<p>Edgar：更高炎症潜能（IL-1β 分泌 p&lt;0.05）<button class="ev" type="button" data-viewer="ev-1" aria-haspopup="dialog">[evidence1]<span class="ev-hint">点击查看来源</span></button>，Vance：IL-27 主导、免疫协调失败；文献背景新生儿 Th1 细胞因子更低<button class="ev" type="button" data-viewer="ev-6" aria-haspopup="dialog">[evidence6]<span class="ev-hint">点击查看来源</span></button>。</p>',
+        sdTally: '结论来源清晰', sdTallyIcon: 'check',
+        evidence: [
+          { viewer: 'ev-1', name: 'evidence1', image: 'e1.png', alt: '引用 evidence1 对应的原文证据', caption: '引用 [evidence1] 对应的原文证据。' },
+          { viewer: 'ev-6', name: 'evidence6', image: 'e6.png', alt: '引用 evidence6 对应的原文证据', caption: '引用 [evidence6] 对应的原文证据。' }
+        ]
+      }
     ],
     learn: '了解更多 →',
-    ctaBoxTitle: '在你自己的机器上运行',
-    ctaBoxSub: '一个可执行文件，无需云账号。启动服务后，即可在浏览器中使用。',
     footNote: 'ScienceDiscovery 仅作为工作流编排工具，不内置任何 AI 模型。',
-    footLinks: [['文档', 'docs/index.html'], ['安装', 'install/index.html']],
-    quickInstall: {
-      title: '运行 Linux 预编译版',
-      sub: '适用于有 Bubblewrap、使用 glibc 的 Linux x86_64（glibc 2.28+ 和兼容的 libstdc++，不适用于 Alpine/musl）。先进入下载文件所在目录，再运行右侧命令。',
-      label: '最快方式',
-      download: '下载 Linux x86_64',
-      alt: '需要使用 Docker、其他系统或架构，或从源码运行？',
-      link: '查看其他安装方式'
-    },
-    demo: {
-      task: ['任务', '会话', '文献 → 分析 → 报告', '重放'],
-      tree: ['Idea Tree', 'Idea Tree', '提升钙钛矿寿命', '随机查看节点'],
-      evolve: ['Evolve', '程序演进', '在 200 次调用内最小化 f(x,y)', '重放搜索'],
-      memory: ['记忆图谱', 'ScienceMemory', '把报告追溯到原始来源', '随机追溯节点'],
-      agents: ['Subagent', '编排', '四位专家，一个目标', '重新开始'],
-      projects: '项目', sessions: '会话',
-      sess: ['钙钛矿稳定性', '激酶筛选', '基准调优'],
-      prompt: '调研能提升钙钛矿稳定性的添加剂，并建立衰减模型。',
-      reply: '我会检索三个数据库、精读关键论文、在沙箱里拟合模型，最后写出带引用的报告。',
-      running: '运行中', done: '完成',
-      final: '报告已生成：9 条结论，均在记忆图谱中关联到证据。',
-      rootDesc: '研究目标。子想法会被设计、独立评分并聚合。',
-      best: '当前最优', evaluated: '已评估', score: '得分',
-      dims: ['活性', '稳定性', '可持续性'], parent: '父节点',
-      lineage: '溯源链', lineageHint: '点击任意节点，查看它依赖的上游。',
-      legend: [['#22a06b', '优'], ['#2563eb', '已评估'], ['#d19a32', '较弱']],
-      best2: '最优', nodes: '节点'
-    },
+    footLinks: [['文档', 'docs/index.html']],
     dl: {
-      title: '安装 ScienceDiscovery', sub: '选择你的系统，再跳转到适合的安装方式。',
       latest: '最新版本', notes: '发布说明', recommended: '为你推荐', download: '下载',
-      linux: ['Linux', 'x86_64 与 aarch64 · 需要 bubblewrap'], macos: ['macOS', 'Apple 芯片与 Intel · Seatbelt 沙箱'], windows: ['Windows', 'Windows 10 / 11 · x64'],
-      soon: '暂未发布预编译包', build: '从源码构建', buildLink: 'docs/getting-started/deployment.html',
-      docker: 'Docker Compose', dockerLink: 'docs/getting-started/deployment.html#docker-部署linux-容器',
-      startTitle: '下载之后',
-      startSteps: '赋予可执行权限并启动服务，然后在浏览器中打开终端输出的 <code>Open to sign in</code> 链接。',
-      startCode: 'chmod +x ./ScienceDiscovery-*-linux-x86_64\n./ScienceDiscovery-*-linux-x86_64 serve',
-      note: '目前预编译二进制仅发布 Linux 版本。macOS 用户现在可以从源码运行，详见构建指南。',
+      linux: 'Linux', macos: 'macOS', windows: 'Windows',
       all: '在 GitHub 查看全部版本'
     },
     docs: {
@@ -167,13 +248,21 @@ const T = {
 // The product documentation owns these six reader-facing groups. Listed pages keep
 // a useful reading order; new pages in the same directory are appended automatically.
 const DOC_GROUPS = [
-  ['getting-started', ['getting-started/README', 'getting-started/quick-start', 'getting-started/deployment']],
+  ['getting-started', ['getting-started/deployment', 'getting-started/quick-start']],
   ['core', ['core/README', 'core/evolve', 'core/execution-workspaces', 'core/idea-tree']],
   ['domains', ['domains/README', 'domains/evolve-a-solution', 'domains/run-an-evolution-search', 'domains/literature-research']],
   ['advanced-setup', ['advanced-setup/README', 'advanced-setup/configure-custom-mcp', 'advanced-setup/configure-network-proxy', 'advanced-setup/science-memory-setup']],
   ['reference', ['reference/README', 'reference/configuration', 'reference/rest-api', 'reference/runtime-behavior', 'reference/builtin-tools', 'reference/web-tools', 'reference/jiuwenswarm-migration-status']],
   ['developer-docs', ['developer-docs/README', 'developer-docs/architecture', 'developer-docs/control-plane', 'developer-docs/agent', 'developer-docs/runner', 'developer-docs/sandbox-execution', 'developer-docs/science-memory', 'developer-docs/subagent-orchestration', 'developer-docs/skill-progressive-disclosure', 'developer-docs/science-connectors', 'developer-docs/web-frontend']]
 ];
+
+// A panel that shows a screenshot is sized from the picture itself: the stylesheet multiplies the
+// height left for the image by this ratio, so the dialog hugs the image instead of sitting in a
+// wide empty box. Read straight from the PNG header (IHDR), so replacing the file is enough.
+function shotRatio(file) {
+  const png = readFileSync(join(HERE, 'src', 'media', file));
+  return (png.readUInt32BE(16) / png.readUInt32BE(20)).toFixed(4);
+}
 
 // ---------------------------------------------------------------- icons (same stroke style as the app)
 const svg = (d, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -189,9 +278,14 @@ const IC = {
   github: '<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>',
   download: '<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>',
   book: '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V4.5"/>',
-  linux: '<path d="M12 3c-2 0-3 1.8-3 4 0 1.5-.4 2.4-1.3 3.8C6.5 12.500 5.500 14 5.500 16c0 1 .5 1.700 1.500 2 .5 1.500 1.700 3 5 3s4.500-1.500 5-3c1-.3 1.500-1 1.500-2 0-2-1-3.500-2.200-5.200C15.400 9.400 15 8.500 15 7c0-2.200-1-4-3-4z"/>',
+  // Tux: the head-and-body silhouette with the beak, eyes and belly patch, so the Linux card reads
+  // as the classic penguin rather than a rounded blob.
+  linux: '<path d="M12 2.6c-1.9 0-3.1 1.6-3.1 3.9 0 1-.3 1.7-.9 2.5-1.4 1.9-2.2 3.6-2.2 5.6 0 2.9 2.5 5.1 6.2 5.1s6.2-2.2 6.2-5.1c0-2-.8-3.7-2.2-5.6-.6-.8-.9-1.5-.9-2.5 0-2.3-1.2-3.9-3.1-3.9z"/><ellipse cx="12" cy="15.2" rx="2.5" ry="3.1"/><circle cx="10.5" cy="6.2" r=".6" fill="currentColor" stroke="none"/><circle cx="13.5" cy="6.2" r=".6" fill="currentColor" stroke="none"/><path d="M10.7 7.9h2.6l-1.3 1.9z" fill="currentColor" stroke="none"/>',
   apple: '<path d="M16.500 12.500c0-2.200 1.800-3.200 1.900-3.300-1-1.500-2.600-1.700-3.200-1.700-1.400-.1-2.600.8-3.300.8-.7 0-1.700-.8-2.800-.8-1.400 0-2.800.8-3.500 2.100-1.500 2.600-.4 6.500 1.100 8.600.7 1 1.600 2.200 2.700 2.100 1.100 0 1.500-.7 2.800-.7s1.700.7 2.800.7c1.200 0 1.900-1 2.600-2.100.8-1.200 1.100-2.300 1.200-2.400-.1 0-2.300-.9-2.300-3.300zM14.300 6c.6-.7 1-1.700.9-2.700-.9 0-1.900.6-2.500 1.300-.5.600-1 1.600-.9 2.600 1 .1 1.900-.5 2.500-1.200z"/>',
-  windows: '<path d="M3 5.500l7.500-1v7H3zM11.500 4.400L21 3v8.500h-9.500zM3 12.500h7.500v7L3 18.500zM11.500 12.500H21V21l-9.500-1.400z"/>'
+  windows: '<path d="M3 5.500l7.500-1v7H3zM11.500 4.400L21 3v8.500h-9.500zM3 12.500h7.500v7L3 18.500zM11.500 12.500H21V21l-9.500-1.400z"/>',
+  warn: '<path d="M10.3 3.9 1.8 18.5A2 2 0 0 0 3.5 21.5h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5"/><path d="M12 17.2h.01"/>',
+  check: '<rect x="3" y="3" width="18" height="18" rx="3.5"/><path d="m8 12.4 2.7 2.6L16 9.5"/>',
+  down: '<rect x="3" y="3" width="18" height="18" rx="3.5"/><path d="M12 7.2v9.6"/><path d="m8.2 13 3.8 3.8L15.8 13"/>'
 };
 
 // ---------------------------------------------------------------- markdown
@@ -294,11 +388,14 @@ function renderDoc(md, srcFile, lang, pagePath) {
       if (!pathPart && hash) return '#' + (anchorAliases[hash] || hash);
       const abs = resolve(srcDir, decodeURI(pathPart));
       const m = abs.match(/[\\/]docs[\\/](en|zh)[\\/](.+)\.md$/);
-      const targetAliases = DOC_ANCHOR_ALIASES[m?.[1]]?.[m?.[2]] || {};
+      const k = m ? m[2].split(sep).join('/') : '';
+      const targetAliases = DOC_ANCHOR_ALIASES[m?.[1]]?.[k] || {};
       const frag = hash ? '#' + (targetAliases[hash] || anchorAliases[hash] || hash) : '';
       if (m) {
-        const k = m[2].split(sep).join('/');
-        if (sources[k]) return rel(pagePath, pathOf(lang, 'docs/' + outPath(k))) + frag;
+        // A link into the other language's docs is a language switch ("English version", "中文版"),
+        // so it keeps its own language: its anchor names the headings of that language, and the page
+        // rendered at this language's URL can only carry this language's ids.
+        if (sources[k]) return rel(pagePath, pathOf(m[1], 'docs/' + outPath(k))) + frag;
       }
       const r = relative(ROOT, abs).split(sep).join('/');
       if (r.startsWith('..')) return href;
@@ -321,77 +418,24 @@ function renderDoc(md, srcFile, lang, pagePath) {
 // ---------------------------------------------------------------- extra strings
 const X = {
   en: {
-    install: 'Install', searchPh: 'Search documentation', searchBtn: 'Search', searchEmpty: 'No results for', searchHint: '↑↓ to navigate · Enter to open · Esc to close', searchLoading: 'Loading index…',
+    searchPh: 'Search documentation', searchBtn: 'Search', searchEmpty: 'No results for', searchHint: '↑↓ to navigate · Enter to open · Esc to close', searchLoading: 'Loading index…',
     theme: 'Toggle dark mode',
     docsQuick: 'Quick start'
   },
   zh: {
-    install: '安装', searchPh: '搜索文档', searchBtn: '搜索', searchEmpty: '没有找到', searchHint: '↑↓ 选择 · Enter 打开 · Esc 关闭', searchLoading: '正在加载索引…',
+    searchPh: '搜索文档', searchBtn: '搜索', searchEmpty: '没有找到', searchHint: '↑↓ 选择 · Enter 打开 · Esc 关闭', searchLoading: '正在加载索引…',
     theme: '切换深色模式',
     docsQuick: '快速开始'
   }
 };
-const binaryRenameCommands = RELEASE.binaries
-  .filter((binary) => binary.os === 'linux' || (!binary.os && binary.name.includes('-linux-')))
-  .sort((a, b) => Number(b.arch === 'x86_64') - Number(a.arch === 'x86_64'))
-  .map((binary) => [binary.arch, `mv ${binary.name} ScienceDiscovery\nchmod +x ./ScienceDiscovery`]);
-const D = {
-  en: {
-    title: 'Deploy ScienceDiscovery', sub: 'Three independent paths. Pick one and do not mix them.',
-    tabs: ['Prebuilt binary', 'Docker', 'From source'], recommended: 'Recommended on native Linux',
-    platformsTitle: 'Choose your system and install method',
-    platforms: [['Linux', 'linux', 'x86_64 and aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple Silicon and Intel', [['docker', 'Docker', true], 'src']], ['Windows', 'windows', 'WSL 2 Linux or Docker', [['bin', 'Linux binary · WSL 2'], ['src', 'From source · WSL 2'], ['docker', 'Docker']], true]],
-    experimental: 'Experimental',
-    experimentalNote: 'macOS Docker and all Windows installation paths are experimental because Agent behavior there has not been fully validated.',
-    platformsNote: 'On Windows, the WSL 2 paths require Bubblewrap and unprivileged user namespaces in the Linux distribution.',
-    wslGuide: 'Set up WSL 2',
-    reqTitle: 'Requirements',
-    bin: { h: 'Prebuilt single-file binary', p: 'For glibc-based Linux x86_64 and aarch64, including a Linux distro in WSL 2 on Windows. It embeds Node, Python, the web UI and micromamba. The Linux environment still needs Bubblewrap and unprivileged user namespaces. On macOS, consider Local source mode or the Docker path below.',
-      req: [['OS', 'glibc-based Linux x86_64 or aarch64, including WSL 2; glibc 2.28+ and compatible libstdc++ (not Alpine/musl)'], ['Linux dependency', 'bubblewrap 0.6+ (unprivileged user namespaces); Debian 11 packages an older version'], ['Network', 'first launch installs uv and Python deps from a PyPI mirror']],
-      steps: ['Install Bubblewrap with the command for your Linux distribution (use only one).', 'Download the binary for your architecture, then use its matching command below. On Windows, open your WSL 2 Linux terminal (for example, Ubuntu) and run <code>cd ~ && explorer.exe .</code> there. Windows File Explorer opens your Linux home directory. Copy the download into it first.', 'Start the stack and keep this terminal open.', 'In a second terminal in the same Linux environment, check the service response. Its top-level <code>status</code> should be <code>ok</code>.'],
-      code: [[['Debian / Ubuntu', 'sudo apt-get install -y bubblewrap'], ['Fedora / RHEL / openEuler', 'sudo dnf install -y bubblewrap']], binaryRenameCommands, './ScienceDiscovery serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#prepackaged-single-file-deployment-linux', linkText: 'Binary deployment in the full guide' },
-    docker: { h: 'Docker Compose', p: 'Run the complete stack in a Linux container.',
-      req: [['Host', 'Linux, macOS with Docker Desktop (<a href="https://docs.docker.com/desktop/setup/install/mac-install/#system-requirements">check OS support</a>) or a working Docker engine, or Windows with Docker Desktop'], ['Software', 'Docker Engine 24+ with Compose v2.15+, or Docker Desktop. On Windows, select Linux containers.'], ['Sandbox', 'Linux container must allow unprivileged user namespaces for Bubblewrap']],
-      steps: ['Clone the repository and enter it.', 'Prepare <code>.env</code> and <code>data/</code>. On Linux / macOS, set <code>SCIENCE_AGENT_UID</code> and <code>SCIENCE_AGENT_GID</code> in <code>.env</code> if your ids differ from 1000. On Windows, start with the default ids; if <code>data/</code> is unwritable, see the troubleshooting guide below.', 'Build and start.', 'Check the service response and find the “Open to sign in” URL in the logs.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', [['Linux / macOS · Unix shell', 'cp .env.docker.example .env\nmkdir -p data\nid -u\nid -g'], ['Windows · PowerShell', 'Copy-Item .env.docker.example .env\nNew-Item -ItemType Directory -Force data']], 'docker compose build\ndocker compose up -d', 'docker compose ps\ndocker compose exec sciencediscovery curl -fsS http://127.0.0.1:4310/health\ndocker compose logs --tail=100 sciencediscovery'], link: 'getting-started/deployment.html#docker-deployment-linux-containers', linkText: 'Docker deployment and troubleshooting' },
-    src: { h: 'Local source mode', p: 'Runs services directly from a checkout. Best for development and debugging on Linux or macOS 13+. On Windows, run the Linux steps inside WSL 2.',
-      req: [['Toolchain', 'Node.js 22.19+, pnpm 11.1.2, python3 3.9+, uv 0.9+, Git, curl'], ['Linux / WSL 2 sandbox', 'Bubblewrap 0.6+ (0.8+ recommended) and unprivileged user namespaces; Debian 11 packages an older version'], ['macOS', '13+ with the built-in Seatbelt sandbox (/usr/bin/sandbox-exec)']],
-      steps: ['Clone the repository. On Windows, run <code>cd ~</code> inside WSL 2 first and keep the checkout out of <code>/mnt/c</code>.', 'Set up JiuwenSwarm once.', 'Install, build and start every service. Keep this terminal open.', 'On later starts, use this command to skip the build.'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'scripts/jiuwenswarm.sh setup', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#local-source-mode-linux--macos', linkText: 'Local mode in the full guide' },
-    after: 'After it starts', afterCards: [['Sign in', 'Open the “Open to sign in” URL from the startup output. The browser saves the local service token automatically. Keep the URL private.', 'getting-started/quick-start.html#after-startup'], ['Configure a model', 'Open System settings → Model registry, connect a model provider, then choose a global default task model. ScienceDiscovery embeds no model of its own.', 'getting-started/quick-start.html#2-configure-a-model'], ['Run a first task', 'Run a task that executes code, then check its result. Quick Start provides a Python example and a checklist.', 'getting-started/quick-start.html#3-run-your-first-scientific-task']],
-    portsTitle: 'Default ports', ports: [['4310', 'Control API and Web UI'], ['4311', 'Runner (loopback only)']],
-    full: 'Read the full deployment guide'
-  },
-  zh: {
-    title: '部署 ScienceDiscovery', sub: '三种相互独立的路径，选择其一，不要混用。',
-    tabs: ['预编译二进制', 'Docker', '源码运行'], recommended: '原生 Linux 推荐',
-    platformsTitle: '按系统选择安装方式',
-    platforms: [['Linux', 'linux', 'x86_64 与 aarch64', ['bin', 'docker', 'src']], ['macOS', 'apple', 'Apple 芯片与 Intel', [['docker', 'Docker', true], 'src']], ['Windows', 'windows', 'WSL 2 Linux 或 Docker', [['bin', 'Linux 二进制 · WSL 2'], ['src', '源码运行 · WSL 2'], ['docker', 'Docker']], true]],
-    experimental: '实验性',
-    experimentalNote: 'macOS Docker 和所有 Windows 安装路径目前作为实验特性提供，其 Agent 运行效果尚未经过全面验证。',
-    platformsNote: 'Windows 用户使用 WSL 2 路径时，需在 Linux 发行版中安装 Bubblewrap，并确保可使用非特权用户命名空间。',
-    wslGuide: '安装 WSL 2',
-    reqTitle: '前置条件',
-    bin: { h: '预编译单文件二进制', p: '适用于使用 glibc 的 Linux x86_64 与 aarch64，包括 Windows 上符合条件的 WSL 2 Linux 发行版。每种架构一个可执行文件，内含 Node、Python、Web 界面与 micromamba。Linux 环境仍需 Bubblewrap 与非特权用户命名空间。macOS 可考虑下方的本地源码模式或 Docker 路径。',
-      req: [['系统', '使用 glibc 的 Linux x86_64 或 aarch64，包括 WSL 2；需 glibc 2.28+ 和兼容的 libstdc++（不适用于 Alpine/musl）'], ['Linux 依赖', 'bubblewrap 0.6+（需非特权用户命名空间）；Debian 11 默认软件包版本较低'], ['网络', '首次启动会从 PyPI 镜像安装 uv 与 Python 依赖']],
-      steps: ['按自己的 Linux 发行版安装 Bubblewrap，两条命令只需执行其一。', '下载对应架构的二进制，执行下方与文件匹配的命令。Windows 用户先打开 WSL 2 的 Linux 终端（例如 Ubuntu），在其中运行 <code>cd ~ && explorer.exe .</code>。Windows 文件资源管理器会打开 Linux 用户主目录，先将下载文件复制进去。', '启动服务，并保持当前终端开启。', '在同一 Linux 环境中另开终端检查服务响应，顶层 <code>status</code> 应为 <code>ok</code>。'],
-      code: [[['Debian / Ubuntu', 'sudo apt-get install -y bubblewrap'], ['Fedora / RHEL / openEuler', 'sudo dnf install -y bubblewrap']], binaryRenameCommands, './ScienceDiscovery serve', 'curl -fsS http://127.0.0.1:4310/health'], link: 'getting-started/deployment.html#预编译单文件部署linux', linkText: '完整指南中的二进制部署' },
-    docker: { h: 'Docker Compose', p: '在 Linux 容器中运行完整服务栈。',
-      req: [['操作系统', 'Linux；macOS 使用 Docker Desktop（<a href="https://docs.docker.com/desktop/setup/install/mac-install/#system-requirements">核对系统要求</a>）或可用的 Docker 引擎；Windows 使用 Docker Desktop'], ['软件', 'Docker Engine 24+ 与 Compose v2.15+，或 Docker Desktop。Windows 用户请选择 Linux 容器。'], ['沙箱', 'Linux 容器内需允许 Bubblewrap 使用非特权用户命名空间']],
-      steps: ['克隆仓库并进入仓库目录。', '准备 <code>.env</code> 和 <code>data/</code>。Linux / macOS 用户若 uid/gid 不为 1000，需在 <code>.env</code> 中设置 <code>SCIENCE_AGENT_UID</code> 和 <code>SCIENCE_AGENT_GID</code>；Windows 用户先使用默认值，若 <code>data/</code> 不可写，请查看下方排障指南。', '构建并启动。', '检查服务响应，从日志中找到“Open to sign in”链接。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', [['Linux / macOS · Unix Shell', 'cp .env.docker.example .env\nmkdir -p data\nid -u\nid -g'], ['Windows · PowerShell', 'Copy-Item .env.docker.example .env\nNew-Item -ItemType Directory -Force data']], 'docker compose build\ndocker compose up -d', 'docker compose ps\ndocker compose exec sciencediscovery curl -fsS http://127.0.0.1:4310/health\ndocker compose logs --tail=100 sciencediscovery'], link: 'getting-started/deployment.html#docker-部署linux-容器', linkText: '完整 Docker 部署与排障指南' },
-    src: { h: '本地源码模式', p: '直接从源码仓库启动服务，适合在 Linux 或 macOS 13+ 上开发与调试。Windows 可在 WSL 2 中运行 Linux 步骤。',
-      req: [['工具链', 'Node.js 22.19+、pnpm 11.1.2、python3 3.9+、uv 0.9+、Git、curl'], ['Linux / WSL 2 沙箱', 'Bubblewrap 0.6+（建议 0.8+），需非特权用户命名空间；Debian 11 默认软件包版本较低'], ['macOS', '13+，使用系统自带 Seatbelt（/usr/bin/sandbox-exec）']],
-      steps: ['克隆仓库。Windows 用户请先在 WSL 2 内运行 <code>cd ~</code>，再执行这些 Linux 命令，不要将仓库放在 <code>/mnt/c</code>。', '首次运行前安装 JiuwenSwarm。', '安装、构建并启动全部服务，保持当前终端开启。', '之后启动时可用此命令跳过构建。'],
-      code: ['git clone https://github.com/openJiuwen-ai/sciencediscovery.git\ncd sciencediscovery', 'scripts/jiuwenswarm.sh setup', './scripts/start-stack.sh --mode local', './scripts/start-stack.sh --mode local --no-build'], link: 'getting-started/deployment.html#本地源码模式linux--macos', linkText: '完整指南中的本地模式' },
-    after: '启动之后', afterCards: [['登录', '打开启动输出中的“Open to sign in”链接，浏览器会自动保存本地服务令牌。请勿泄露该链接。', 'getting-started/quick-start.html#启动成功后'], ['配置模型', '打开“系统设置 → 模型注册表”，连接模型服务商，再选择全局默认任务模型。ScienceDiscovery 本身不内置任何模型。', 'getting-started/quick-start.html#2-配置模型'], ['运行第一个任务', '运行一个实际执行代码的任务，再检查其结果。快速开始提供了 Python 示例和检查清单。', 'getting-started/quick-start.html#3-完成第一次科研任务']],
-    portsTitle: '默认端口', ports: [['4310', '控制 API 与 Web 界面'], ['4311', 'Runner（仅回环地址）']],
-    full: '阅读完整部署指南'
-  }
-};
-
 // ---------------------------------------------------------------- page shell
 const scriptTheme = `<script>(function(){try{var t=localStorage.getItem('sd-theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}})()</script>`;
+// The English home page is the site root, so it is where a Chinese-reading visitor lands by default.
+// It hands them to /zh/ unless they picked a language before: the language switcher stores
+// 'sd-lang', and that stored choice outranks the browser language. Runs before the page paints so
+// the English content never flashes.
+const scriptLang = `<script>(function(){try{var c=localStorage.getItem('sd-lang');var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();if(c?c==='zh':n.slice(0,2)==='zh')location.replace('zh/')}catch(e){}})()</script>`;
+const scriptLangFor = (lang, pagePath) => (lang === 'en' && pagePath === 'index.html' ? scriptLang : '');
 const rootOf = (pagePath) => rel(pagePath, 'index.html').replace(/index\.html$/, '');
 
 function head(lang, title, pagePath, desc, extraCss = []) {
@@ -405,10 +449,8 @@ function head(lang, title, pagePath, desc, extraCss = []) {
 <meta name="description" content="${esc(desc || T[lang].lead.replace(/<[^>]+>/g, ''))}">
 <meta name="google-site-verification" content="Z04-sOshM5D2RBC0A6Vi_SK49QHi3iIlHYwQ2dhywg0" />
 <link rel="icon" href="${r('favicon.svg')}" type="image/svg+xml">
-<link rel="preload" href="${r('fonts/manrope-latin-wght-normal.woff2')}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="${r('fonts/source-serif-4-latin-wght-normal.woff2')}" as="font" type="font/woff2" crossorigin>
-${lang === 'en' && pagePath === 'index.html' ? `<link rel="preload" href="${r('fonts/source-serif-4-latin-wght-italic.woff2')}" as="font" type="font/woff2" crossorigin>` : ''}
 ${scriptTheme}
+${scriptLangFor(lang, pagePath)}
 <link rel="stylesheet" href="${r('site.css')}">
 ${extraCss.map((c) => `<link rel="stylesheet" href="${r(c)}">`).join('\n')}
 </head>`;
@@ -419,8 +461,8 @@ function topbar(lang, active, pagePath, otherPath) {
   const p = (target) => rel(pagePath, (lang === 'zh' ? 'zh/' : '') + target);
   const item = (id, target, label) => `<a href="${p(target)}"${active === id ? ' class="active"' : ''}>${label}</a>`;
   return `<header class="topbar"><div class="topbar-inner">
-<a class="brand" href="${p('index.html')}"><span class="brand-mark">${svg(IC.brand, 20)}</span><span class="brand-name">${t.name}</span></a>
-<nav class="topnav">${item('home', 'index.html', t.nav.home)}${item('docs', 'docs/index.html', t.nav.docs)}${item('install', 'install/index.html', t.nav.install)}</nav>
+<a class="brand" href="${p('index.html')}"><img class="brand-mark" src="${rel(pagePath, 'media/app-icon.png')}" alt="" width="36" height="36"><span class="brand-name">${t.name}</span></a>
+<nav class="topnav">${item('home', 'index.html', t.nav.home)}${item('docs', 'docs/index.html', t.nav.docs)}</nav>
 <div class="topbar-actions">
 <button class="search-btn" type="button" data-ph="${esc(x.searchPh)}" data-empty="${esc(x.searchEmpty)}" data-hint="${esc(x.searchHint)}" data-loading="${esc(x.searchLoading)}" aria-label="${esc(x.searchPh)}">${svg('<circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/>', 15)}<span>${x.searchBtn}</span><kbd>⌘K</kbd></button>
 <a class="lang-switch" href="${rel(pagePath, otherPath)}" hreflang="${lang === 'zh' ? 'en' : 'zh'}">${t.langLabel}</a>
@@ -433,95 +475,141 @@ function footer(lang, pagePath) {
   const t = T[lang], x = X[lang];
   const p = (target) => rel(pagePath, (lang === 'zh' ? 'zh/' : '') + target);
   return `<footer class="footer"><div class="wrap"><span>© ScienceDiscovery · Apache-2.0 · ${t.footNote}</span>
-<span><a href="${p('docs/index.html')}">${t.nav.docs}</a> &nbsp;·&nbsp; <a href="${p('install/index.html')}">${t.nav.install}</a> &nbsp;·&nbsp; <a href="${GH}">GitHub</a></span></div></footer>`;
+<span><a href="${p('docs/index.html')}">${t.nav.docs}</a> &nbsp;·&nbsp; <a href="${GH}">GitHub</a></span></div></footer>`;
 }
 
 const pathOf = (lang, page) => (lang === 'zh' ? 'zh/' : '') + page;
 const other = (lang, page) => pathOf(lang === 'zh' ? 'en' : 'zh', page);
 
+// ---------------------------------------------------------------- download
+// What the homepage's download button reveals: the newest release as one card per system, so the
+// visitor picks a platform instead of reading install steps. The panel unfolds inside the page
+// under the hero, pushing the video down rather than floating over it. site.js marks the card
+// matching the visitor's system, and each build is a chip labelled with its architecture that
+// carries the checksum in its tooltip. Chips come from release.json, so a system without a
+// published build simply shows no chip.
+function downloadPanel(lang) {
+  const t = T[lang], dl = t.dl;
+  // The chip is a bare architecture label: the card already carries a download glyph, so a second
+  // one in front of every build only adds noise.
+  const chip = (b) => {
+    // Windows is distributed outside the GitHub release, so its entry carries no checksum.
+    const tip = b.sha256 ? `${dl.download} · SHA256 ${esc(b.sha256)}` : dl.download;
+    return `<a class="file" href="${esc(b.url)}" title="${esc(tip)}">${esc(b.arch)}</a>`;
+  };
+  const chips = (re) => RELEASE.binaries.filter((b) => re.test(b.name)).sort((a, b) => Number(b.arch === 'x86_64') - Number(a.arch === 'x86_64')).map(chip).join('');
+  // The tag lives in the Linux card until site.js moves it into whichever card is the visitor's.
+  const card = (os, icon, name, re) => {
+    const rows = chips(re);
+    return `<div class="os" data-os="${os}">
+<div class="ico">${svg(IC[icon], 20)}</div>
+<h3>${name}${os === 'linux' ? ` <span id="recommend-tag" class="hidden">${dl.recommended}</span>` : ''}</h3>
+${rows ? `<div class="files">${rows}</div>` : ''}
+</div>`;
+  };
+  return `<div class="dl-reveal" id="download-panel">
+<div class="dl-clip">
+<div class="dl-panel">
+<div class="os-grid" id="downloads">
+${card('windows', 'windows', dl.windows, /-windows-|-win-/)}
+${card('linux', 'linux', dl.linux, /-linux-/)}
+</div>
+</div>
+<div class="ver-row dl-meta">${dl.latest} <b>v${esc(RELEASE.version)}</b> · <a href="${esc(RELEASE.url)}" target="_blank" rel="noopener">${dl.notes}</a> · <a href="${GH}/releases" target="_blank" rel="noopener">${dl.all} →</a></div>
+</div>
+</div>`;
+}
+
 // ---------------------------------------------------------------- home
 function home(lang) {
-  const t = T[lang], x = X[lang];
+  const t = T[lang];
   const page = 'index.html', pagePath = pathOf(lang, page);
   const r = (p) => rel(pagePath, p);
   const docLink = (k) => rel(pagePath, pathOf(lang, 'docs/' + keyFor(k) + '.html'));
-  const binary = RELEASE.binaries.find((b) => (b.os || OS_OF(b.name)) === 'linux' && b.arch === 'x86_64');
-  const command = binary ? [`chmod +x ./${binary.name}`, `./${binary.name} serve`].join('\n') : '';
-  const feats = t.feats.map(([ic, title, text, doc]) => `<a class="card" href="${docLink(doc)}"><div class="ico">${svg(IC[ic], 20)}</div><h3>${title}</h3><p>${text}</p><span class="more">${t.learn}</span></a>`).join('');
-  return head(lang, `${t.name} — ${t.tag}`, pagePath, null, ['demo.css']) + `
-<body>
+  // Turns are marked with a square avatar rather than a name inside the bubble: the reader's own
+  // words carry their avatar on the right, the agent's carries it on the left.
+  const avatar = (sd) => `<span class="avatar${sd ? ' sd' : ''}">${sd ? t.avatarSd : t.avatarAgent}</span>`;
+  const userTurn = (text) => `<div class="turn user"><div class="bubble user">${text}</div><span class="avatar">${t.avatarUser}</span></div>`;
+  const botTurn = (text, sd, cls = '') => `<div class="turn bot">${avatar(sd)}<div class="bubble bot${cls ? ' ' + cls : ''}">${text}</div></div>`;
+  // The reply is about files landing in the workspace, so name a few of them and let three dots
+  // say the list keeps going.
+  const FILE_IC = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
+  const fileList = (names) => `<span class="files">${names.map((n) => `<span class="file">${FILE_IC}${n}</span>`).join('')}</span><span class="files-more" title="${t.filesMore}">···</span>`;
+  // A file the run produced or fetched opens in place. The two columns open to different things:
+  // the generic agent can only show the raw record, ScienceDiscovery reveals the rendered artifact.
+  // Both carry a hint and a glyph, because a bare file name reads as a label.
+  const CHEV = '<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  const fold = (name, hint, body) => `<details class="fold"><summary>${FILE_IC}${name}<span class="fold-hint">${hint}</span>${CHEV}</summary><div class="fold-body">${body}</div></details>`;
+  // The hint that opens the viewer is the one readers must not miss, so it carries hint-live
+  // (a colour cycle) while the plain column's hint stays quiet.
+  const chipIcon = (f) => (f.ic ? svg(IC[f.ic], 13) : FILE_IC);
+  const viewerChip = (f) => `<span class="fold-label">${f.label}</span><button class="file fold-open" type="button" data-viewer="${f.viewer}" aria-haspopup="dialog">${chipIcon(f)}${f.name}<span class="fold-hint hint-live">${f.hint}</span>${CHEV}</button>`;
+  // What a chip opens is too large for the reading flow, so it lives in a modal with a way out.
+  // Two kinds exist: a real Mol* viewer (bundle and structure fetched on first open) and a still
+  // screenshot of an Evolve run.
+  const viewerPanel = (f) => {
+    // A screenshot panel carries its own aspect ratio so the dialog can be narrowed to the image;
+    // the Mol* panel keeps the full 80vw because the viewer wants the room.
+    const cls = f.structure ? 'viewer-dialog' : 'viewer-dialog shot-dialog';
+    const style = f.structure ? '' : ` style="--shot-ratio:${shotRatio(f.image)}"`;
+    const body = f.structure
+      ? `<div class="viewer-stage" data-viewer-css="${r('vendor/molstar/molstar.css')}" data-viewer-lib="${r('vendor/molstar/molstar.js')}" data-viewer-src="${r('media/' + f.structure)}" data-viewer-error="${esc(f.error)}"><span class="viewer-msg">${f.loading}</span></div>`
+      : `<div class="viewer-shot"><img src="${r('media/' + f.image)}" alt="${esc(f.alt)}" decoding="async"></div>`;
+    return `<dialog class="${cls}" id="${f.viewer}"${style} aria-label="${esc(f.name)}"><div class="viewer-head"><span class="viewer-name">${chipIcon(f)}${f.name}</span><button class="viewer-close" data-close type="button" aria-label="${t.close}">✕</button></div><p class="viewer-note">${f.caption}</p>${body}</dialog>`;
+  };
+  // What the run cost is a per-column footnote, not part of the transcript: it sits under the
+  // bubble, centred, so the two columns can be read against each other.
+  const tally = (text, ic) => (text ? `<p class="tally">${ic ? svg(IC[ic], 16) : ''}${text}</p>` : '');
+  const feats = t.feats.map((f) => `<article class="feature">
+<span class="eyebrow">${svg(IC[f.ic], 14)}${f.tag}</span>
+<h3>${f.title}</h3>
+<p class="feature-text">${f.text}</p>
+<div class="compare">
+<figure class="chat${f.tally ? ' tallied' : ''}"><figcaption><span class="dot"></span>${t.chatPlain}</figcaption>
+${userTurn(f.ask)}
+${botTurn(`${f.plain}${f.plainFold ? fold(f.plainFold.name, f.plainFold.hint, `<pre>${esc(f.plainFold.text)}</pre><span class="fold-note">${f.plainFold.note}</span>`) : ''}`, false)}
+${f.plain2 ? botTurn(`${f.plain2}<span class="pulse"></span>`, false, 'progress') : ''}
+${tally(f.tally, f.tallyIcon)}
+</figure>
+<figure class="chat sd${f.sdTally ? ' tallied' : ''}"><figcaption><span class="dot"></span>${t.chatSd}</figcaption>
+${userTurn(f.ask)}
+${botTurn(`${f.sd}${f.files ? fileList(f.files) : ''}${f.sdFold ? viewerChip(f.sdFold) : ''}${f.sdTask ? viewerChip(f.sdTask) : ''}`, true)}
+${tally(f.sdTally, f.sdTallyIcon)}
+</figure>
+</div>
+${f.sdFold ? viewerPanel(f.sdFold) : ''}
+${f.sdTask ? viewerPanel(f.sdTask) : ''}
+${(f.evidence || []).map(viewerPanel).join('')}
+<p class="feature-more"><a href="${docLink(f.doc)}">${t.learn}</a></p>
+</article>`).join('\n');
+  return head(lang, `${t.name} — ${t.tag}`, pagePath) + `
+<body class="home">
+<div class="aurora" aria-hidden="true"></div>
 ${topbar(lang, 'home', pagePath, other(lang, page))}
 <main class="wrap">
 <section class="quick-install">
 <span class="eyebrow">${svg(IC.flask, 14)}${t.eyebrow}</span>
 <h1>${t.h1}</h1><p class="lead">${t.lead}</p>
-<div class="quick-command"><div><span class="eyebrow">${t.quickInstall.label}</span><h2>${t.quickInstall.title}</h2><p>${t.quickInstall.sub}</p>${binary ? `<a class="btn primary quick-download" href="${esc(binary.url)}">${svg(IC.download, 16)}${t.quickInstall.download}</a>` : ''}</div><pre><code>${esc(command)}</code></pre></div>
-<p class="install-alternative">${t.quickInstall.alt} <a href="${r(pathOf(lang, 'install/index.html'))}">${t.quickInstall.link} →</a></p>
+<div class="hero-cta"><button class="btn download" type="button" data-download-open aria-controls="download-panel" aria-expanded="false">${svg(IC.download, 18)}${t.ctaDownload}</button></div>
+${downloadPanel(lang)}
 </section>
-<section class="demo-stage"><div class="app" id="demo" aria-label="Interactive product demo"></div><p class="demo-hint">${t.demoHint}</p></section>
-<section class="section"><h2>${t.featTitle}</h2><p class="sub">${t.featSub}</p><div class="grid">${feats}</div></section>
-<section class="cta"><h2>${t.ctaBoxTitle}</h2><p class="sub">${t.ctaBoxSub}</p><div class="hero-cta"><a class="btn primary" href="${r(pathOf(lang, 'install/index.html'))}">${t.ctaInstall}</a><a class="btn" href="${r(pathOf(lang, 'docs/getting-started/quick-start.html'))}">${x.docsQuick}</a></div></section>
-</main>
-${footer(lang, pagePath)}
-<script src="${r('site.js')}"></script>
-<script src="${r('viz.js')}"></script>
-<script src="${r('demo.js')}"></script>
-</body></html>`;
-}
-
-// ---------------------------------------------------------------- install
-function installStep(step, code) {
-  const blocks = Array.isArray(code) ? code : [['', code || '']];
-  const snippets = blocks.map(([label, snippet]) =>
-    `${label ? `<p class="install-step-note"><strong>${label}</strong></p>` : ''}<pre><code>${esc(snippet)}</code></pre>`
-  ).join('');
-  return `<li>${step}${snippets}</li>`;
-}
-
-function install(lang) {
-  const t = T[lang], d = D[lang], dl = t.dl;
-  const page = 'install/index.html', pagePath = pathOf(lang, page);
-  const r = (p) => rel(pagePath, p);
-  const doc = (p) => rel(pagePath, pathOf(lang, 'docs/' + p));
-  const modes = [['bin', d.bin, 0], ['docker', d.docker, 1], ['src', d.src, 2]];
-  const modeLabels = Object.fromEntries(modes.map(([id, , i]) => [id, d.tabs[i]]));
-  const experimentalBadge = `<span class="install-experimental">${d.experimental}</span>`;
-  const platforms = d.platforms.map(([name, icon, note, methods, isExperimental]) => `<section class="install-platform"><div class="install-platform-heading"><span class="install-platform-icon">${svg(IC[icon], 22)}</span><div><h3>${name}${isExperimental ? ` ${experimentalBadge}` : ''}</h3><p>${note}</p></div></div><div class="install-platform-methods">${methods.map((method) => { const [id, label, isExperimentalMethod] = Array.isArray(method) ? method : [method, modeLabels[method]]; return `<a href="#install-${id}"><span>${label}${isExperimentalMethod ? ` ${experimentalBadge}` : ''}</span><span aria-hidden="true">→</span></a>`; }).join('')}</div></section>`).join('');
-  const releaseFiles = RELEASE.binaries.filter((b) => (b.os || OS_OF(b.name)) === 'linux').sort((a, b) => Number(b.arch === 'x86_64') - Number(a.arch === 'x86_64')).map((b) => `<div class="release-file"><a class="file download-file" href="${esc(b.url)}"><span>${dl.download} Linux ${b.arch}</span><small>${svg(IC.download, 18)}</small></a><div class="sha"><span>SHA256</span><code title="${b.sha256}">${b.sha256}</code><button type="button" data-copy="${b.sha256}">${lang === 'zh' ? '复制' : 'Copy'}</button></div></div>`).join('');
-  const panels = modes.map(([id, m, i]) => `<details class="install-route" id="install-${id}"${i === 0 ? ' open' : ''}>
-<summary><span><b>${m.h}${i === 0 ? ` <span class="badge blue">${d.recommended}</span>` : ''}</b><small>${m.p}</small></span></summary>
-<div class="install-route-body">
-<div class="reqs">${m.req.map(([k, v]) => `<div class="req-item"><b>${k.toUpperCase()}</b>${v}</div>`).join('')}</div>
-${id === 'bin' ? `<div class="release-files">${releaseFiles}</div>` : ''}
-<ol>${m.steps.map((step, k) => installStep(step, m.code[k])).join('')}</ol>
-<a class="readmore" href="${doc(m.link)}">${m.linkText} →</a>
-</div></details>`).join('');
-  const after = d.afterCards.map(([h, p, l]) => `<a class="card" href="${doc(l)}"><h3>${h}</h3><p>${p}</p></a>`).join('');
-  const ports = d.ports.map(([n, v]) => `<div class="req-item"><b>${n}</b>${v}</div>`).join('');
-  return head(lang, `${dl.title} — ${t.name}`, pagePath, dl.sub) + `
-<body>
-${topbar(lang, 'install', pagePath, other(lang, page))}
-<main class="deploy install-page">
-<section class="page-head"><h1>${dl.title}</h1><p>${dl.sub}</p></section>
-<nav class="install-platform-nav" aria-label="${d.platformsTitle}"><h2>${d.platformsTitle}</h2><div class="install-platforms">${platforms}</div><p>${d.experimentalNote}</p><p>${d.platformsNote} <a href="https://learn.microsoft.com/${lang === 'zh' ? 'zh-cn' : 'en-us'}/windows/wsl/install" target="_blank" rel="noopener">${d.wslGuide} →</a></p></nav>
-${panels}
-<h2 class="h">${d.after}</h2><div class="grid">${after}</div>
-<h2 class="h">${d.portsTitle}</h2><div class="reqs" style="grid-template-columns:repeat(2,minmax(0,1fr))">${ports}</div>
-<p class="install-more"><a class="btn" href="${doc('getting-started/deployment.html')}">${svg(IC.book, 16)}${d.full}</a> <a href="${GH}/releases" target="_blank" rel="noopener">${dl.all} →</a></p>
+<section class="home-video"><video src="${r('media/ScienceDiscovery.mp4')}" aria-label="${esc(t.videoLabel)}" autoplay muted loop playsinline controls preload="metadata"></video></section>
+${feats}
 </main>
 ${footer(lang, pagePath)}
 <script src="${r('site.js')}"></script>
 </body></html>`;
 }
 
-// ---------------------------------------------------------------- download (pinned to release.json, with checksums)
-const OS_OF = (name) => (/win/i.test(name) && !/darwin/i.test(name) ? 'windows' : /mac|darwin/i.test(name) ? 'macos' : 'linux');
-function legacyRedirect(lang, page) {
-  const pagePath = pathOf(lang, page);
-  const target = rel(pagePath, pathOf(lang, 'install/index.html'));
-  return head(lang, `${T[lang].nav.install} — ${T[lang].name}`, pagePath) + `
+// ---------------------------------------------------------------- retired pages
+// Older URLs that no longer have a page of their own point at a surviving one, so incoming links
+// keep working. The label and the highlighted nav item follow whichever page they land on.
+function legacyRedirect(lang, page, to, nav) {
+  const t = T[lang], pagePath = pathOf(lang, page);
+  const target = rel(pagePath, pathOf(lang, to));
+  return head(lang, `${t.nav[nav]} — ${t.name}`, pagePath) + `
 <meta http-equiv="refresh" content="0;url=${target}"></head>
-<body>${topbar(lang, 'install', pagePath, other(lang, page))}<main class="redirect"><p><a href="${target}">${T[lang].nav.install}</a></p></main>${footer(lang, pagePath)}</body></html>`;
+<body>${topbar(lang, nav, pagePath, other(lang, page))}<main class="redirect"><p><a href="${target}">${t.nav[nav]}</a></p></main>${footer(lang, pagePath)}</body></html>`;
 }
 
 // ---------------------------------------------------------------- docs
@@ -605,10 +693,12 @@ ${footer(lang, pagePath)}
 
 // ---------------------------------------------------------------- write
 // GitHub Pages caches assets for minutes: version the local CSS/JS URLs by content so a redeploy is never
-// served as new HTML with stale styles.
+// served as new HTML with stale styles. Mol* ships as a devDependency and is copied in below, so the
+// viewer is served from this origin rather than a CDN.
 const ASSET_V = {};
-for (const f of ['site.css', 'site.js', 'demo.css', 'demo.js', 'viz.js']) ASSET_V[f] = createHash('sha256').update(readFileSync(join(HERE, 'src', f))).digest('hex').slice(0, 10);
-const versioned = (html) => html.replace(/(src|href)="([^"]*?)((?:site|demo|viz)\.(?:css|js))"/g, (m, attr, dir, f) => `${attr}="${dir}${f}?v=${ASSET_V[f]}"`);
+for (const f of ['site.css', 'site.js']) ASSET_V[f] = createHash('sha256').update(readFileSync(join(HERE, 'src', f))).digest('hex').slice(0, 10);
+for (const f of ['molstar.css', 'molstar.js']) ASSET_V[f] = createHash('sha256').update(readFileSync(join(ROOT, 'node_modules', 'molstar', 'build', 'viewer', f))).digest('hex').slice(0, 10);
+const versioned = (html) => html.replace(/(src|href|data-viewer-(?:css|lib))="([^"]*?)((?:site|molstar)\.(?:css|js))"/g, (m, attr, dir, f) => `${attr}="${dir}${f}?v=${ASSET_V[f]}"`);
 const SITE_ORIGIN = (process.env.SITE_URL || 'https://sciencediscovery.github.io').replace(/\/$/, '');
 const sitemapPages = []; // populated as pages are written; 404.html and JSON are excluded
 
@@ -624,8 +714,12 @@ function write(p, content, sitemap = true) {
 
 rmSync(DIST, { recursive: true, force: true });
 mkdirSync(DIST, { recursive: true });
-for (const f of ['site.css', 'site.js', 'demo.css', 'demo.js', 'viz.js']) cpSync(join(HERE, 'src', f), join(DIST, f));
+for (const f of ['site.css', 'site.js']) cpSync(join(HERE, 'src', f), join(DIST, f));
 cpSync(join(HERE, 'src', 'fonts'), join(DIST, 'fonts'), { recursive: true });
+cpSync(join(HERE, 'src', 'media'), join(DIST, 'media'), { recursive: true });
+// The Mol* viewer is served from this origin: the site must not depend on a CDN at runtime.
+mkdirSync(join(DIST, 'vendor', 'molstar'), { recursive: true });
+for (const f of ['molstar.css', 'molstar.js']) cpSync(join(ROOT, 'node_modules', 'molstar', 'build', 'viewer', f), join(DIST, 'vendor', 'molstar', f));
 cpSync(join(DOCS, 'images'), join(DIST, 'docs', 'images'), { recursive: true });
 write('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#2563eb"/><g transform="translate(6 6) scale(.83)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC.brand}</g></svg>`);
 write('.nojekyll', '');
@@ -636,9 +730,8 @@ const order = DOC_GROUPS.flatMap(([group]) => groupItems(group));
 let pages = 0;
 for (const lang of LANGS) {
   write(pathOf(lang, 'index.html'), home(lang));
-  write(pathOf(lang, 'install/index.html'), install(lang));
-  write(pathOf(lang, 'deployment/index.html'), legacyRedirect(lang, 'deployment/index.html'), false);
-  write(pathOf(lang, 'download/index.html'), legacyRedirect(lang, 'download/index.html'), false);
+  write(pathOf(lang, 'deployment/index.html'), legacyRedirect(lang, 'deployment/index.html', 'docs/getting-started/deployment.html', 'docs'), false);
+  write(pathOf(lang, 'download/index.html'), legacyRedirect(lang, 'download/index.html', 'index.html', 'home'), false);
   write(pathOf(lang, 'docs/index.html'), docsHome(lang, order));
   for (const k of order) { write(pathOf(lang, 'docs/' + outPath(k)), docPage(k, lang, order)); pages++; }
   write(pathOf(lang, 'search-index.json'), JSON.stringify(INDEX[lang]));
