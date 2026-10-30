@@ -370,7 +370,9 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 .hidden { display: none !important; }
 
 /* ---------- docs ---------- */
-.docs { display: grid; grid-template-columns: 280px minmax(0, 1fr) 210px; max-width: 1400px; margin: 0 auto; align-items: start; }
+/* The reader column is the point of this page, so the shell is wider than the marketing ones and
+   the two rails stay fixed: on a 1440px screen the article gets about 950px instead of 800px. */
+.docs { display: grid; grid-template-columns: 268px minmax(0, 1fr) 200px; max-width: 1680px; margin: 0 auto; align-items: start; }
 .docs-nav { position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; padding: 18px 12px 32px; border-right: 1px solid var(--border); background: var(--surface-subtle); }
 .docs-nav-group { margin: 4px 0; border: 1px solid transparent; border-radius: 12px; }
 .docs-nav-group[open] { border-color: var(--border); background: var(--surface); box-shadow: var(--shadow-1); }
@@ -390,14 +392,14 @@ a.file:hover { border-color: var(--accent-border-soft); background: var(--accent
 .docs-nav-links a:hover { background: var(--surface-hover); color: var(--text-strong); text-decoration: none; }
 .docs-nav-links a.active { background: var(--accent-softer); color: var(--accent-deep); font-weight: 650; }
 .docs-nav-links a.active::before { position: absolute; top: 6px; bottom: 6px; left: -14px; width: 2px; border-radius: 2px; background: var(--accent); content: ''; }
-.article { min-width: 0; padding: 48px 52px 24px; font-family: var(--serif); }
+.article { min-width: 0; padding: 46px 44px 24px; font-family: var(--serif); }
 .article > *:first-child { margin-top: 0; }
 .article h1 { margin: 0 0 24px; color: var(--text-strong); font-size: clamp(32px, 3.1vw, 40px); line-height: 1.18; letter-spacing: -.045em; }
 .article h2 { margin: 48px 0 16px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-strong); font-size: 25px; letter-spacing: -.035em; }
 .article h3 { margin: 32px 0 10px; color: var(--text-strong); font-size: 19px; letter-spacing: -.02em; }
 .article h4 { margin: 22px 0 6px; color: var(--text-heading); font-size: 15px; }
 .article p, .article li { color: var(--text); font-size: 16px; line-height: 1.78; }
-.article > p, .article > ul, .article > ol, .article > blockquote { max-width: 76ch; }
+.article > p, .article > ul, .article > ol, .article > blockquote { max-width: 96ch; }
 .article li { margin: 4px 0; }
 .article a { text-decoration: underline; text-decoration-color: var(--accent-border-soft); text-underline-offset: 2px; }
 .article a:hover { text-decoration-color: var(--accent-strong); }

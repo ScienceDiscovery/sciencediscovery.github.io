@@ -139,7 +139,7 @@ const T = {
     docs: {
       title: 'Documentation', menu: 'Menu', on: 'On this page', prev: 'Previous', next: 'Next',
       onlyOther: 'This page is only available in Chinese so far.', homeIntro: 'Start here, then dive into the features you need.',
-      sections: { 'getting-started': 'Getting Started', core: 'Core Capabilities', domains: 'Domain Guides', 'advanced-setup': 'Advanced Setup', reference: 'Reference', 'developer-docs': 'Developer Documentation' }
+      sections: { 'getting-started': 'Getting Started', core: 'Core Capabilities', domains: 'Domain Guides', 'setup-reference': 'More Features and Configuration' }
     }
   },
   zh: {
@@ -240,21 +240,26 @@ const T = {
     docs: {
       title: '文档', menu: '目录', on: '本页内容', prev: '上一篇', next: '下一篇',
       onlyOther: '本页暂时只有英文版。', homeIntro: '从这里开始，再深入你需要的功能。',
-      sections: { 'getting-started': '快速开始', core: '核心功能', domains: '领域教程', 'advanced-setup': '高级配置', reference: '参考', 'developer-docs': '开发者文档' }
+      sections: { 'getting-started': '快速开始', core: '核心功能', domains: '领域教程', 'setup-reference': '更多功能与配置' }
     }
   }
 };
 
-// The product documentation owns these six reader-facing groups. Listed pages keep
+// The product documentation owns these reader-facing groups. Listed pages keep
 // a useful reading order; new pages in the same directory are appended automatically.
 const DOC_GROUPS = [
   ['getting-started', ['getting-started/deployment', 'getting-started/quick-start']],
   ['core', ['core/README', 'core/evolve', 'core/execution-workspaces', 'core/idea-tree']],
   ['domains', ['domains/README', 'domains/evolve-a-solution', 'domains/run-an-evolution-search', 'domains/literature-research']],
-  ['advanced-setup', ['advanced-setup/README', 'advanced-setup/configure-custom-mcp', 'advanced-setup/configure-network-proxy', 'advanced-setup/science-memory-setup']],
-  ['reference', ['reference/README', 'reference/configuration', 'reference/rest-api', 'reference/runtime-behavior', 'reference/builtin-tools', 'reference/web-tools', 'reference/jiuwenswarm-migration-status']],
-  ['developer-docs', ['developer-docs/README', 'developer-docs/architecture', 'developer-docs/control-plane', 'developer-docs/agent', 'developer-docs/runner', 'developer-docs/sandbox-execution', 'developer-docs/science-memory', 'developer-docs/subagent-orchestration', 'developer-docs/skill-progressive-disclosure', 'developer-docs/science-connectors', 'developer-docs/web-frontend']]
+  ['setup-reference', [
+    'advanced-setup/README', 'advanced-setup/configure-custom-mcp', 'advanced-setup/configure-network-proxy', 'advanced-setup/science-memory-setup',
+    'reference/README', 'reference/configuration', 'reference/rest-api', 'reference/runtime-behavior', 'reference/builtin-tools', 'reference/web-tools', 'reference/jiuwenswarm-migration-status'
+  ]]
 ];
+
+// Implementation notes are still built and linked from the core pages, but they are no longer a
+// reader-facing group, so neither the sidebar nor the documentation index lists them.
+const DOC_HIDDEN_GROUPS = ['developer-docs'];
 
 // A panel that shows a screenshot is sized from the picture itself: the stylesheet multiplies the
 // height left for the image by this ratio, so the dialog hugs the image instead of sitting in a
@@ -310,9 +315,13 @@ for (const lang of LANGS) {
 }
 const keyFor = (k) => (k === 'README' ? 'index' : k.replace(/\/README$/, '/index'));
 const outPath = (k) => keyFor(k) + '.html';
+// A group normally maps to one documentation directory; setup-reference folds two of them into a
+// single rail entry, so it needs both prefixes to discover the pages that are not listed by name.
+const GROUP_PREFIXES = { 'setup-reference': ['advanced-setup', 'reference'] };
+const prefixesOf = (group) => GROUP_PREFIXES[group] || [group];
 function groupItems(group) {
   const listed = DOC_GROUPS.find(([name]) => name === group)?.[1] || [];
-  const available = Object.keys(sources).filter((k) => k.startsWith(group + '/'));
+  const available = Object.keys(sources).filter((k) => prefixesOf(group).some((p) => k.startsWith(p + '/')));
   return [...listed.filter((k) => sources[k]), ...available.filter((k) => !listed.includes(k)).sort()];
 }
 
@@ -399,6 +408,10 @@ function renderDoc(md, srcFile, lang, pagePath) {
       }
       const r = relative(ROOT, abs).split(sep).join('/');
       if (r.startsWith('..')) return href;
+      // Sample data and screenshots are published with the site, so a link to them must not send
+      // the reader to GitHub for a file that is already served from this origin.
+      const inDocs = relative(DOCS, abs).split(sep).join('/');
+      if (!inDocs.startsWith('..') && /^(examples|images)\//.test(inDocs)) return rel(pagePath, 'docs/' + inDocs) + frag;
       const isDir = existsSync(abs) && statSync(abs).isDirectory();
       return `${GH}/${isDir ? 'tree' : 'blob'}/${BRANCH}/${r}${frag}`;
     },
@@ -630,7 +643,7 @@ function indexDoc(lang, k, title, html) {
 
 function docNav(lang, activeKey) {
   const t = T[lang], S = t.docs.sections;
-  const groupIcons = { 'getting-started': 'book', core: 'tree', domains: 'flask', 'advanced-setup': 'plug', reference: 'task', 'developer-docs': 'graph' };
+  const groupIcons = { 'getting-started': 'book', core: 'tree', domains: 'flask', 'setup-reference': 'plug' };
   const linkFor = (k, text, fromPath) => `<a href="${rel(fromPath, pathOf(lang, 'docs/' + outPath(k)))}"${k === activeKey ? ' class="active" aria-current="page"' : ''}>${esc(text)}</a>`;
   return (fromPath) => {
     return DOC_GROUPS.map(([group]) => {
@@ -721,11 +734,15 @@ cpSync(join(HERE, 'src', 'media'), join(DIST, 'media'), { recursive: true });
 mkdirSync(join(DIST, 'vendor', 'molstar'), { recursive: true });
 for (const f of ['molstar.css', 'molstar.js']) cpSync(join(ROOT, 'node_modules', 'molstar', 'build', 'viewer', f), join(DIST, 'vendor', 'molstar', f));
 cpSync(join(DOCS, 'images'), join(DIST, 'docs', 'images'), { recursive: true });
+// The walkthrough links the sample data it asks readers to upload, so it has to ship with the page.
+if (existsSync(join(DOCS, 'examples'))) cpSync(join(DOCS, 'examples'), join(DIST, 'docs', 'examples'), { recursive: true });
 write('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#2563eb"/><g transform="translate(6 6) scale(.83)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC.brand}</g></svg>`);
 write('.nojekyll', '');
 write('404.html', '<meta charset="utf-8"><meta http-equiv="refresh" content="0;url=./"><a href="./">ScienceDiscovery</a>');
 
 const order = DOC_GROUPS.flatMap(([group]) => groupItems(group));
+// Each hidden group pages only against itself, so no pager link sends a reader into it.
+const hiddenOrder = DOC_HIDDEN_GROUPS.flatMap((group) => groupItems(group));
 
 let pages = 0;
 for (const lang of LANGS) {
@@ -734,6 +751,7 @@ for (const lang of LANGS) {
   write(pathOf(lang, 'download/index.html'), legacyRedirect(lang, 'download/index.html', 'index.html', 'home'), false);
   write(pathOf(lang, 'docs/index.html'), docsHome(lang, order));
   for (const k of order) { write(pathOf(lang, 'docs/' + outPath(k)), docPage(k, lang, order)); pages++; }
+  for (const k of hiddenOrder) { write(pathOf(lang, 'docs/' + outPath(k)), docPage(k, lang, hiddenOrder), false); pages++; }
   write(pathOf(lang, 'search-index.json'), JSON.stringify(INDEX[lang]));
 }
 
