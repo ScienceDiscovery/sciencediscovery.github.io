@@ -132,7 +132,7 @@ const T = {
     footNote: 'ScienceDiscovery is a workflow orchestration tool and does not embed any AI model.',
     footLinks: [['Documentation', 'docs/index.html']],
     dl: {
-      latest: 'Latest release', notes: 'Release notes', recommended: 'Recommended for you', download: 'Download',
+      latest: 'Latest release', notes: 'Release notes', recommended: 'For you', download: 'Download',
       linux: 'Linux', macos: 'macOS', windows: 'Windows',
       all: 'All releases on GitHub'
     },
