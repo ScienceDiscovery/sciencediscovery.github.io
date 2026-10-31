@@ -140,7 +140,7 @@
     var ua = navigator.userAgent, plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
     var os = /win/i.test(plat + ua) && !/darwin/i.test(plat + ua) ? 'windows' : /mac|iphone|ipad/i.test(plat + ua) ? 'macos' : 'linux';
     var card = $('[data-os="' + os + '"]', dl), tag = $('#recommend-tag');
-    if (card) { card.classList.add('recommended'); if (tag) { $('h3', card).appendChild(tag); tag.classList.remove('hidden'); } }
+    if (card) { card.classList.add('recommended'); if (tag) { card.appendChild(tag); tag.classList.remove('hidden'); } }
     $$('[data-copy]', dl).forEach(function (b) { b.addEventListener('click', function () { copy(b.dataset.copy, b); }); });
     /* The cards above are the platform picker the download button unfolds beneath itself. The class
        drives the slide-and-fade in both directions, and Escape or a click outside folds it back. */
