@@ -6,19 +6,19 @@
       "arch": "x64",
       "name": "ScienceDiscovery-0.3.0-win-x64-setup.exe",
       "sha256": "",
-      "url": "https://github.com/openJiuwen-ai/sciencediscovery/releases/download/v0.3.0/ScienceDiscovery-0.3.0-win-x64-setup.exe"
+      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.3.0/ScienceDiscovery-0.3.0-win-x64-setup.exe"
     },
     {
       "arch": "aarch64",
       "name": "ScienceDiscovery-0.3.0-linux-aarch64",
       "sha256": "",
-      "url": "https://github.com/openJiuwen-ai/sciencediscovery/releases/download/v0.3.0/ScienceDiscovery-0.3.0-linux-aarch64"
+      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.3.0/ScienceDiscovery-0.3.0-linux-aarch64"
     },
     {
       "arch": "x86_64",
       "name": "ScienceDiscovery-0.3.0-linux-x86_64",
       "sha256": "",
-      "url": "https://github.com/openJiuwen-ai/sciencediscovery/releases/download/v0.3.0/ScienceDiscovery-0.3.0-linux-x86_64"
+      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.3.0/ScienceDiscovery-0.3.0-linux-x86_64"
     }
   ]
 }
