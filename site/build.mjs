@@ -128,9 +128,13 @@ const T = {
         ]
       }
     ],
+    h1Title: 'Your all-in-one AI research workspace',
+    bandTitle: 'Runs on your own machine',
+    bandQuick: 'Quick start',
+    bandInstall: 'Install',
     learn: 'Learn more →',
     footNote: 'ScienceDiscovery is a workflow orchestration tool and does not embed any AI model.',
-    footLinks: [['Documentation', 'docs/index.html']],
+    footLinks: [['Documentation', 'docs/index.html'], ['Install', 'docs/getting-started/deployment.html']],
     dl: {
       latest: 'Latest release', notes: 'Release notes', recommended: 'For you', download: 'Download',
       linux: 'Linux', macos: 'macOS', windows: 'Windows',
@@ -229,9 +233,13 @@ const T = {
         ]
       }
     ],
+    h1Title: '你的一站式AI科研工作站',
+    bandTitle: '在你自己的机器上运行',
+    bandQuick: '快速开始',
+    bandInstall: '安装',
     learn: '了解更多 →',
     footNote: 'ScienceDiscovery 仅作为工作流编排工具，不内置任何 AI 模型。',
-    footLinks: [['文档', 'docs/index.html']],
+    footLinks: [['文档', 'docs/index.html'], ['安装', 'docs/getting-started/deployment.html']],
     dl: {
       latest: '最新版本', notes: '发布说明', recommended: '为你推荐', download: '下载',
       linux: 'Linux', macos: 'macOS', windows: 'Windows',
@@ -375,14 +383,16 @@ const DOC_ANCHOR_ALIASES = {
     'developer-docs/architecture': { '25-responsibility-split': '4-service-and-sidecar-responsibilities' },
     'getting-started/deployment': {
       'docker-deployment': 'docker-deployment-linux-containers',
-      'local-mode-source-checkout': 'local-source-mode-linux--macos'
+      // The deployment guide dropped its source-mode chapter in the 2026-11 restructure; the
+      // Linux install section is where a reader looking for "run it on my machine" lands now.
+      'local-mode-source-checkout': 'install-and-start-on-linux'
     }
   },
   zh: {
     'developer-docs/architecture': { '25-职责切分核心原则': '4-服务与-sidecar-职责' },
     'getting-started/deployment': {
       'docker-部署': 'docker-部署linux-容器',
-      '本地模式源码检出': '本地源码模式linux--macos'
+      '本地模式源码检出': 'linux-安装与启动'
     }
   }
 };
@@ -474,7 +484,7 @@ function topbar(lang, active, pagePath, otherPath) {
   const p = (target) => rel(pagePath, (lang === 'zh' ? 'zh/' : '') + target);
   const item = (id, target, label) => `<a href="${p(target)}"${active === id ? ' class="active"' : ''}>${label}</a>`;
   return `<header class="topbar"><div class="topbar-inner">
-<a class="brand" href="${p('index.html')}"><img class="brand-mark" src="${rel(pagePath, 'media/app-icon.png')}" alt="" width="36" height="36"><span class="brand-name">${t.name}</span></a>
+<a class="brand" href="${p('index.html')}"><img class="brand-mark" src="${rel(pagePath, 'media/logo/mark.svg')}" alt="" width="23" height="27"><span class="brand-word">${esc(t.name)}</span></a>
 <nav class="topnav">${item('home', 'index.html', t.nav.home)}${item('docs', 'docs/index.html', t.nav.docs)}</nav>
 <div class="topbar-actions">
 <button class="search-btn" type="button" data-ph="${esc(x.searchPh)}" data-empty="${esc(x.searchEmpty)}" data-hint="${esc(x.searchHint)}" data-loading="${esc(x.searchLoading)}" aria-label="${esc(x.searchPh)}">${svg('<circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/>', 15)}<span>${x.searchBtn}</span><kbd>⌘K</kbd></button>
@@ -485,10 +495,14 @@ function topbar(lang, active, pagePath, otherPath) {
 }
 
 function footer(lang, pagePath) {
-  const t = T[lang], x = X[lang];
-  const p = (target) => rel(pagePath, (lang === 'zh' ? 'zh/' : '') + target);
-  return `<footer class="footer"><div class="wrap"><span>© ScienceDiscovery · Apache-2.0 · ${t.footNote}</span>
-<span><a href="${p('docs/index.html')}">${t.nav.docs}</a> &nbsp;·&nbsp; <a href="${GH}">GitHub</a></span></div></footer>`;
+  const t = T[lang];
+  const link = ([label, href]) => {
+    const external = /^https?:/.test(href);
+    const url = external ? href : rel(pagePath, pathOf(lang, href));
+    return `<a href="${url}"${external ? ' target="_blank" rel="noopener"' : ''}>${label}</a>`;
+  };
+  const links = [...t.footLinks, ['GitHub', GH]].map(link).join('<span class="foot-dot">·</span>');
+  return `<footer class="footer"><div class="wrap"><span>© ScienceDiscovery · Apache-2.0 · ${t.footNote}</span><span class="foot-links">${links}</span></div></footer>`;
 }
 
 const pathOf = (lang, page) => (lang === 'zh' ? 'zh/' : '') + page;
@@ -539,75 +553,45 @@ function home(lang) {
   const page = 'index.html', pagePath = pathOf(lang, page);
   const r = (p) => rel(pagePath, p);
   const docLink = (k) => rel(pagePath, pathOf(lang, 'docs/' + keyFor(k) + '.html'));
-  // Turns are marked with a square avatar rather than a name inside the bubble: the reader's own
-  // words carry their avatar on the right, the agent's carries it on the left.
-  const avatar = (sd) => `<span class="avatar${sd ? ' sd' : ''}">${sd ? t.avatarSd : t.avatarAgent}</span>`;
-  const userTurn = (text) => `<div class="turn user"><div class="bubble user">${text}</div><span class="avatar">${t.avatarUser}</span></div>`;
-  const botTurn = (text, sd, cls = '') => `<div class="turn bot">${avatar(sd)}<div class="bubble bot${cls ? ' ' + cls : ''}">${text}</div></div>`;
-  // The reply is about files landing in the workspace, so name a few of them and let three dots
-  // say the list keeps going.
-  const FILE_IC = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';
-  const fileList = (names) => `<span class="files">${names.map((n) => `<span class="file">${FILE_IC}${n}</span>`).join('')}</span><span class="files-more" title="${t.filesMore}">···</span>`;
-  // A file the run produced or fetched opens in place. The two columns open to different things:
-  // the generic agent can only show the raw record, ScienceDiscovery reveals the rendered artifact.
-  // Both carry a hint and a glyph, because a bare file name reads as a label.
-  const CHEV = '<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
-  const fold = (name, hint, body) => `<details class="fold"><summary>${FILE_IC}${name}<span class="fold-hint">${hint}</span>${CHEV}</summary><div class="fold-body">${body}</div></details>`;
-  // The hint that opens the viewer is the one readers must not miss, so it carries hint-live
-  // (a colour cycle) while the plain column's hint stays quiet.
-  const chipIcon = (f) => (f.ic ? svg(IC[f.ic], 13) : FILE_IC);
-  const viewerChip = (f) => `<span class="fold-label">${f.label}</span><button class="file fold-open" type="button" data-viewer="${f.viewer}" aria-haspopup="dialog">${chipIcon(f)}${f.name}<span class="fold-hint hint-live">${f.hint}</span>${CHEV}</button>`;
-  // What a chip opens is too large for the reading flow, so it lives in a modal with a way out.
-  // Two kinds exist: a real Mol* viewer (bundle and structure fetched on first open) and a still
-  // screenshot of an Evolve run.
-  const viewerPanel = (f) => {
-    // A screenshot panel carries its own aspect ratio so the dialog can be narrowed to the image;
-    // the Mol* panel keeps the full 80vw because the viewer wants the room.
-    const cls = f.structure ? 'viewer-dialog' : 'viewer-dialog shot-dialog';
-    const style = f.structure ? '' : ` style="--shot-ratio:${shotRatio(f.image)}"`;
-    const body = f.structure
-      ? `<div class="viewer-stage" data-viewer-css="${r('vendor/molstar/molstar.css')}" data-viewer-lib="${r('vendor/molstar/molstar.js')}" data-viewer-src="${r('media/' + f.structure)}" data-viewer-error="${esc(f.error)}"><span class="viewer-msg">${f.loading}</span></div>`
-      : `<div class="viewer-shot"><img src="${r('media/' + f.image)}" alt="${esc(f.alt)}" decoding="async"></div>`;
-    return `<dialog class="${cls}" id="${f.viewer}"${style} aria-label="${esc(f.name)}"><div class="viewer-head"><span class="viewer-name">${chipIcon(f)}${f.name}</span><button class="viewer-close" data-close type="button" aria-label="${t.close}">✕</button></div><p class="viewer-note">${f.caption}</p>${body}</dialog>`;
-  };
-  // What the run cost is a per-column footnote, not part of the transcript: it sits under the
-  // bubble, centred, so the two columns can be read against each other.
-  const tally = (text, ic) => (text ? `<p class="tally">${ic ? svg(IC[ic], 16) : ''}${text}</p>` : '');
-  const feats = t.feats.map((f) => `<article class="feature">
-<span class="eyebrow">${svg(IC[f.ic], 14)}${f.tag}</span>
-<h3>${f.title}</h3>
-<p class="feature-text">${f.text}</p>
-<div class="compare">
-<figure class="chat${f.tally ? ' tallied' : ''}"><figcaption><span class="dot"></span>${t.chatPlain}</figcaption>
-${userTurn(f.ask)}
-${botTurn(`${f.plain}${f.plainFold ? fold(f.plainFold.name, f.plainFold.hint, `<pre>${esc(f.plainFold.text)}</pre><span class="fold-note">${f.plainFold.note}</span>`) : ''}`, false)}
-${f.plain2 ? botTurn(`${f.plain2}<span class="pulse"></span>`, false, 'progress') : ''}
-${tally(f.tally, f.tallyIcon)}
-</figure>
-<figure class="chat sd${f.sdTally ? ' tallied' : ''}"><figcaption><span class="dot"></span>${t.chatSd}</figcaption>
-${userTurn(f.ask)}
-${botTurn(`${f.sd}${f.files ? fileList(f.files) : ''}${f.sdFold ? viewerChip(f.sdFold) : ''}${f.sdTask ? viewerChip(f.sdTask) : ''}`, true)}
-${tally(f.sdTally, f.sdTallyIcon)}
-</figure>
+  // Each feature pairs its copy with the product shot drawn for that column. Light and dark have
+  // their own export, so the theme swaps the picture instead of recolouring one.
+  const feature = (f, i) => `<section class="home-feature${i % 2 ? ' flip' : ''}">
+<div class="feature-copy">
+<span class="chip">${svg(IC[f.ic], 14)}${f.tag}</span>
+<h2>${f.title}</h2>
+<p>${f.text}</p>
+<a class="feature-link" href="${docLink(f.doc)}">${t.learn}</a>
 </div>
-${f.sdFold ? viewerPanel(f.sdFold) : ''}
-${f.sdTask ? viewerPanel(f.sdTask) : ''}
-${(f.evidence || []).map(viewerPanel).join('')}
-<p class="feature-more"><a href="${docLink(f.doc)}">${t.learn}</a></p>
-</article>`).join('\n');
+<figure class="feature-figure">
+<img class="visual-light" src="${r('media/landing/feature-' + (i + 1) + '-light.webp')}" alt="${esc(f.title)}" width="1780" height="940" loading="lazy" decoding="async">
+<img class="visual-dark" src="${r('media/landing/feature-' + (i + 1) + '-dark.webp')}" alt="" width="1780" height="940" loading="lazy" decoding="async">
+</figure>
+</section>`;
   return head(lang, `${t.name} — ${t.tag}`, pagePath) + `
 <body class="home">
-<div class="aurora" aria-hidden="true"></div>
 ${topbar(lang, 'home', pagePath, other(lang, page))}
-<main class="wrap">
-<section class="quick-install">
-<span class="eyebrow">${svg(IC.flask, 14)}${t.eyebrow}</span>
-<h1>${t.h1}</h1><p class="lead">${t.lead}</p>
-<div class="hero-cta"><button class="btn download" type="button" data-download-open aria-controls="download-panel" aria-expanded="false">${svg(IC.download, 18)}${t.ctaDownload}</button></div>
+<main>
+<section class="home-hero">
+<div class="hero-inner">
+<p class="hero-eyebrow">${svg(IC.flask, 15)}<span>${esc(t.eyebrow)}</span></p>
+<div class="hero-brandline">
+<img class="hero-mark" src="${r('media/logo/mark.svg')}" alt="" width="26" height="30" decoding="async">
+<span class="hero-wordmark">ScienceDiscovery</span>
+</div>
+<h1 class="hero-title">${esc(t.h1Title)}</h1>
+<p class="hero-lead">${esc(t.lead)}</p>
+<div class="hero-actions"><button class="home-download" type="button" data-download-open aria-controls="download-panel" aria-expanded="false">${svg(IC.download, 18)}${t.ctaDownload}</button></div>
 ${downloadPanel(lang)}
+<figure class="hero-shot">
+<video src="${r('media/ScienceDiscovery.mp4')}" autoplay muted loop playsinline preload="auto" aria-label="${esc(t.videoLabel)}"></video>
+</figure>
+</div>
 </section>
-<section class="home-video"><video src="${r('media/ScienceDiscovery.mp4')}" aria-label="${esc(t.videoLabel)}" autoplay muted loop playsinline controls preload="metadata"></video></section>
-${feats}
+${t.feats.map(feature).join('\n')}
+<section class="home-cta">
+<h2>${esc(t.bandTitle)}</h2>
+<div class="cta-actions"><a class="cta-ghost" href="${docLink('getting-started/quick-start')}">${t.bandQuick}</a><a class="cta-solid" href="${docLink('getting-started/deployment')}">${t.bandInstall}</a></div>
+</section>
 </main>
 ${footer(lang, pagePath)}
 <script src="${r('site.js')}"></script>
@@ -736,8 +720,9 @@ for (const f of ['molstar.css', 'molstar.js']) cpSync(join(ROOT, 'node_modules',
 cpSync(join(DOCS, 'images'), join(DIST, 'docs', 'images'), { recursive: true });
 // The walkthrough links the sample data it asks readers to upload, so it has to ship with the page.
 if (existsSync(join(DOCS, 'examples'))) cpSync(join(DOCS, 'examples'), join(DIST, 'docs', 'examples'), { recursive: true });
-// The tab icon is the product's own app icon, so the browser tab and the header brand never drift.
-cpSync(join(HERE, 'src', 'media', 'app-icon.png'), join(DIST, 'favicon.png'));
+// The tab icon is the brand mark on a rounded square, cut from the same artwork as the header lockup,
+// so the browser tab and the header never drift.
+cpSync(join(HERE, 'src', 'media', 'logo', 'favicon.png'), join(DIST, 'favicon.png'));
 write('.nojekyll', '');
 write('404.html', '<meta charset="utf-8"><meta http-equiv="refresh" content="0;url=./"><a href="./">ScienceDiscovery</a>');
 

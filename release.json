@@ -1,24 +1,24 @@
 {
-  "version": "0.3.0",
-  "url": "https://github.com/openJiuwen-ai/sciencediscovery/releases/tag/v0.3.0",
+  "version": "0.4.0.rc1",
+  "url": "https://github.com/openJiuwen-ai/sciencediscovery/releases/tag/v0.4.0-rc1",
   "binaries": [
     {
       "arch": "x64",
-      "name": "ScienceDiscovery-0.3.0-win-x64-setup.exe",
+      "name": "ScienceDiscovery-0.4.0.rc1-win-x64-setup.exe",
       "sha256": "",
-      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.3.0/ScienceDiscovery-0.3.0-win-x64-setup.exe"
+      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.4.0.rc1/ScienceDiscovery-0.4.0.rc1-win-x64-setup.exe"
     },
     {
       "arch": "aarch64",
-      "name": "ScienceDiscovery-0.3.0-linux-aarch64",
+      "name": "ScienceDiscovery-0.4.0.rc1-linux-aarch64",
       "sha256": "",
-      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.3.0/ScienceDiscovery-0.3.0-linux-aarch64"
+      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.4.0.rc1/ScienceDiscovery-0.4.0.rc1-linux-aarch64"
     },
     {
       "arch": "x86_64",
-      "name": "ScienceDiscovery-0.3.0-linux-x86_64",
+      "name": "ScienceDiscovery-0.4.0.rc1-linux-x86_64",
       "sha256": "",
-      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.3.0/ScienceDiscovery-0.3.0-linux-x86_64"
+      "url": "https://gitcode.com/openJiuwen/sciencediscovery/releases/download/0.4.0.rc1/ScienceDiscovery-0.4.0.rc1-linux-x86_64"
     }
   ]
 }
