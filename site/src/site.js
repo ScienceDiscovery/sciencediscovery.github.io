@@ -157,6 +157,26 @@
     }
   }
 
+  /* ---------------- video ---------------- */
+  var heroVideo = $('.hero-video');
+  var videoDialog = $('#demo-video');
+  var demoVideo = videoDialog ? $('video', videoDialog) : null;
+  if (videoDialog) {
+    var openVideo = function () {
+      videoDialog.showModal();
+      if (demoVideo) { try { demoVideo.currentTime = 0; } catch (e) { /* not loaded yet */ } demoVideo.play().catch(function () { /* autoplay refused; native controls still work */ }); }
+      if (heroVideo) heroVideo.pause();
+    };
+    if (heroVideo) heroVideo.addEventListener('click', openVideo);
+    var closer = $('[data-close]', videoDialog);
+    if (closer) closer.addEventListener('click', function () { videoDialog.close(); });
+    videoDialog.addEventListener('click', function (e) { if (e.target === videoDialog) videoDialog.close(); });
+    videoDialog.addEventListener('close', function () {
+      if (demoVideo) demoVideo.pause();
+      if (heroVideo) heroVideo.play().catch(function () {});
+    });
+  }
+
   /* ---------------- structure viewer ---------------- */
   // The 3D view is a real Mol* viewer, not a picture. The bundle is ~5 MB and the structure file
   // another 300 KB, so both are fetched the first time a reader opens one and never on page load.

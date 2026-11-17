@@ -249,13 +249,27 @@ body.home { background: var(--page); }
 }
 :root[data-theme="dark"] .home-download:hover { background: linear-gradient(180deg, #5aa2ff 0%, #2a78ff 100%); }
 
-/* The recording is the hero's second half and plays on load: no poster, no dialog. It is muted and
-   looping so the browser's autoplay policy allows it to start without a gesture. */
+/* The recording is the hero's second half and plays muted on load so the browser's autoplay policy
+   lets it start without a gesture. Clicking it opens a dialog with the same video, native controls
+   and sound. */
 .hero-shot {
   display: block; width: min(1200px, 62.5vw); margin: clamp(26px, 2.6vw, 50px) auto 0;
-  border-radius: 14px; background: #0b0b0c; overflow: hidden; box-shadow: var(--shot-shadow);
+  border-radius: 14px; background: #0b0b0c; overflow: hidden; box-shadow: var(--shot-shadow); cursor: pointer;
 }
 .hero-shot video { display: block; width: 100%; height: auto; background: #0b0b0c; }
+
+/* ---- video dialog ---- */
+.video-dialog { border: 0; padding: 0; background: transparent; width: min(1200px, 92vw); max-width: none; }
+.video-dialog::backdrop { background: rgba(4, 6, 12, .72); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+.video-dialog-inner { position: relative; }
+.video-close {
+  position: absolute; top: -16px; right: -16px; z-index: 2;
+  width: 34px; height: 34px; border: 0; border-radius: 50%;
+  background: #fff; color: #111; font-size: 15px; line-height: 1; cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,.45);
+}
+.video-close:hover { background: #f1f5f9; }
+.video-dialog-video { display: block; width: 100%; height: auto; border-radius: 12px; background: #000; }
 
 /* ---------- feature rows ---------- */
 .home-feature {
@@ -370,6 +384,7 @@ body.home { background: var(--page); }
   .home-hero { margin-top: -56px; padding-top: calc(56px + 28px); }
   .hero-wordmark { letter-spacing: 0; }
   .hero-shot { border-radius: 10px; }
+  .video-close { top: -12px; right: -12px; width: 30px; height: 30px; }
   .home-feature { padding: 40px 0; }
   .feature-figure img { border-radius: 14px; }
   .cta-actions { flex-direction: column; align-items: center; }

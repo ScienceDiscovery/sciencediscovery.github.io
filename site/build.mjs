@@ -583,10 +583,16 @@ ${topbar(lang, 'home', pagePath, other(lang, page))}
 <div class="hero-actions"><button class="home-download" type="button" data-download-open aria-controls="download-panel" aria-expanded="false">${svg(IC.download, 18)}${t.ctaDownload}</button></div>
 ${downloadPanel(lang)}
 <figure class="hero-shot">
-<video src="${r('media/ScienceDiscovery.mp4')}" autoplay muted loop playsinline preload="auto" aria-label="${esc(t.videoLabel)}"></video>
+<video class="hero-video" src="${r('media/ScienceDiscovery.mp4')}" autoplay muted loop playsinline preload="auto" aria-label="${esc(t.videoLabel)}"></video>
 </figure>
 </div>
 </section>
+<dialog class="video-dialog" id="demo-video">
+<div class="video-dialog-inner">
+<button class="video-close" type="button" data-close aria-label="${esc(t.close)}">✕</button>
+<video class="video-dialog-video" src="${r('media/ScienceDiscovery.mp4')}" controls playsinline preload="metadata" aria-label="${esc(t.videoLabel)}"></video>
+</div>
+</dialog>
 ${t.feats.map(feature).join('\n')}
 <section class="home-cta">
 <h2>${esc(t.bandTitle)}</h2>
